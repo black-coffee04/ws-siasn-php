@@ -1,0 +1,22 @@
+{
+    "name": "black-coffee04/ws-siasn-php",
+    "description": "Software Development Kit Web Service SiASN",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "black-coffee04",
+            "email": "bkdegy@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "autoload":{
+        "psr-4": {
+            "SiASN\\Sdk\\": "src/"
+        }
+    }
+}
