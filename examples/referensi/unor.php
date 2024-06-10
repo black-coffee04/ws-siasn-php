@@ -8,11 +8,11 @@ $config = [
     "consumerKey"    => getenv('CONSUMER_KEY'),
     "consumerSecret" => getenv('CONSUMER_SECRET'),
     "clientId"       => getenv('CLIENT_ID'),
-    "username"       => getenv('USERNAME_SSO'),
+    "username"       => getenv('USERNAME_SSOs'),
     "password"       => getenv('PASSWORD')
 ];
 
-$wsSiASN = new SiasnClient($config);
+$siasnClient = new SiasnClient($config);
 
 
 /**
@@ -20,4 +20,4 @@ $wsSiASN = new SiasnClient($config);
  * @param boolean $cache atur menjadi true apabila anda akan menyimpannya ke cache, cache akan expired dalam 1 jam
  */
 $cache = true;
-var_dump($wsSiASN->getReferensiUnor($cache));
+echo json_encode($siasnClient->referensi()->unor($cache));

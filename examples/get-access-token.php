@@ -12,15 +12,15 @@ $config = [
     "password"       => getenv('PASSWORD')
 ];
 
-$wsSiASN = new SiasnClient($config);
+$siasnClient = new SiasnClient($config);
 
 
 /**
  * Contoh Pengambilan Access Token WSO
  */
-echo $wsSiASN->wsoAccessToken() . PHP_EOL . PHP_EOL;
+echo $siasnClient->wsoAccessToken() . PHP_EOL . PHP_EOL;
 
 /**
  * Contoh Pengambilan Access Token SSO
  */
-echo $wsSiASN->ssoAccessToken() . PHP_EOL . PHP_EOL;
+echo $siasnClient->ssoAccessToken() . PHP_EOL . PHP_EOL;

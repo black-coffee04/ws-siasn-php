@@ -3,8 +3,9 @@
 namespace SiASN\Sdk\Resources;
 
 use SiASN\Sdk\Exceptions\RestRequestException;
+use SiASN\Sdk\Resources\Authentication;
 
-class Referensi Extends Authentication
+class Referensi extends Authentication
 {
     /**
      * Membuat instance Referensi.

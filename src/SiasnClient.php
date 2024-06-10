@@ -55,11 +55,10 @@ class SiasnClient
     /**
      * Mendapatkan data referensi unit organisasi.
      *
-     * @param bool $cache Menentukan apakah data akan disimpan di cache atau tidak.
-     * @return array Data referensi unit organisasi.
+     * @return object Data referensi unit organisasi.
      */
-    public function getReferensiUnor(bool $cache = false): array
+    public function referensi(): object
     {
-        return (new Referensi($this->config))->unor($cache);
+        return new Referensi($this->config);
     }
 }
