@@ -4,14 +4,25 @@ namespace SiASN\Sdk;
 
 use SiASN\Sdk\Config;
 use SiASN\Sdk\Resources\Authentication;
+use SiASN\Sdk\Resources\PNS;
 use SiASN\Sdk\Resources\Referensi;
+
+/**
+ * Class SiasnClient.
+ * 
+ * Klien untuk berinteraksi dengan layanan SiASN menggunakan SDK.
+ *
+ * @author  Black Coffee 04
+ * @license MIT License
+ */
 
 class SiasnClient
 {
+    /** @var Config Konfigurasi yang digunakan oleh klien. */
     private $config;
 
     /**
-     * Membuat instance SiasnClient.
+     * Constructor untuk SiasnClient.
      *
      * @param array $config Konfigurasi yang digunakan untuk inisialisasi.
      */
@@ -21,7 +32,7 @@ class SiasnClient
     }
 
     /**
-     * Mengembalikan objek konfigurasi yang digunakan oleh client.
+     * Mengembalikan objek konfigurasi yang digunakan oleh klien.
      *
      * @return Config Objek konfigurasi.
      */
@@ -55,11 +66,20 @@ class SiasnClient
     /**
      * Mendapatkan data referensi unit organisasi.
      *
-     * @param bool $cache Menentukan apakah data akan disimpan di cache atau tidak.
-     * @return array Data referensi unit organisasi.
+     * @return object Data referensi unit organisasi.
      */
-    public function getReferensiUnor(bool $cache = false): array
+    public function referensi(): object
     {
-        return (new Referensi($this->config))->unor($cache);
+        return new Referensi($this->config);
+    }
+
+    /**
+     * Mendapatkan data PNS.
+     *
+     * @return object Data PNS.
+     */
+    public function pns(): object
+    {
+        return new PNS($this->config);
     }
 }

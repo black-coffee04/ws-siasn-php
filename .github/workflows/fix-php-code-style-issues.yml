@@ -1,0 +1,24 @@
+name: Fix PHP code style issues
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  fix-style:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '7.4'  # Anda bisa mengubah versi PHP sesuai kebutuhan
+    - name: Install dependencies
+      run: composer install
+    - name: Check and fix code style
+      run: vendor/bin/php-cs-fixer fix --diff --dry-run

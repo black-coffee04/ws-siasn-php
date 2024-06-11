@@ -2,16 +2,18 @@
 
 namespace SiASN\Sdk\Resources;
 
+use SiASN\Sdk\Config;
 use SiASN\Sdk\Exceptions\RestRequestException;
+use SiASN\Sdk\Resources\Authentication;
 
-class Referensi Extends Authentication
+class Referensi extends Authentication
 {
     /**
      * Membuat instance Referensi.
      *
-     * @param object $config Objek konfigurasi.
+     * @param \SiASN\Sdk\Config $config Objek konfigurasi.
      */
-    public function __construct($config)
+    public function __construct(Config $config)
     {
         parent::__construct($config);
     }
@@ -32,7 +34,7 @@ class Referensi Extends Authentication
                 return $this->cache->get($cacheKey);
             }
 
-            $postOptions = [
+            $requestOptions = [
                 'url'     => $this->config->getApiBaseUrl() . '/referensi/ref-unor',
                 'headers' => [
                     'Accept: application/json',
@@ -41,7 +43,7 @@ class Referensi Extends Authentication
                 ]
             ];
 
-            $response = $this->get($postOptions);
+            $response = $this->get($requestOptions);
             $decodedResponse = json_decode($response, true);
 
             if ($storeCache) {

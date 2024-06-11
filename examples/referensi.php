@@ -2,8 +2,7 @@
 
 use SiASN\Sdk\SiasnClient;
 
-require_once '../../vendor/autoload.php';
-require_once '../init.php';
+require_once __DIR__ . './init.php';
 
 $config = [
     "consumerKey"    => getenv('CONSUMER_KEY'),
@@ -13,7 +12,7 @@ $config = [
     "password"       => getenv('PASSWORD')
 ];
 
-$wsSiASN = new SiasnClient($config);
+$siasnClient = new SiasnClient($config);
 
 
 /**
@@ -21,4 +20,4 @@ $wsSiASN = new SiasnClient($config);
  * @param boolean $cache atur menjadi true apabila anda akan menyimpannya ke cache, cache akan expired dalam 1 jam
  */
 $cache = true;
-var_dump($wsSiASN->getReferensiUnor($cache));
+echo json_encode($siasnClient->referensi()->unor($cache));

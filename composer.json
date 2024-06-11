@@ -14,9 +14,23 @@
         "ext-curl": "*",
         "ext-json": "*"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6",
+        "mockery/mockery": "^1.6"
+    },
     "autoload":{
         "psr-4": {
             "SiASN\\Sdk\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit --colors=always",
+        "test-siasn-client": "phpunit tests/SiasnClientTest.php --colors=always",
+        "test-pns": "phpunit tests/Resources/PNSTest.php --colors=always"
     }
 }
