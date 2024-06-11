@@ -5,7 +5,6 @@ namespace SiASN\Sdk\Resources;
 use SiASN\Sdk\Config;
 use SiASN\Sdk\Exceptions\RestRequestException;
 
-
 class Pns extends Authentication
 {
     /**

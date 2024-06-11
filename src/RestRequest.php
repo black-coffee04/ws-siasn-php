@@ -97,8 +97,6 @@ class RestRequest
         }
     }
 
-
-
     /**
      * Membangun opsi cURL berdasarkan konfigurasi.
      *
