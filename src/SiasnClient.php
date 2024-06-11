@@ -4,6 +4,7 @@ namespace SiASN\Sdk;
 
 use SiASN\Sdk\Config;
 use SiASN\Sdk\Resources\Authentication;
+use SiASN\Sdk\Resources\PNS;
 use SiASN\Sdk\Resources\Referensi;
 
 class SiasnClient
@@ -60,5 +61,10 @@ class SiasnClient
     public function referensi(): object
     {
         return new Referensi($this->config);
+    }
+
+    public function pns(): object
+    {
+        return new PNS($this->config);
     }
 }
