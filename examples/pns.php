@@ -12,7 +12,7 @@ $config = [
 ];
 
 $siasnClient = new SiasnClient($config);
-$nipAsn      = '199612052020121003';
+$nipAsn      = getenv('NIP');
 
 /**
  * Mengambil data utama ASN

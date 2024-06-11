@@ -56,7 +56,7 @@ class Pns extends Authentication
             $response = $this->get($requestOptions);
             $decodedResponse = json_decode($response, true);
 
-            return $decodedResponse ?? [];
+            return $decodedResponse['data'] ?? [];
         } catch (RestRequestException $e) {
             throw new RestRequestException('Gagal mengambil data: ' . $e->getMessage(), $e->getCode());
         }

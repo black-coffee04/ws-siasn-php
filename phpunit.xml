@@ -6,5 +6,11 @@
         <testsuite name="default">
             <directory>./tests</directory>
         </testsuite>
+        <testsuite name="SiasnClient Suite">
+            <file>./tests/SiasnClientTest.php</file>
+        </testsuite>
+        <testsuite name="PNS Suite">
+            <file>./tests/Resources/PNSTest.php</file>
+        </testsuite>
     </testsuites>
 </phpunit>

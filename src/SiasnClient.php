@@ -7,12 +7,22 @@ use SiASN\Sdk\Resources\Authentication;
 use SiASN\Sdk\Resources\PNS;
 use SiASN\Sdk\Resources\Referensi;
 
+/**
+ * Class SiasnClient.
+ * 
+ * Klien untuk berinteraksi dengan layanan SiASN menggunakan SDK.
+ *
+ * @author  Black Coffee 04
+ * @license MIT License
+ */
+
 class SiasnClient
 {
+    /** @var Config Konfigurasi yang digunakan oleh klien. */
     private $config;
 
     /**
-     * Membuat instance SiasnClient.
+     * Constructor untuk SiasnClient.
      *
      * @param array $config Konfigurasi yang digunakan untuk inisialisasi.
      */
@@ -22,7 +32,7 @@ class SiasnClient
     }
 
     /**
-     * Mengembalikan objek konfigurasi yang digunakan oleh client.
+     * Mengembalikan objek konfigurasi yang digunakan oleh klien.
      *
      * @return Config Objek konfigurasi.
      */
@@ -63,6 +73,11 @@ class SiasnClient
         return new Referensi($this->config);
     }
 
+    /**
+     * Mendapatkan data PNS.
+     *
+     * @return object Data PNS.
+     */
     public function pns(): object
     {
         return new PNS($this->config);

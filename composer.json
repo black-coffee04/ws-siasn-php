@@ -29,6 +29,8 @@
         }
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "phpunit --colors=always",
+        "test-siasn-client": "phpunit tests/SiasnClientTest.php --colors=always",
+        "test-pns": "phpunit tests/Resources/PNSTest.php --colors=always"
     }
 }
