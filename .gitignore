@@ -4,3 +4,4 @@ vendor/
 .env
 .idea
 .DS_STORE
+.cache
