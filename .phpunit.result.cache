@@ -1,1 +1,0 @@
-{"version":1,"defects":{"PnsTest::testDataUtamaReturnsData":3,"PnsTest::testDataPasanganReturnsData":3,"PnsTest::testDataAnakReturnsData":3},"times":{"PnsTest::testDataUtamaReturnsData":0.019,"PnsTest::testDataUtamaThrowsExceptionOnEmptyNip":0.002,"PnsTest::testDataPasanganReturnsData":0.001,"PnsTest::testDataAnakReturnsData":0.001}}
