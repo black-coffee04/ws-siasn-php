@@ -1,9 +1,19 @@
 # ws-siasn-php
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/black-coffee04/ws-siasn-php.svg?style=flat-square)](https://packagist.org/packages/black-coffee04/ws-siasn-php)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/black-coffee04/ws-siasn-php/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/black-coffee04/ws-siasn-php/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/black-coffee04/ws-siasn-php/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/black-coffee04/ws-siasn-php/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/black-coffee04/ws-siasn-php.svg?style=flat-square)](https://packagist.org/packages/black-coffee04/ws-siasn-php)
+<!-- BADGES_START -->
+[![Latest Version][badge-release]][packagist]
+[![PHP Version][badge-php]][php]
+![tests](https://github.com/black-coffee04/ws-siasn-php/workflows/tests/badge.svg)
+[![Total Downloads][badge-downloads]][downloads]
+
+[badge-release]: https://img.shields.io/packagist/v/black-coffee04/ws-siasn-php.svg?style=flat-square&label=release
+[badge-php]: https://img.shields.io/packagist/php-v/black-coffee04/ws-siasn-php.svg?style=flat-square
+[badge-downloads]: https://img.shields.io/packagist/dt/black-coffee04/ws-siasn-php.svg?style=flat-square&colorB=mediumvioletred
+
+[packagist]: https://packagist.org/packages/black-coffee04/ws-siasn-php
+[php]: https://php.net
+[downloads]: https://packagist.org/packages/black-coffee04/ws-siasn-php
+<!-- BADGES_END -->
 
 PHP Client untuk Web Services SIASN
 

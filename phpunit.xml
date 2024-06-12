@@ -10,7 +10,7 @@
             <file>./tests/SiasnClientTest.php</file>
         </testsuite>
         <testsuite name="PNS Suite">
-            <file>./tests/Resources/PNSTest.php</file>
+            <file>./tests/Resources/PnsTest.php</file>
         </testsuite>
     </testsuites>
 </phpunit>
