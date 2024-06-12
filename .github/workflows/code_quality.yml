@@ -1,0 +1,41 @@
+name: Code Quality
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  fix-style:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --no-suggest
+
+    - name: Install PHP CS Fixer
+      run: composer require --dev friendsofphp/php-cs-fixer
+
+    - name: Check and fix code style
+      run: |
+        fixed_files=$(vendor/bin/php-cs-fixer fix src --dry-run --diff --format=json | jq -r '.files | map(select(.diff | length > 0)) | length')
+        if [ "$fixed_files" -gt 0 ]; then
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add .
+          git commit -m "Apply PHP CS Fixer changes"
+          git push origin HEAD
+        fi
+      env:
+        GH_PATOKEN: ${{ secrets.GH_PATOKEN }}
