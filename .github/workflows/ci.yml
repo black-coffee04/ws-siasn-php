@@ -59,6 +59,8 @@ jobs:
       run: |
         fixed_files=$(vendor/bin/php-cs-fixer fix src --dry-run --diff --format=json | jq -r '.files | map(select(.diff | length > 0)) | length')
         if [ "$fixed_files" -gt 0 ]; then
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
           git add .
           git commit -m "Apply PHP CS Fixer changes"
           git push origin HEAD:main
