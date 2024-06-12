@@ -1,6 +1,9 @@
 <?php
-namespace SiASN\Sdk\Exceptions;
+
+namespace YourNamespace\Exceptions;
 
 use Exception;
 
-class RestRequestException extends Exception {}
+class RestRequestException extends Exception
+{
+}
