@@ -63,6 +63,7 @@ jobs:
           git config --global user.email 'github-actions@github.com'
           git add .
           git commit -m "Apply PHP CS Fixer changes"
+          git pull origin main
           git push origin HEAD:main
         fi
       env:
