@@ -12,7 +12,15 @@ class SiasnClientTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->siasnClient = new SiasnClient();
+        $config = [
+            "consumerKey"    => 'dummy_consumer_key',
+            "consumerSecret" => 'dummy_consumer_secret',
+            "clientId"       => 'dummy_client_id',
+            "username"       => 'dummy_username',
+            "password"       => 'dummy_consumer_key'
+        ];
+
+        $this->siasnClient = new SiasnClient($config);
     }
 
     public function testGetConfig()

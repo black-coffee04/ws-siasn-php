@@ -2,68 +2,37 @@
 
 namespace SiASN\Sdk;
 
+use InvalidArgumentException;
+
 /**
  * Class Config
  *
- * Class ini bertanggung jawab untuk menyimpan konfigurasi yang diperlukan
- * untuk mengakses layanan SIASN.
+ * Menyimpan konfigurasi yang diperlukan untuk mengakses layanan SIASN.
  */
 class Config
 {
-    /**
-     * URL SSO Base 
-     *
-     * @var string
-     */
+    /** @var string URL SSO Base */
     private $ssoBaseUrl = 'https://sso-siasn.bkn.go.id/auth/realms/public-siasn/protocol/openid-connect/token';
 
-    /**
-     * URL WSO Base 
-     *
-     * @var string
-     */
+    /** @var string URL WSO Base */
     private $wsoBaseUrl = 'https://apimws.bkn.go.id/oauth2/token';
 
-    /**
-     * URL Api Base 
-     *
-     * @var string
-     */
+    /** @var string URL API Base */
     private $apiBaseUrl = 'https://apimws.bkn.go.id:8243/apisiasn/1.0';
 
-    /**
-     * Consumer Key
-     *
-     * @var string
-     */
+    /** @var string Consumer Key */
     private $consumerKey;
 
-    /**
-     * Consumer Secret
-     *
-     * @var string
-     */
+    /** @var string Consumer Secret */
     private $consumerSecret;
 
-    /**
-     * Client ID
-     *
-     * @var string
-     */
+    /** @var string Client ID */
     private $clientId;
 
-    /**
-     * Username
-     *
-     * @var string
-     */
+    /** @var string Username */
     private $username;
 
-    /**
-     * Password
-     *
-     * @var string
-     */
+    /** @var string Password */
     private $password;
 
     /**
@@ -77,42 +46,59 @@ class Config
      *                      - clientId
      *                      - username
      *                      - password
+     * @throws InvalidArgumentException Jika salah satu konfigurasi tidak diatur atau kosong.
      */
     public function __construct(array $config = [])
     {
-        $this->consumerKey    = $config['consumerKey'] ?? '';
-        $this->consumerSecret = $config['consumerSecret'] ?? '';
-        $this->clientId       = $config['clientId'] ?? '';
-        $this->username       = $config['username'] ?? '';
-        $this->password       = $config['password'] ?? '';
+        $this->consumerKey    = $this->validateConfigValue($config, 'consumerKey');
+        $this->consumerSecret = $this->validateConfigValue($config, 'consumerSecret');
+        $this->clientId       = $this->validateConfigValue($config, 'clientId');
+        $this->username       = $this->validateConfigValue($config, 'username');
+        $this->password       = $this->validateConfigValue($config, 'password');
     }
 
     /**
-     * Mendapatkan URL SSO Base 
+     * Memvalidasi nilai konfigurasi.
      *
-     * @return string URL SSO Base 
+     * @param array $config Array konfigurasi.
+     * @param string $key Kunci konfigurasi yang divalidasi.
+     * @return string Nilai konfigurasi yang divalidasi.
+     * @throws InvalidArgumentException Jika nilai konfigurasi tidak diatur atau kosong.
      */
-    public function getSsoBaseUrl()
+    private function validateConfigValue(array $config, string $key): string
+    {
+        if (empty($config[$key])) {
+            throw new InvalidArgumentException("Nilai konfigurasi untuk '{$key}' diperlukan.");
+        }
+        return $config[$key];
+    }
+
+    /**
+     * Mendapatkan URL SSO Base
+     *
+     * @return string URL SSO Base
+     */
+    public function getSsoBaseUrl(): string
     {
         return $this->ssoBaseUrl;
     }
 
     /**
-     * Mendapatkan URL Api Base 
+     * Mendapatkan URL API Base
      *
-     * @return string URL Api Base 
+     * @return string URL API Base
      */
-    public function getApiBaseUrl()
+    public function getApiBaseUrl(): string
     {
         return $this->apiBaseUrl;
     }
 
     /**
-     * Mendapatkan URL WSO Base 
+     * Mendapatkan URL WSO Base
      *
-     * @return string URL WSO Base 
+     * @return string URL WSO Base
      */
-    public function getWsoBaseUrl()
+    public function getWsoBaseUrl(): string
     {
         return $this->wsoBaseUrl;
     }
@@ -122,7 +108,7 @@ class Config
      *
      * @return string Consumer Key
      */
-    public function getConsumerKey()
+    public function getConsumerKey(): string
     {
         return $this->consumerKey;
     }
@@ -132,7 +118,7 @@ class Config
      *
      * @return string Consumer Secret
      */
-    public function getConsumerSecret()
+    public function getConsumerSecret(): string
     {
         return $this->consumerSecret;
     }
@@ -142,7 +128,7 @@ class Config
      *
      * @return string Client ID
      */
-    public function getClientId()
+    public function getClientId(): string
     {
         return $this->clientId;
     }
@@ -152,7 +138,7 @@ class Config
      *
      * @return string Username
      */
-    public function getUsername()
+    public function getUsername(): string
     {
         return $this->username;
     }
@@ -162,7 +148,7 @@ class Config
      *
      * @return string Password
      */
-    public function getPassword()
+    public function getPassword(): string
     {
         return $this->password;
     }

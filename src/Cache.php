@@ -7,9 +7,7 @@ namespace SiASN\Sdk;
  */
 class Cache
 {
-    /**
-     * @var string Direktori tempat penyimpanan cache.
-     */
+    /** @var string Direktori tempat penyimpanan cache. */
     private $cacheDir;
 
     /**
@@ -26,10 +24,10 @@ class Cache
     /**
      * Menyimpan data ke dalam cache.
      *
-     * @param string $key        Kunci untuk data yang akan disimpan.
-     * @param mixed  $data       Data yang akan disimpan.
-     * @param int    $expiration Waktu kedaluwarsa cache dalam detik (opsional, default: 3600).
-     * @return bool              True jika penyimpanan berhasil, false jika gagal.
+     * @param string $key Kunci untuk data yang akan disimpan.
+     * @param mixed $data Data yang akan disimpan.
+     * @param int $expiration Waktu kedaluwarsa cache dalam detik (default: 3600).
+     * @return bool True jika penyimpanan berhasil, false jika gagal.
      */
     public function set(string $key, $data, int $expiration = 3600): bool
     {
@@ -38,6 +36,7 @@ class Cache
             'expires_at' => time() + $expiration,
             'data'       => $data,
         ];
+
         return file_put_contents($cacheFile, serialize($cacheData)) !== false;
     }
 
@@ -50,13 +49,17 @@ class Cache
     public function get(string $key)
     {
         $cacheFile = $this->getCacheFilename($key);
+
         if (file_exists($cacheFile)) {
             $cacheData = unserialize(file_get_contents($cacheFile));
+
             if ($cacheData['expires_at'] >= time()) {
                 return $cacheData['data'];
             }
+
             $this->delete($key);
         }
+
         return null;
     }
 
@@ -64,11 +67,12 @@ class Cache
      * Menghapus data dari cache.
      *
      * @param string $key Kunci untuk data yang akan dihapus dari cache.
-     * @return bool      True jika penghapusan berhasil, false jika tidak.
+     * @return bool True jika penghapusan berhasil, false jika tidak.
      */
     public function delete(string $key): bool
     {
         $cacheFile = $this->getCacheFilename($key);
+
         return file_exists($cacheFile) ? unlink($cacheFile) : false;
     }
 
@@ -88,15 +92,18 @@ class Cache
      * Memeriksa apakah data tersedia di dalam cache.
      *
      * @param string $key Kunci untuk data yang akan diperiksa.
-     * @return bool      True jika data tersedia di cache, false jika tidak.
+     * @return bool True jika data tersedia di cache, false jika tidak.
      */
     public function has(string $key): bool
     {
         $cacheFile = $this->getCacheFilename($key);
+
         if (file_exists($cacheFile)) {
             $cacheData = unserialize(file_get_contents($cacheFile));
+
             return $cacheData['expires_at'] >= time();
         }
+
         return false;
     }
 
@@ -104,7 +111,7 @@ class Cache
      * Mendapatkan nama file cache berdasarkan kunci.
      *
      * @param string $key Kunci untuk data cache.
-     * @return string    Nama file cache yang sesuai dengan kunci.
+     * @return string Nama file cache yang sesuai dengan kunci.
      */
     private function getCacheFilename(string $key): string
     {

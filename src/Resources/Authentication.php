@@ -13,7 +13,7 @@ class Authentication extends \SiASN\Sdk\RestRequest
     /**
      * Authentication constructor.
      *
-     * @param object $config Objek konfigurasi.
+     * @param Config $config Objek konfigurasi.
      */
     public function __construct($config)
     {
@@ -29,27 +29,14 @@ class Authentication extends \SiASN\Sdk\RestRequest
      */
     private function requestWsoToken(): string
     {
-        $data = [
-            "grant_type" => 'client_credentials'
-        ];
-
-        $postOptions = [
-            'url'         => $this->config->getWsoBaseUrl(),
-            'headers'     => ['Accept: application/json'],
-            'username'    => $this->config->getConsumerKey(),
-            'password'    => $this->config->getConsumerSecret(),
-            'contentType' => 'urlencoded'
-        ];
+        $data = ['grant_type' => 'client_credentials'];
+        $postOptions = $this->getWsoPostOptions();
 
         $response = $this->post($postOptions, $data);
-        $decodedResponse = json_decode($response, true);
+        $decodedResponse = $this->decodeResponse($response);
 
         $this->handleResponseError($response, $decodedResponse);
-
-        $expiresIn = $decodedResponse['expires_in'] - 10;
-
-        $cacheKey = 'wso.token.' . $postOptions['username'];
-        $this->cache->set($cacheKey, $decodedResponse['access_token'], $expiresIn);
+        $this->cacheToken('wso.token.' . $postOptions['username'], $decodedResponse);
 
         return $decodedResponse['access_token'];
     }
@@ -60,10 +47,9 @@ class Authentication extends \SiASN\Sdk\RestRequest
      * @return string Token dari cache atau dari WSO.
      * @throws RestRequestException Jika terjadi kesalahan saat meminta token.
      */
-    public function wsoAccessToken(): string
+    public function getWsoAccessToken(): string
     {
-        $username = $this->config->getConsumerKey();
-        $cacheKey = 'wso.token.' . $username;
+        $cacheKey = 'wso.token.' . $this->config->getConsumerKey();
 
         if ($this->cache->has($cacheKey)) {
             return $this->cache->get($cacheKey);
@@ -81,27 +67,18 @@ class Authentication extends \SiASN\Sdk\RestRequest
     private function requestSsoToken(): string
     {
         $data = [
-            "grant_type" => 'password',
-            "client_id"  => $this->config->getClientId(),
-            "username"   => $this->config->getUsername(),
-            "password"   => $this->config->getPassword(),
+            'grant_type' => 'password',
+            'client_id'  => $this->config->getClientId(),
+            'username'   => $this->config->getUsername(),
+            'password'   => $this->config->getPassword(),
         ];
-
-        $postOptions = [
-            'url'         => $this->config->getSsoBaseUrl(),
-            'headers'     => ['Accept: application/json'],
-            'contentType' => 'urlencoded'
-        ];
+        $postOptions = $this->getSsoPostOptions();
 
         $response = $this->post($postOptions, $data);
-        $decodedResponse = json_decode($response, true);
+        $decodedResponse = $this->decodeResponse($response);
 
         $this->handleResponseError($response, $decodedResponse);
-
-        $expiresIn = $decodedResponse['expires_in'] - 10;
-
-        $cacheKey = 'sso.token.' . $data['username'];
-        $this->cache->set($cacheKey, $decodedResponse['access_token'], $expiresIn);
+        $this->cacheToken('sso.token.' . $data['username'], $decodedResponse);
 
         return $decodedResponse['access_token'];
     }
@@ -112,10 +89,9 @@ class Authentication extends \SiASN\Sdk\RestRequest
      * @return string Token dari cache atau dari SSO.
      * @throws RestRequestException Jika terjadi kesalahan saat meminta token.
      */
-    public function ssoAccessToken(): string
+    public function getSsoAccessToken(): string
     {
-        $username = $this->config->getUsername();
-        $cacheKey = 'sso.token.' . $username;
+        $cacheKey = 'sso.token.' . $this->config->getUsername();
 
         if ($this->cache->has($cacheKey)) {
             return $this->cache->get($cacheKey);
@@ -128,10 +104,10 @@ class Authentication extends \SiASN\Sdk\RestRequest
      * Menangani error dalam respons HTTP.
      *
      * @param string $response Respon HTTP.
-     * @param mixed $decodedResponse Respon yang telah didekode.
+     * @param array $decodedResponse Respon yang telah didekode.
      * @throws RestRequestException Jika terjadi kesalahan dalam respons.
      */
-    private function handleResponseError(string $response, $decodedResponse): void
+    private function handleResponseError(string $response, array $decodedResponse): void
     {
         if ($response === false) {
             throw new RestRequestException('Gagal melakukan permintaan HTTP.');
@@ -142,12 +118,70 @@ class Authentication extends \SiASN\Sdk\RestRequest
         }
 
         if (!isset($decodedResponse['access_token'])) {
-            $errorMessage = isset($decodedResponse['error']) ? $decodedResponse['error'] : 'Respon tidak mengandung token akses.';
+            $errorMessage = $decodedResponse['error'] ?? 'Respon tidak mengandung token akses.';
             throw new RestRequestException($errorMessage);
         }
 
         if (!isset($decodedResponse['expires_in'])) {
             throw new RestRequestException('Respon tidak mengandung waktu kedaluwarsa.');
         }
+    }
+
+    /**
+     * Mengatur token ke cache.
+     *
+     * @param string $cacheKey Key untuk cache.
+     * @param array $decodedResponse Respon yang telah didekode.
+     */
+    private function cacheToken(string $cacheKey, array $decodedResponse): void
+    {
+        $expiresIn = $decodedResponse['expires_in'] - 10;
+        $this->cache->set($cacheKey, $decodedResponse['access_token'], $expiresIn);
+    }
+
+    /**
+     * Mendapatkan opsi POST untuk WSO.
+     *
+     * @return array Opsi POST untuk WSO.
+     */
+    private function getWsoPostOptions(): array
+    {
+        return [
+            'url'         => $this->config->getWsoBaseUrl(),
+            'headers'     => ['Accept: application/json'],
+            'username'    => $this->config->getConsumerKey(),
+            'password'    => $this->config->getConsumerSecret(),
+            'contentType' => 'urlencoded'
+        ];
+    }
+
+    /**
+     * Mendapatkan opsi POST untuk SSO.
+     *
+     * @return array Opsi POST untuk SSO.
+     */
+    private function getSsoPostOptions(): array
+    {
+        return [
+            'url'         => $this->config->getSsoBaseUrl(),
+            'headers'     => ['Accept: application/json'],
+            'contentType' => 'urlencoded'
+        ];
+    }
+
+    /**
+     * Mendekode respons JSON.
+     *
+     * @param string $response Respons JSON.
+     * @return array Respons yang telah didekode.
+     * @throws RestRequestException Jika gagal mendekode JSON.
+     */
+    private function decodeResponse(string $response): array
+    {
+        $decodedResponse = json_decode($response, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new RestRequestException('Gagal mendekode respons JSON: ' . json_last_error_msg());
+        }
+        return $decodedResponse;
     }
 }

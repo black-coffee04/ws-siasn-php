@@ -6,12 +6,17 @@ use SiASN\Sdk\Config;
 use SiASN\Sdk\Exceptions\RestRequestException;
 use SiASN\Sdk\Resources\Authentication;
 
+/**
+ * Class Referensi.
+ *
+ * Kelas ini digunakan untuk mengakses data referensi dari layanan SiASN.
+ */
 class Referensi extends Authentication
 {
     /**
      * Membuat instance Referensi.
      *
-     * @param \SiASN\Sdk\Config $config Objek konfigurasi.
+     * @param Config $config Objek konfigurasi.
      */
     public function __construct(Config $config)
     {
@@ -25,7 +30,7 @@ class Referensi extends Authentication
      * @return array Data UNOR.
      * @throws RestRequestException Jika terjadi kesalahan saat meminta data UNOR.
      */
-    public function unor($storeCache = false): array
+    public function getUnor(bool $storeCache = false): array
     {
         try {
             $cacheKey = 'ref.unor.' . $this->config->getClientId();
@@ -38,16 +43,16 @@ class Referensi extends Authentication
                 'url'     => $this->config->getApiBaseUrl() . '/referensi/ref-unor',
                 'headers' => [
                     'Accept: application/json',
-                    'Auth: bearer ' . $this->ssoAccessToken(),
-                    'Authorization: Bearer ' . $this->wsoAccessToken(),
-                ]
+                    'Auth: bearer ' . $this->getSsoAccessToken(),
+                    'Authorization: Bearer ' . $this->getWsoAccessToken(),
+                ],
             ];
 
             $response = $this->get($requestOptions);
             $decodedResponse = json_decode($response, true);
 
             if ($storeCache) {
-                $this->cache->set($cacheKey, $decodedResponse['data']);
+                $this->cache->set($cacheKey, $decodedResponse['data'] ?? []);
             }
 
             return $decodedResponse['data'] ?? [];

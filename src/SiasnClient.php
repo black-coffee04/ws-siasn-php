@@ -2,20 +2,17 @@
 
 namespace SiASN\Sdk;
 
-use SiASN\Sdk\Config;
 use SiASN\Sdk\Resources\Authentication;
-use SiASN\Sdk\Resources\PNS;
+use SiASN\Sdk\Resources\Pns;
 use SiASN\Sdk\Resources\Referensi;
 
 /**
  * Class SiasnClient.
  * 
  * Klien untuk berinteraksi dengan layanan SiASN menggunakan SDK.
- *
- * @author  Black Coffee 04
- * @license MIT License
+ * 
+ * @package SiASN\Sdk
  */
-
 class SiasnClient
 {
     /** @var Config Konfigurasi yang digunakan oleh klien. */
@@ -42,44 +39,32 @@ class SiasnClient
     }
 
     /**
-     * Mengambil token dari WSO menggunakan metode client_credentials.
+     * Mendapatkan instance Authentication untuk mengambil token.
      *
-     * @return string Token dari WSO.
-     * @throws RestRequestException Jika terjadi kesalahan saat meminta token.
+     * @return Authentication Instance Authentication.
      */
-    public function wsoAccessToken(): string
+    public function client(): Authentication
     {
-        return (new Authentication($this->config))->wsoAccessToken();
-    }
-
-    /**
-     * Mengambil token dari SSO menggunakan metode password.
-     *
-     * @return string Token dari SSO.
-     * @throws RestRequestException Jika terjadi kesalahan saat meminta token.
-     */
-    public function ssoAccessToken(): string
-    {
-        return (new Authentication($this->config))->ssoAccessToken();
+        return new Authentication($this->config);
     }
 
     /**
      * Mendapatkan data referensi unit organisasi.
      *
-     * @return object Data referensi unit organisasi.
+     * @return Referensi Instance Referensi.
      */
-    public function referensi(): object
+    public function referensi(): Referensi
     {
         return new Referensi($this->config);
     }
 
     /**
-     * Mendapatkan data PNS.
+     * Mendapatkan data Pns.
      *
-     * @return object Data PNS.
+     * @return Pns Instance Pns.
      */
-    public function pns(): object
+    public function pns(): Pns
     {
-        return new PNS($this->config);
+        return new Pns($this->config);
     }
 }

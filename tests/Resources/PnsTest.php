@@ -31,62 +31,90 @@ class PnsTest extends TestCase
     }
 
     /**
-     * Menguji bahwa metode dataUtama mengembalikan data yang benar.
+     * Menguji bahwa metode getDataUtama mengembalikan data yang benar.
      */
     public function testDataUtamaReturnsData()
     {
         $nip = '123456';
         $this->configMock->shouldReceive('getApiBaseUrl')->andReturn('https://api.example.com');
 
-        $this->pns->shouldReceive('ssoAccessToken')->andReturn('sso_token');
-        $this->pns->shouldReceive('wsoAccessToken')->andReturn('wso_token');
+        $this->pns->shouldReceive('getSsoAccessToken')->andReturn('sso_token');
+        $this->pns->shouldReceive('getWsoAccessToken')->andReturn('wso_token');
         $this->pns->shouldReceive('get')->andReturn(json_encode(['data' => ['some', 'data']]));
 
-        $data = $this->pns->dataUtama($nip);
+        $data = $this->pns->getDataUtama($nip);
 
         $this->assertEquals(['some', 'data'], $data);
     }
 
     /**
-     * Menguji bahwa metode dataUtama melempar pengecualian jika NIP kosong.
+     * Menguji bahwa metode getDataUtama melempar pengecualian jika NIP kosong.
      */
     public function testDataUtamaThrowsExceptionOnEmptyNip()
     {
         $this->expectException(RestRequestException::class);
         $this->expectExceptionMessage('Nomor Induk Pegawai (NIP) harus diisi');
-        $this->pns->dataUtama('');
+        $this->pns->getDataUtama('');
     }
 
     /**
-     * Menguji bahwa metode dataPasangan mengembalikan data yang benar.
+     * Menguji bahwa metode getPasangan mengembalikan data yang benar.
      */
     public function testDataPasanganReturnsData()
     {
         $nip = '123456';
         $this->configMock->shouldReceive('getApiBaseUrl')->andReturn('https://api.example.com');
 
-        $this->pns->shouldReceive('ssoAccessToken')->andReturn('sso_token');
-        $this->pns->shouldReceive('wsoAccessToken')->andReturn('wso_token');
+        $this->pns->shouldReceive('getSsoAccessToken')->andReturn('sso_token');
+        $this->pns->shouldReceive('getWsoAccessToken')->andReturn('wso_token');
         $this->pns->shouldReceive('get')->andReturn(json_encode(['data' => ['some', 'data']]));
 
-        $data = $this->pns->dataPasangan($nip);
+        $data = $this->pns->getDataPasangan($nip);
 
         $this->assertEquals(['some', 'data'], $data);
     }
 
     /**
-     * Menguji bahwa metode dataAnak mengembalikan data yang benar.
+     * Menguji bahwa metode getDataAnak mengembalikan data yang benar.
      */
     public function testDataAnakReturnsData()
     {
         $nip = '123456';
         $this->configMock->shouldReceive('getApiBaseUrl')->andReturn('https://api.example.com');
 
-        $this->pns->shouldReceive('ssoAccessToken')->andReturn('sso_token');
-        $this->pns->shouldReceive('wsoAccessToken')->andReturn('wso_token');
+        $this->pns->shouldReceive('getSsoAccessToken')->andReturn('sso_token');
+        $this->pns->shouldReceive('getWsoAccessToken')->andReturn('wso_token');
         $this->pns->shouldReceive('get')->andReturn(json_encode(['data' => ['some', 'data']]));
 
-        $data = $this->pns->dataAnak($nip);
+        $data = $this->pns->getDataAnak($nip);
+
+        $this->assertEquals(['some', 'data'], $data);
+    }
+
+    public function testDataOrangTuaReturnsData()
+    {
+        $nip = '123456';
+        $this->configMock->shouldReceive('getApiBaseUrl')->andReturn('https://api.example.com');
+
+        $this->pns->shouldReceive('getSsoAccessToken')->andReturn('sso_token');
+        $this->pns->shouldReceive('getWsoAccessToken')->andReturn('wso_token');
+        $this->pns->shouldReceive('get')->andReturn(json_encode(['data' => ['some', 'data']]));
+
+        $data = $this->pns->getDataOrangTua($nip);
+
+        $this->assertEquals(['some', 'data'], $data);
+    }
+
+    public function testNilaiIpAsnReturnsData()
+    {
+        $nip = '123456';
+        $this->configMock->shouldReceive('getApiBaseUrl')->andReturn('https://api.example.com');
+
+        $this->pns->shouldReceive('getSsoAccessToken')->andReturn('sso_token');
+        $this->pns->shouldReceive('getWsoAccessToken')->andReturn('wso_token');
+        $this->pns->shouldReceive('get')->andReturn(json_encode(['data' => ['some', 'data']]));
+
+        $data = $this->pns->getNilaiIpAsn($nip);
 
         $this->assertEquals(['some', 'data'], $data);
     }
