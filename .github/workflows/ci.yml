@@ -64,6 +64,6 @@ jobs:
         git config --global user.email 'github-actions@github.com'
         git add .
         git commit -m "Apply PHP CS Fixer changes"
-        git push
+        git push origin HEAD:main
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

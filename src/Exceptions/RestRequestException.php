@@ -1,6 +1,6 @@
 <?php
 
-namespace YourNamespace\Exceptions;
+namespace SiASN\Sdk\Exceptions;
 
 use Exception;
 
