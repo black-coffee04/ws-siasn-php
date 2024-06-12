@@ -3,7 +3,7 @@
 <!-- BADGES_START -->
 [![Latest Version][badge-release]][packagist]
 [![PHP Version][badge-php]][php]
-![tests](https://github.com/black-coffee04/ws-siasn-php/workflows/tests/badge.svg)
+[![tests](https://github.com/black-coffee04/ws-siasn-php/actions/workflows/tests.yml/badge.svg)](https://github.com/black-coffee04/ws-siasn-php/actions/workflows/tests.yml)
 [![Total Downloads][badge-downloads]][downloads]
 
 [badge-release]: https://img.shields.io/packagist/v/black-coffee04/ws-siasn-php.svg?style=flat-square&label=release
