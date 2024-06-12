@@ -66,4 +66,4 @@ jobs:
         git commit -m "Apply PHP CS Fixer changes"
         git push origin HEAD:main
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_PATOKEN: ${{ secrets.GH_PATOKEN }}
