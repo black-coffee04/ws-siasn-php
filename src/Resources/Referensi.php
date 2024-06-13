@@ -3,7 +3,7 @@
 namespace SiASN\Sdk\Resources;
 
 use SiASN\Sdk\Config;
-use SiASN\Sdk\Exceptions\RestRequestException;
+use SiASN\Sdk\Exceptions\SiasnRequestException;
 use SiASN\Sdk\Resources\Authentication;
 
 /**
@@ -13,6 +13,8 @@ use SiASN\Sdk\Resources\Authentication;
  */
 class Referensi extends Authentication
 {
+    private const UNOR_CACHE_PREFIX = 'ref.unor.';
+
     /**
      * Membuat instance Referensi.
      *
@@ -28,36 +30,47 @@ class Referensi extends Authentication
      *
      * @param bool $storeCache Menentukan apakah data akan disimpan di cache atau tidak.
      * @return array Data UNOR.
-     * @throws RestRequestException Jika terjadi kesalahan saat meminta data UNOR.
+     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data UNOR.
      */
     public function getUnor(bool $storeCache = false): array
     {
         try {
-            $cacheKey = 'ref.unor.' . $this->config->getClientId();
-
+            $cacheKey = self::UNOR_CACHE_PREFIX . $this->config->getClientId();
             if ($storeCache && $this->cache->has($cacheKey)) {
                 return $this->cache->get($cacheKey);
             }
 
-            $requestOptions = [
-                'url'     => $this->config->getApiBaseUrl() . '/referensi/ref-unor',
-                'headers' => [
-                    'Accept: application/json',
-                    'Auth: bearer ' . $this->getSsoAccessToken(),
-                    'Authorization: Bearer ' . $this->getWsoAccessToken(),
-                ],
-            ];
-
-            $response = $this->get($requestOptions);
-            $decodedResponse = json_decode($response, true);
+            $response = $this->requestUnorData();
 
             if ($storeCache) {
-                $this->cache->set($cacheKey, $decodedResponse['data'] ?? []);
+                $this->cache->set($cacheKey, $response);
             }
 
-            return $decodedResponse['data'] ?? [];
-        } catch (RestRequestException $e) {
-            throw new RestRequestException('Gagal mengambil data UNOR: ' . $e->getMessage(), $e->getCode());
+            return $response;
+        } catch (SiasnRequestException $e) {
+            throw new SiasnRequestException('Gagal mengambil data UNOR: ' . $e->getMessage(), $e->getCode());
         }
+    }
+
+    /**
+     * Meminta data UNOR dari layanan SiASN.
+     *
+     * @return array Data UNOR.
+     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data UNOR.
+     */
+    private function requestUnorData(): array
+    {
+        $requestOptions = [
+            'url'     => $this->config->getApiBaseUrl() . '/referensi/ref-unor',
+            'headers' => [
+                'Accept: application/json',
+                'Auth: bearer ' . $this->getSsoAccessToken(),
+                'Authorization: Bearer ' . $this->getWsoAccessToken(),
+            ],
+        ];
+
+        $response = $this->get($requestOptions)->getBody();
+
+        return $response['data'] ?? [];
     }
 }

@@ -3,6 +3,7 @@
 namespace SiASN\Sdk;
 
 use InvalidArgumentException;
+use SiASN\Sdk\Exceptions\SiasnCredentialsException;
 
 /**
  * Class Config
@@ -68,7 +69,7 @@ class Config
     private function validateConfigValue(array $config, string $key): string
     {
         if (empty($config[$key])) {
-            throw new InvalidArgumentException("Nilai konfigurasi untuk '{$key}' diperlukan.");
+            throw new SiasnCredentialsException($key);
         }
         return $config[$key];
     }

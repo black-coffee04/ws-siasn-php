@@ -5,3 +5,4 @@ vendor/
 .idea
 .DS_STORE
 .phpunit.result.cache
+examples/*.png

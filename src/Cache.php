@@ -31,6 +31,10 @@ class Cache
      */
     public function set(string $key, $data, int $expiration = 3600): bool
     {
+        if ($data === null || $data === '' || (is_array($data) && empty($data))) {
+            return false;
+        }
+        
         $cacheFile = $this->getCacheFilename($key);
         $cacheData = [
             'expires_at' => time() + $expiration,

@@ -53,4 +53,14 @@ echo $siasnClient->pns()->refreshGolongan($pnsOrangId);
 
 echo json_encode($siasnClient->pns()->getNilaiIpAsn($nipAsn));
 
-var_dump($siasnClient->pns()->getFoto($pnsOrangId));
+$path = __DIR__;
+$fileName = "Profil";
+echo $siasnClient->pns()
+    ->getFoto($pnsOrangId)
+    ->saveTo($path)
+    ->withFileName($fileName);
+
+$siasnClient->pns()->updateDataUtama([
+    "pns_orang_id" => getenv("PNS_ORANG_ID"),
+    "agama_id"     => '1'
+]);

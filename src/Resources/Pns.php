@@ -3,7 +3,8 @@
 namespace SiASN\Sdk\Resources;
 
 use SiASN\Sdk\Config;
-use SiASN\Sdk\Exceptions\RestRequestException;
+use SiASN\Sdk\Exceptions\SiasnRequestException;
+use SiASN\Sdk\Mime;
 
 /**
  * Class Pns
@@ -12,6 +13,11 @@ use SiASN\Sdk\Exceptions\RestRequestException;
  */
 class Pns extends Authentication
 {
+    protected $response;
+    protected $filePath;
+    protected $fileName;
+    protected $headers;
+
     /**
      * Membuat instance PNS.
      *
@@ -26,12 +32,12 @@ class Pns extends Authentication
      * Memvalidasi NIP yang diberikan.
      *
      * @param string $nip Nomor Induk Pegawai.
-     * @throws RestRequestException Jika NIP kosong.
+     * @throws SiasnRequestException Jika NIP kosong.
      */
     private function validateNip(string $nip): void
     {
         if (empty($nip)) {
-            throw new RestRequestException('Nomor Induk Pegawai (NIP) harus diisi', 422);
+            throw new SiasnRequestException('Nomor Induk Pegawai (NIP) harus diisi', 422);
         }
     }
 
@@ -41,9 +47,9 @@ class Pns extends Authentication
      * @param string $endpoint Endpoint API yang akan diakses.
      * @param string $nip Nomor Induk Pegawai.
      * @return array Data yang diambil dari API.
-     * @throws RestRequestException Jika terjadi kesalahan saat meminta data.
+     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
-    private function fetchData(string $endpoint, string $nip): array
+    protected function fetchData(string $endpoint, string $nip): array
     {
         $this->validateNip($nip);
 
@@ -56,14 +62,13 @@ class Pns extends Authentication
             ]
         ];
 
-        $response = $this->get($requestOptions);
-        $decodedResponse = json_decode($response, true);
+        $response = $this->get($requestOptions)->getBody();
 
-        if (!isset($decodedResponse['data'])) {
-            throw new RestRequestException('Gagal mengambil data dari API.', 500);
+        if (!isset($response['data'])) {
+            throw new SiasnRequestException('Gagal mengambil data dari API.', 500);
         }
 
-        return is_array($decodedResponse['data']) ? $decodedResponse['data'] : [];
+        return is_array($response['data']) ? $response['data'] : [];
     }
 
     /**
@@ -71,7 +76,7 @@ class Pns extends Authentication
      *
      * @param string $nip Nomor Induk Pegawai.
      * @return array Data utama PNS.
-     * @throws RestRequestException Jika terjadi kesalahan saat meminta data.
+     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
     public function getDataUtama(string $nip): array
     {
@@ -83,7 +88,7 @@ class Pns extends Authentication
      *
      * @param string $nip Nomor Induk Pegawai.
      * @return array Data pasangan PNS.
-     * @throws RestRequestException Jika terjadi kesalahan saat meminta data.
+     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
     public function getDataPasangan(string $nip): array
     {
@@ -95,7 +100,7 @@ class Pns extends Authentication
      *
      * @param string $nip Nomor Induk Pegawai.
      * @return array Data anak PNS.
-     * @throws RestRequestException Jika terjadi kesalahan saat meminta data.
+     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
     public function getDataAnak(string $nip): array
     {
@@ -107,7 +112,7 @@ class Pns extends Authentication
      *
      * @param string $nip Nomor Induk Pegawai.
      * @return array Data orang tua PNS.
-     * @throws RestRequestException Jika terjadi kesalahan saat meminta data.
+     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
     public function getDataOrangTua(string $nip): array
     {
@@ -119,7 +124,7 @@ class Pns extends Authentication
      *
      * @param string $pnsOrangId Nomor Induk Pegawai.
      * @return bool True jika pembaruan berhasil, false jika gagal.
-     * @throws RestRequestException Jika terjadi kesalahan saat meminta data.
+     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
     public function refreshJabatan(string $pnsOrangId): bool
     {
@@ -131,7 +136,7 @@ class Pns extends Authentication
      *
      * @param string $pnsOrangId Nomor Induk Pegawai.
      * @return bool True jika pembaruan berhasil, false jika gagal.
-     * @throws RestRequestException Jika terjadi kesalahan saat meminta data.
+     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
     public function refreshGolongan(string $pnsOrangId): bool
     {
@@ -143,7 +148,7 @@ class Pns extends Authentication
      *
      * @param string $nip Nomor Induk Pegawai.
      * @return array Data nilai IP ASN.
-     * @throws RestRequestException Jika terjadi kesalahan saat meminta data.
+     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
     public function getNilaiIpAsn(string $nip): array
     {
@@ -154,8 +159,8 @@ class Pns extends Authentication
      * Mengambil foto PNS berdasarkan ID orang.
      *
      * @param string $pnsOrangId ID Orang PNS.
-     * @return mixed Data foto PNS dalam bentuk string atau null jika tidak ada.
-     * @throws RestRequestException Jika terjadi kesalahan saat meminta data.
+     * @return $this
+     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
     public function getFoto(string $pnsOrangId)
     {
@@ -168,15 +173,108 @@ class Pns extends Authentication
             ]
         ];
 
-        $response = $this->get($requestOptions);
-        $decodedResponse = json_decode($response, true);
+        $response       = $this->get($requestOptions);
+        $decodeResponse = json_decode($response->getContent(), true);
 
-        if ($decodedResponse !== null && $decodedResponse['error']) {
-            throw new RestRequestException('Gagal mendapatkan foto: '.$decodedResponse['message']);
+        if ($decodeResponse !== null && isset($decodeResponse['error'])) {
+            throw new SiasnRequestException('Gagal mendapatkan foto: ' . $decodeResponse['message']);
         }
 
-        return $response;
+        $this->response = $response;
+        return $this;
     }
+
+    /**
+     * Menyimpan data foto ke lokasi tertentu.
+     *
+     * @param string $path Path lokasi penyimpanan.
+     * @return $this
+     */
+    public function saveTo(string $path)
+    {
+        $this->filePath = $path;
+        return $this;
+    }
+
+    /**
+     * Membuat direktori jika belum ada.
+     *
+     * @param string $path Path dari direktori.
+     * @return void
+     * @throws DataFetchException Jika terjadi kesalahan saat membuat direktori.
+     */
+    private function ensureDirectoryExists(string $path)
+    {
+        if (!is_dir($path)) {
+            if (!mkdir($path, 0777, true) && !is_dir($path)) {
+                throw new SiasnRequestException('Gagal membuat direktori: ' . $path);
+            }
+        }
+    }
+
+    /**
+     * Menyimpan data foto dengan nama file tertentu.
+     *
+     * @param string $filename Nama file untuk menyimpan data foto.
+     * @return string
+     */
+    public function withFileName(string $filename): string
+    {
+        $mime = $this->response->getHeader('content-type');
+        $extension = (new Mime())->get($mime);
+        $this->fileName = $filename . '.' . $extension;
+        return $this->saveFotoToFile();
+    }
+
+    /**
+     * Menyimpan data foto ke dalam file.
+     *
+     * @return string
+     */
+    private function saveFotoToFile(): string
+    {
+        if ($this->response->getContent() === null) {
+            throw new SiasnRequestException('Foto tidak tersedia.');
+        }
+
+        $directory = rtrim($this->filePath, DIRECTORY_SEPARATOR);
+        $this->ensureDirectoryExists($directory);
+
+        $fullPath = rtrim($this->filePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $this->fileName;
+        file_put_contents($fullPath, $this->response->getContent());
+        return $this->fileName;
+    }
+
+    /**
+     * Mengubah data utama PNS.
+     *
+     * Metode ini mengirim permintaan untuk memperbarui data utama PNS dengan data yang diberikan.
+     *
+     * @param array $data Data baru untuk memperbarui data utama PNS.
+     * @return array Respon dari API setelah mengubah data.
+     * @throws SiasnRequestException Jika terjadi kesalahan saat mengubah data utama.
+     */
+    public function updateDataUtama(array $data): array
+    {
+        $requestOptions = [
+            'url'         => $this->config->getApiBaseUrl() . '/pns/data-utama-update',
+            'headers' => [
+                'Content-Type: application/json',
+                'Accept: application/json',
+                'Auth: bearer ' . $this->getSsoAccessToken(),
+                'Authorization: Bearer ' . $this->getWsoAccessToken(),
+            ],
+            'contentType' => 'json'
+        ];
+
+        $response = $this->post($requestOptions, $data)->getBody();
+        if (isset($response['code']) && $response['code']) {
+            return $response;
+        }
+
+        throw new SiasnRequestException('Gagal mengubah data utama: ' . $response['message']);
+    }
+
 
     /**
      * Memperbarui data PNS berdasarkan NIP.
@@ -184,9 +282,9 @@ class Pns extends Authentication
      * @param string $endpoint Endpoint API yang akan diakses.
      * @param string $pnsOrangId
      *      * @return bool True jika pembaruan berhasil, false jika gagal.
-     * @throws RestRequestException Jika terjadi kesalahan saat meminta data.
+     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
-    private function refreshData(string $endpoint, string $pnsOrangId): bool
+    protected function refreshData(string $endpoint, string $pnsOrangId): bool
     {
         $this->validateNip($pnsOrangId);
 
@@ -199,13 +297,12 @@ class Pns extends Authentication
             ]
         ];
 
-        $response = $this->get($requestOptions);
-        $decodedResponse = json_decode($response, true);
+        $response = $this->get($requestOptions)->getBody();
 
-        if (isset($decodedResponse['Error']) && $decodedResponse['Error']) {
+        if (isset($response['Error']) && $response['Error']) {
             return true;
         }
 
-        throw new RestRequestException('Gagal merefresh data: '.$decodedResponse['Message'], 500);
+        throw new SiasnRequestException('Gagal merefresh data: '.$response['Message'], 500);
     }
 }

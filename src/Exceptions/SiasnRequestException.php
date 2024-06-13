@@ -5,16 +5,16 @@ namespace SiASN\Sdk\Exceptions;
 use Exception;
 
 /**
- * Class RestRequestException.
+ * Class SiasnRequestException.
  *
  * Exception yang digunakan untuk menangani kesalahan pada permintaan REST.
  *
  * @package SiASN\Sdk\Exceptions
  */
-class RestRequestException extends Exception
+class SiasnRequestException extends Exception
 {
     /**
-     * RestRequestException constructor.
+     * SiasnRequestException constructor.
      *
      * @param string $message Pesan kesalahan.
      * @param int $code Kode kesalahan.
