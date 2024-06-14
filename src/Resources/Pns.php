@@ -302,7 +302,7 @@ class Pns extends Authentication
         if (isset($response['Error']) && $response['Error']) {
             return true;
         }
-
+        
         throw new SiasnRequestException('Gagal merefresh data: '.$response['Message'], 500);
     }
 }

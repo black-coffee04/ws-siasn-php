@@ -6,11 +6,14 @@
         <testsuite name="default">
             <directory>./tests</directory>
         </testsuite>
-        <testsuite name="SiasnClient Suite">
+        <testsuite name="core">
             <file>./tests/SiasnClientTest.php</file>
+            <file>./tests/ConfigTest.php</file>
+            <file>./tests/CacheTest.php</file>
+            <file>./tests/RestRequestTest.php</file>
         </testsuite>
-        <testsuite name="PNS Suite">
-            <file>./tests/Resources/PnsTest.php</file>
+        <testsuite name="resource">
+            <directory>./tests/Resources</directory>
         </testsuite>
     </testsuites>
 </phpunit>

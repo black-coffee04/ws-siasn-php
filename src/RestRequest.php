@@ -101,7 +101,7 @@ class RestRequest
      * @param array $data Data yang akan dikirim dalam permintaan (opsional).
      * @throws SiasnRequestException Jika terjadi kesalahan cURL atau kode status HTTP menunjukkan kesalahan.
      */
-    private function executeRequest(array $config, array $data = []): void
+    protected function executeRequest(array $config, array $data = []): void
     {
         $ch = curl_init();
         $options = $this->buildCurlOptions($config, $data);
@@ -112,7 +112,7 @@ class RestRequest
 
         list($this->headers, $this->body) = $this->splitResponse($ch, $response);
 
-        $this->handleCurlError($ch, $httpCode, $this->body);
+        $this->handleCurlError($ch, $httpCode);
         curl_close($ch);
     }
 
@@ -182,14 +182,13 @@ class RestRequest
      *
      * @param resource $ch Handle cURL.
      * @param int $httpCode Kode status HTTP dari respons.
-     * @param string $response Respon dari server.
      * @return void.
-     * @throws SiasnRequestException Jika terjadi kesalahan cURL atau kode status HTTP menunjukkan kesalahan selain HTTP 404.
+     * @throws SiasnRequestException Jika terjadi kesalahan cURL.
      */
-    private function handleCurlError($ch, int $httpCode, string $response): void
+    protected function handleCurlError($ch, int $httpCode): void
     {
         if (curl_errno($ch)) {
-            throw new SiasnRequestException('Kesalahan Curl: ' . curl_error($ch), 400);
+            throw new SiasnRequestException('Kesalahan Curl: ' . curl_error($ch), $httpCode);
         }
     }
 

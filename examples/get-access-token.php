@@ -18,9 +18,9 @@ $siasn = new SiasnClient($config);
 /**
  * Contoh Pengambilan Access Token WSO
  */
-echo $siasn->client()->getWsoAccessToken() . PHP_EOL . PHP_EOL;
+echo $siasn->authentication()->getWsoAccessToken() . PHP_EOL . PHP_EOL;
 
 /**
  * Contoh Pengambilan Access Token SSO
  */
-echo $siasn->client()->getSsoAccessToken() . PHP_EOL . PHP_EOL;
+echo $siasn->authentication()->getSsoAccessToken() . PHP_EOL . PHP_EOL;

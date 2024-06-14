@@ -3,6 +3,7 @@
 namespace SiASN\Sdk\Resources;
 
 use SiASN\Sdk\Cache;
+use SiASN\Sdk\Config;
 use SiASN\Sdk\Exceptions\SiasnRequestException;
 
 class Authentication extends \SiASN\Sdk\RestRequest
@@ -18,10 +19,20 @@ class Authentication extends \SiASN\Sdk\RestRequest
      *
      * @param Config $config Objek konfigurasi.
      */
-    public function __construct($config)
+    public function __construct(Config $config)
     {
         $this->config = $config;
         $this->cache = new Cache();
+    }
+
+    /**
+     * Set objek cache.
+     *
+     * @param Cache $cache Objek cache.
+     */
+    public function setCache(Cache $cache)
+    {
+        $this->cache = $cache;
     }
 
     /**
@@ -39,7 +50,9 @@ class Authentication extends \SiASN\Sdk\RestRequest
         }
 
         $token = $this->requestWsoToken();
-        $this->cacheToken($cacheKey, $token);
+        if ($token && $this->cache) {
+            $this->cacheToken($cacheKey, $token);
+        }
 
         return $token;
     }
@@ -59,7 +72,9 @@ class Authentication extends \SiASN\Sdk\RestRequest
         }
 
         $token = $this->requestSsoToken();
-        $this->cacheToken($cacheKey, $token);
+        if ($token && $this->cache) {
+            $this->cacheToken($cacheKey, $token);
+        }
 
         return $token;
     }
@@ -70,7 +85,7 @@ class Authentication extends \SiASN\Sdk\RestRequest
      * @return string Token dari WSO.
      * @throws SiasnRequestException Jika terjadi kesalahan saat meminta token.
      */
-    private function requestWsoToken(): string
+    protected function requestWsoToken(): string
     {
         $data = ['grant_type' => 'client_credentials'];
         $postOptions = $this->getWsoPostOptions();
@@ -89,7 +104,7 @@ class Authentication extends \SiASN\Sdk\RestRequest
      * @return string Token dari SSO.
      * @throws SiasnRequestException Jika terjadi kesalahan saat meminta token.
      */
-    private function requestSsoToken(): string
+    protected function requestSsoToken(): string
     {
         $data = [
             'grant_type' => 'password',

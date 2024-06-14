@@ -31,7 +31,7 @@
     },
     "scripts": {
         "test": "phpunit --colors=always",
-        "test-siasn-client": "phpunit tests/SiasnClientTest.php --colors=always",
-        "test-pns": "phpunit tests/Resources/PNSTest.php --colors=always"
+        "test:core": "phpunit --configuration phpunit.xml --testsuite core --colors=always",
+        "test:resource": "phpunit --configuration phpunit.xml --testsuite resource --colors=always"
     }
 }

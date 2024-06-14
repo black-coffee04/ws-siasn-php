@@ -1,17 +1,21 @@
 <?php
 
-namespace SiASN\Sdk\Tests;
-
 use PHPUnit\Framework\TestCase;
 use SiASN\Sdk\SiasnClient;
+use SiASN\Sdk\Config;
+use SiASN\Sdk\Resources\Authentication;
+use SiASN\Sdk\Resources\Referensi;
+use SiASN\Sdk\Resources\Pns;
 
 class SiasnClientTest extends TestCase
 {
-    /** @var SiasnClient Instance SiasnClient untuk testing. */
-    private $siasnClient;
+    /** @var SiasnClient */
+    private $client;
 
     protected function setUp(): void
     {
+        parent::setUp();
+        
         $config = [
             "consumerKey"    => 'dummy_consumer_key',
             "consumerSecret" => 'dummy_consumer_secret',
@@ -19,27 +23,29 @@ class SiasnClientTest extends TestCase
             "username"       => 'dummy_username',
             "password"       => 'dummy_consumer_key'
         ];
-
-        $this->siasnClient = new SiasnClient($config);
+        $this->client = new SiasnClient($config);
     }
 
     public function testGetConfig()
     {
-        $config = $this->siasnClient->getConfig();
+        $this->assertInstanceOf(Config::class, $this->client->getConfig());
+    }
 
-        $this->assertInstanceOf('SiASN\Sdk\Config', $config);
+    public function testAuthentication()
+    {
+        $auth = $this->client->authentication();
+        $this->assertInstanceOf(Authentication::class, $auth);
     }
 
     public function testReferensi()
     {
-        $referensi = $this->siasnClient->referensi();
-        $this->assertInstanceOf('SiASN\Sdk\Resources\Referensi', $referensi);
+        $referensi = $this->client->referensi();
+        $this->assertInstanceOf(Referensi::class, $referensi);
     }
 
     public function testPns()
     {
-        $pns = $this->siasnClient->pns();
-
-        $this->assertInstanceOf('SiASN\Sdk\Resources\PNS', $pns);
+        $pns = $this->client->pns();
+        $this->assertInstanceOf(Pns::class, $pns);
     }
 }

@@ -39,17 +39,17 @@ class SiasnClient
     }
 
     /**
-     * Mendapatkan instance Authentication untuk mengambil token.
+     * Mengembalikan instance Authentication untuk mengelola otentikasi.
      *
      * @return Authentication Instance Authentication.
      */
-    public function client(): Authentication
+    public function authentication(): Authentication
     {
         return new Authentication($this->config);
     }
 
     /**
-     * Mendapatkan data referensi unit organisasi.
+     * Mengembalikan instance Referensi untuk mengelola data referensi.
      *
      * @return Referensi Instance Referensi.
      */
@@ -59,7 +59,7 @@ class SiasnClient
     }
 
     /**
-     * Mendapatkan data Pns.
+     * Mengembalikan instance Pns untuk mengelola data PNS.
      *
      * @return Pns Instance Pns.
      */

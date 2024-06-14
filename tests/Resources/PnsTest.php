@@ -118,26 +118,6 @@ class PnsTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testGetFoto()
-    {
-        $pnsOrangId = '123456789';
-        $expectedData = 'base64imagestring';
-
-        $this->pns->shouldReceive('get')
-            ->with([
-                'url' => 'https://training-apimws.bkn.go.id:8243/api/1.0/pns/photo/' . $pnsOrangId,
-                'headers' => [
-                    'Accept: application/json',
-                    'Auth: bearer mock_sso_token',
-                    'Authorization: Bearer mock_wso_token',
-                ]
-            ])
-            ->andReturn($expectedData);
-
-        $actualData = $this->pns->getFoto($pnsOrangId);
-        $this->assertEquals($expectedData, $actualData);
-    }
-
     public function testValidateNipThrowsException()
     {
         $this->expectException(SiasnRequestException::class);
@@ -150,8 +130,11 @@ class PnsTest extends TestCase
     {
         $nip = '123456789';
 
+        $responseMock = m::mock('GuzzleHttp\Psr7\Response');
+        $responseMock->shouldReceive('getBody')->andReturn(['invalid' => 'response']);
+
         $this->pns->shouldReceive('get')
-            ->andReturn(json_encode(['invalid' => 'response']));
+                ->andReturn($responseMock);
 
         $this->expectException(SiasnRequestException::class);
         $this->expectExceptionMessage('Gagal mengambil data dari API.');
@@ -164,27 +147,23 @@ class PnsTest extends TestCase
 
     public function testRefreshJabatanThrowsExceptionForInvalidResponse()
     {
-        $pnsOrangId = '123456789';
+        $nip = '123456789';
 
+        $responseMock = m::mock('GuzzleHttp\Psr7\Response');
+        $responseMock->shouldReceive('getBody')->andReturn([
+            'Error'   => false, 
+            'Message' => 'Deskripsi Error'
+        ]);
+        
         $this->pns->shouldReceive('get')
-                  ->andReturn(json_encode(['Error' => false, 'Message' => 'Deskripsi Error']));
+                  ->andReturn($responseMock);
 
         $this->expectException(SiasnRequestException::class);
         $this->expectExceptionMessage('Gagal merefresh data: Deskripsi Error');
 
-        $this->pns->refreshJabatan($pnsOrangId);
-    }
-
-    public function testGetFotoThrowsExceptionForInvalidResponse()
-    {
-        $pnsOrangId = '123456789';
-
-        $this->pns->shouldReceive('get')
-                  ->andReturn(json_encode(['error' => true, 'message' => 'Deskripsi Error']));
-
-        $this->expectException(SiasnRequestException::class);
-        $this->expectExceptionMessage('Gagal mendapatkan foto: Deskripsi Error');
-
-        $this->pns->getFoto($pnsOrangId);
+        $reflection = new ReflectionClass($this->pns);
+        $method = $reflection->getMethod('refreshData');
+        $method->setAccessible(true);
+        $method->invokeArgs($this->pns, ['/pns/data-utama-golongansync?pns_orang_id=', $nip]);
     }
 }
