@@ -48,7 +48,7 @@ class ReferensiTest extends TestCase
             ->with($cacheKey)
             ->willReturn($expectedData);
 
-        $data = $this->referensi->getUnor(true);
+        $data = $this->referensi->unor(true);
 
         $this->assertEquals($expectedData, $data);
     }
