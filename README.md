@@ -27,8 +27,9 @@ Selamat datang di SiASN Web Service SDK! SDK ini dirancang untuk memudahkan peng
   - [Detail Konfigurasi](#detail-konfigurasi)
 - [Contoh Penggunaan](#contoh-penggunaan)
 - [Dokumentasi API](#dokumentasi-api)
-  - [Authentication][#authentication]
-  - [Referensi][#referensi]
+  - [Authentication](#authentication)
+  - [Referensi](#referensi)
+  - [PNS](#pns)
 - [Menjalankan Tes](#menjalankan-tes)
 - [Lisensi](#lisensi)
 
