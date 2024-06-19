@@ -59,7 +59,7 @@ $fileName = "Profil";
 echo $pns
     ->foto($pnsOrangId)
     ->setFileName($fileName)
-    ->outputStream();
+    ->saveTo($path);
 
 var_dump($pns->updateDataUtama([
     "pns_orang_id" => getenv("PNS_ORANG_ID"),

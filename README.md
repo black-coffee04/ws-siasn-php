@@ -20,16 +20,28 @@ Selamat datang di SiASN Web Service SDK! SDK ini dirancang untuk memudahkan peng
 ## Daftar Isi
 
 - [Instalasi](#instalasi)
+  - [Requirement System](#requirement-system)
   - [Instalasi Menggunakan Composer](#instalasi-menggunakan-composer)
   - [Instalasi Manual](#instalasi-manual)
 - [Konfigurasi](#konfigurasi)
-- [Penggunaan Dasar](#penggunaan-dasar)
+  - [Detail Konfigurasi](#detail-konfigurasi)
+- [Contoh Penggunaan](#contoh-penggunaan)
 - [Dokumentasi API](#dokumentasi-api)
-- [Contoh Penggunaan Lanjutan](#contoh-penggunaan-lanjutan)
-- [Kontribusi](#kontribusi)
+  - [Authentication][#authentication]
+  - [Referensi][#referensi]
+- [Menjalankan Tes](#menjalankan-tes)
 - [Lisensi](#lisensi)
 
 ## Instalasi
+
+### Requirement System
+
+Pastikan sistem Anda memenuhi persyaratan berikut sebelum melanjutkan instalasi SDK SiASN:
+
+- PHP versi minimal yang diperlukan adalah **7.4**
+- Ekstensi PHP yang diperlukan:
+  - `ext-curl`
+  - `ext-json`
 
 ### Instalasi Menggunakan Composer
 
@@ -46,7 +58,7 @@ Jika Anda memilih untuk menambahkan dependensi SDK SiASN melalui file `composer.
 
 1. **Edit File composer.json**
 
-   Buka file `composer.json` dari proyek Anda.
+   Buka file `composer.json` proyek Anda.
 
 2. **Tambahkan Baris Require**
 
@@ -65,7 +77,7 @@ Jika Anda memilih untuk melakukan instalasi SDK SiASN secara manual, berikut ada
 
 1. **Unduh SDK**
 
-   Unduh SDK SiASN dari repositori atau sumber yang disediakan.
+   [Unduh SDK SiASN](https://github.com/black-coffee04/ws-siasn-php/archive/refs/heads/main.zip).
 
 2. **Ekstrak SDK**
 
@@ -73,7 +85,7 @@ Jika Anda memilih untuk melakukan instalasi SDK SiASN secara manual, berikut ada
 
 3. **Gunakan Autoload**
 
-   Pastikan untuk memasukkan file `autoload.php` dari SDK ke dalam proyek Anda. File ini akan mengatur autoload sehingga kelas-kelas dari SDK dapat diakses dengan benar. Berikut adalah contoh cara menggunakan autoload dalam aplikasi PHP:
+   Pastikan untuk memasukkan file `autoload.php` SDK ke dalam proyek Anda. File ini akan mengatur autoload sehingga kelas-kelas SDK dapat diakses dengan benar. Berikut adalah contoh cara menggunakan autoload dalam aplikasi PHP:
 
    ```php
    require_once __DIR__ . '/path/to/ws-siasn-php/autoload.php';
@@ -97,7 +109,19 @@ $config = [
 
 $siasnClient = new SiasnClient($config);
 ```
-## Penggunaan Dasar
+
+### Detail Konfigurasi
+
+| Parameter       | Nilai Default | Deskripsi                                      |
+|-----------------|---------------|------------------------------------------------|
+| `consumerKey`   | -             | Kunci konsumen untuk otentikasi aplikasi.      |
+| `consumerSecret`| -             | Rahasia konsumen untuk otentikasi aplikasi.    |
+| `clientId`      | -             | ID klien untuk otentikasi aplikasi.            |
+| `username`      | -             | Nama pengguna untuk otentikasi SSO.            |
+| `password`      | -             | Kata sandi untuk otentikasi SSO.               |
+
+
+## Contoh Penggunaan
 
 Berikut adalah beberapa contoh penggunaan dasar SDK SiASN untuk berbagai operasi seperti pengambilan Access Token dan akses ke data referensi:
 
@@ -124,3 +148,125 @@ Anda dapat mengakses data referensi seperti data golongan PNS atau data UNOR men
 ```php
 $cache = true; // Atur menjadi true untuk menyimpan ke cache, cache akan expired dalam 1 jam
 echo json_encode($siasnClient->referensi()->unor($cache)) . PHP_EOL;
+```
+**atau**
+
+Anda dapat melihat contoh penggunaan pada folder [examples](https://github.com/black-coffee04/ws-siasn-php/tree/main/examples).
+
+## Dokumentasi API
+
+### Authentication
+
+Berikut adalah daftar lengkap metode yang tersedia pada resource Authentication:
+
+| Metode                                            | Deskripsi                                             | Kembalian                        |
+|---------------------------------------------------|-------------------------------------------------------|-------------------------------|
+| `$siasnClient->authentication()->getWsoAccessToken()` | Mengambil access token untuk layanan WSO SiASN.        | `string` Access token         |
+| `$siasnClient->authentication()->getSsoAccessToken()` | Mengambil access token untuk layanan SSO SiASN.        | `string` Access token         |
+
+### Referensi
+
+Berikut adalah daftar lengkap metode yang tersedia pada resource Referensi:
+
+| Metode                                      | Deskripsi                                                   | Kembalian                                                     |
+|---------------------------------------------|-------------------------------------------------------------|---------------------------------------------------------------|
+| `$siasnClient->referensi()->unor($storeCache)` | Mengambil data referensi Unit Organisasi (UNOR). Parameter `$storeCache` dapat diatur ke `true` untuk menyimpan data di cache dengan masa berlaku 3600 detik (default: `false`). | `Array` data referensi Unit Organisasi (UNOR).          |                          |
+| `$siasnClient->referensi()->agama()`         | Mengambil data referensi agama.                             | `Array` data referensi agama.                              |
+| `$siasnClient->referensi()->alasanHukumanDisiplin()` | Mengambil data referensi alasan hukuman disiplin.        | `Array` data referensi alasan hukuman disiplin.             |
+| `$siasnClient->referensi()->cltn()`          | Mengambil data referensi CLTN.                              | `Array` data referensi CLTN.                               |
+| `$siasnClient->referensi()->dokumen()`       | Mengambil data referensi dokumen.                           | `Array` data referensi dokumen.                            |
+| `$siasnClient->referensi()->eselon()`        | Mengambil data referensi eselon.                            | `Array` data referensi eselon.                             |
+| `$siasnClient->referensi()->golonganPns()`   | Mengambil data referensi golongan PNS.                      | `Array` data referensi golongan PNS.                       |
+| `$siasnClient->referensi()->instansi()`      | Mengambil data referensi instansi.                          | `Array` data referensi instansi.                           |
+| `$siasnClient->referensi()->jabatanFungsional()` | Mengambil data referensi jabatan fungsional.              | `Array` data referensi jabatan fungsional.                 |
+| `$siasnClient->referensi()->jabatanPelaksana()` | Mengambil data referensi jabatan pelaksana.              | `Array` data referensi jabatan pelaksana.                  |
+| `$siasnClient->referensi()->jenisDiklat()`   | Mengambil data referensi jenis diklat.                      | `Array` data referensi jenis diklat.                       |
+| `$siasnClient->referensi()->jenisHukuman()`  | Mengambil data referensi jenis hukuman.                     | `Array` data referensi jenis hukuman.                      |
+| `$siasnClient->referensi()->jenisJabatan()`  | Mengambil data referensi jenis jabatan.                     | `Array` data referensi jenis jabatan.                      |
+| `$siasnClient->referensi()->jenisKursus()`   | Mengambil data referensi jenis kursus.                      | `Array` data referensi jenis kursus.                       |
+| `$siasnClient->referensi()->jenisMutasi()`   | Mengambil data referensi jenis mutasi.                      | `Array` data referensi jenis mutasi.                       |
+| `$siasnClient->referensi()->jenisPegawai()`  | Mengambil data referensi jenis pegawai.                     | `Array` data referensi jenis pegawai.                      |
+| `$siasnClient->referensi()->jenisPemberhentian()` | Mengambil data referensi jenis pemberhentian.            | `Array` data referensi jenis pemberhentian.                |
+| `$siasnClient->referensi()->jenisPengadaan()` | Mengambil data referensi jenis pengadaan.                  | `Array` data referensi jenis pengadaan.                    |
+| `$siasnClient->referensi()->jenisPensiun()`  | Mengambil data referensi jenis pensiun.                     | `Array` data referensi jenis pensiun.                      |
+| `$siasnClient->referensi()->jenisPenugasan()` | Mengambil data referensi jenis penugasan.                  | `Array` data referensi jenis penugasan.                    |
+| `$siasnClient->referensi()->jenisRiwayat()`  | Mengambil data referensi jenis riwayat.                     | `Array` data referensi jenis riwayat.                      |
+| `$siasnClient->referensi()->kabupaten()`     | Mengambil data referensi kabupaten.                         | `Array` data referensi kabupaten.                          |
+| `$siasnClient->referensi()->kawin()`         | Mengambil data referensi kawin.                             | `Array` data referensi kawin.                              |
+| `$siasnClient->referensi()->kedudukanHukum()` | Mengambil data referensi kedudukan hukum.                  | `Array` data referensi kedudukan hukum.                    |
+| `$siasnClient->referensi()->kelasJabatan()`  | Mengambil data referensi kelas jabatan.                     | `Array` data referensi kelas jabatan.                      |
+| `$siasnClient->referensi()->kenaikanPangkat()` | Mengambil data referensi kenaikan pangkat.                | `Array` data referensi kenaikan pangkat.                   |
+| `$siasnClient->referensi()->kepanitiaan()`   | Mengambil data referensi kepanitiaan.                       | `Array` data referensi kepanitiaan.                        |
+| `$siasnClient->referensi()->koefisien()`     | Mengambil data referensi koefisien.                         | `Array` data referensi koefisien.                          |
+| `$siasnClient->referensi()->kompetensi()`    | Mengambil data referensi kompetensi.                        | `Array` data referensi kompetensi.                         |
+| `$siasnClient->referensi()->kpkn()`          | Mengambil data referensi KPKN.                               | `Array` data referensi KPKN.                               |
+| `$siasnClient->referensi()->kuadranNilai()`  | Mengambil data referensi kuadran nilai.                     | `Array` data referensi kuadran nilai.                      |
+| `$siasnClient->referensi()->kursus()`        | Mengambil data referensi kursus.                             | `Array` data referensi kursus.                             |
+| `$siasnClient->referensi()->latihanStruktural()` | Mengambil data referensi latihan struktural.              | `Array` data referensi latihan struktural.                 |
+| `$siasnClient->referensi()->pendidikan()`    | Mengambil data referensi pendidikan.                         | `Array` data referensi pendidikan.                         |
+| `$siasnClient->referensi()->penghargaan()`   | Mengambil data referensi penghargaan.                        | `Array` data referensi penghargaan.                        |
+| `$siasnClient->referensi()->perilakuDanKinerja()` | Mengambil data referensi perilaku dan kinerja.          | `Array` data referensi perilaku dan kinerja.               |
+| `$siasnClient->referensi()->periodik()`      | Mengambil data referensi periodik.                           | `Array` data referensi periodik.                           |
+| `$siasnClient->referensi()->profesi()`       | Mengambil data referensi profesi.                            | `Array` data referensi profesi.                            |
+| `$siasnClient->referensi()->rumpunJabatan()` | Mengambil data referensi rumpun jabatan.                    | `Array` data referensi rumpun jabatan.                     |
+| `$siasnClient->referensi()->satuanKerja()`   | Mengambil data referensi satuan kerja.                       | `Array` data referensi satuan kerja.                       |
+| `$siasnClient->referensi()->subJabatan()`    | Mengambil data referensi sub jabatan.                        | `Array` data referensi sub jabatan.                        |
+| `$siasnClient->referensi()->taspen()`        | Mengambil data referensi taspen.                             | `Array` data referensi taspen.                             |
+
+### PNS
+
+Berikut adalah daftar lengkap metode yang tersedia pada resource PNS:
+
+| Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
+|---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
+| `$pns->dataUtama($nipAsn)`                   | Mengambil data utama ASN berdasarkan NIP ASN.               | `$nipAsn` (string): NIP ASN                                    | Array data utama ASN.                                         |
+| `$pns->dataPasangan($nipAsn)`                | Mengambil data pasangan ASN berdasarkan NIP ASN.            | `$nipAsn` (string): NIP ASN                                    | Array data pasangan ASN.                                      |
+| `$pns->dataAnak($nipAsn)`                    | Mengambil data anak ASN berdasarkan NIP ASN.                | `$nipAsn` (string): NIP ASN                                    | Array data anak ASN.                                          |
+| `$pns->dataOrangTua($nipAsn)`                | Mengambil data orang tua ASN berdasarkan NIP ASN.           | `$nipAsn` (string): NIP ASN                                    | Array data orang tua ASN.                                     |
+| `$pns->refreshJabatan($pnsOrangId)`          | Memperbarui data jabatan ASN berdasarkan ID orang ASN.      | `$pnsOrangId` (string): ID orang ASN                           | `true` jika berhasil memperbarui, `false` jika tidak.         |
+| `$pns->refreshGolongan($pnsOrangId)`         | Memperbarui data golongan ASN berdasarkan ID orang ASN.     | `$pnsOrangId` (string): ID orang ASN                           | `true` jika berhasil memperbarui, `false` jika tidak.         |
+| `$pns->nilaiIpAsn($nipAsn)`                  | Mengambil nilai IP ASN berdasarkan NIP ASN.                 | `$nipAsn` (string): NIP ASN                                    | Array nilai IP ASN.                                           |
+| `$pns->foto($pnsOrangId)->setFileName($fileName)->outputStream()` | Mengambil foto profil ASN berdasarkan ID orang ASN dan menyimpannya sebagai file dengan nama tertentu. | `$pnsOrangId` (string): ID orang ASN, `$fileName` (string): Nama file | Menghasilkan output stream foto profil ASN.                    |
+| `$pns->foto($pnsOrangId)->setFileName($fileName)->saveTo($path)` | Menyimpan foto profil ASN ke direktori yang ditentukan. | `$pnsOrangId` (string): ID orang ASN, `$path ` (string): direktori | Void.                    |
+| `$pns->updateDataUtama([...])`               | Memperbarui data utama ASN dengan parameter yang diberikan. | `$data` (array): Data yang akan diperbarui pada data utama ASN  | Array.         |
+
+## Menjalankan Tes
+
+Untuk menjalankan tes pada SDK ini, pastikan Anda telah menginstal dependensi dengan Composer dan konfigurasi yang diperlukan seperti yang dijelaskan sebelumnya.
+
+### Langkah-langkah Menjalankan Tes
+
+1. **Persiapkan Lingkungan**
+
+   Pastikan lingkungan pengembangan Anda sudah siap dengan PHP >= 7.4 dan ekstensi yang diperlukan seperti `ext-curl` dan `ext-json`.
+
+2. **Clone Repositori**
+
+   Clone repositori SDK ini ke komputer lokal Anda:
+
+   ```bash
+   git clone https://github.com/black-coffee04/ws-siasn-php.git
+   cd ws-siasn-php
+    ```
+3. **Instal Dependensi**
+
+    Instal semua dependensi menggunakan Composer:
+
+    ```bash
+   composer install
+    ```
+4. **Jalankan Test**
+
+    Jalankan perintah untuk menjalankan tes:
+
+    ```bash
+   composer test
+
+   composer test:core #Testing Core
+
+   composer test:resource #Testing Resource
+    ```
+
+## License
+
+[MIT](https://github.com/black-coffee04/ws-siasn-php/blob/main/LICENSE.md)
