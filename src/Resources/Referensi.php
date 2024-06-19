@@ -6,14 +6,15 @@ use SiASN\Sdk\Config;
 use SiASN\Sdk\Exceptions\SiasnRequestException;
 
 /**
- * Class Referensi.
+ * Class Referensi
  *
  * Kelas ini digunakan untuk mengakses data referensi dari layanan SiASN.
  */
 class Referensi extends Authentication
 {
     private const UNOR_CACHE_PREFIX = 'ref.unor.';
-    private const DATA_PATH = __DIR__ . "/../Data/Referensi";
+    private const DATA_PATH = __DIR__ . '/../Data/Referensi';
+    private const UNOR_ENDPOINT = '/referensi/ref-unor';
 
     /**
      * Membuat instance Referensi.
@@ -31,22 +32,28 @@ class Referensi extends Authentication
      * @param string $method Nama metode yang dipanggil (nama file JSON tanpa ekstensi).
      * @param array $args Argumen yang dilewatkan ke metode (tidak digunakan dalam kasus ini).
      * @return array Data dari file JSON yang terkompresi.
-     * @throws \Exception Jika file JSON tidak ditemukan.
+     * @throws SiasnRequestException Jika file JSON tidak ditemukan.
      */
-    public function __call($method, $args) 
+    public function __call($method, $args)
     {
+        $this->getWsoAccessToken();
+
         $fileName = $method . '.json.gz';
         $filePath = self::DATA_PATH . DIRECTORY_SEPARATOR . $fileName;
 
         if (!file_exists($filePath)) {
-            throw new \Exception("Methods '$fileName' tidak ditemukan.");
-        } 
+            throw new SiasnRequestException("Method '$method' tidak ditemukan.");
+        }
 
         $compressedData = file_get_contents($filePath);
-        $jsonData       = gzdecode($compressedData);
-        $data           = json_decode($jsonData, true);
+        $jsonData = gzdecode($compressedData);
+        $data = json_decode($jsonData, true);
 
-        return $data;
+        if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+            throw new SiasnRequestException("Gagal memproses data: $fileName");
+        }
+
+        return $data ?: [];
     }
 
     /**
@@ -58,22 +65,19 @@ class Referensi extends Authentication
      */
     public function unor(bool $storeCache = false): array
     {
-        try {
-            $cacheKey = self::UNOR_CACHE_PREFIX . $this->config->getClientId();
-            if ($storeCache && $this->cache->has($cacheKey)) {
-                return $this->cache->get($cacheKey);
-            }
+        $cacheKey = self::UNOR_CACHE_PREFIX . $this->config->getClientId() . '-' . $this->config->getConsumerKey();
 
-            $response = $this->requestUnorData();
-
-            if ($storeCache) {
-                $this->cache->set($cacheKey, $response);
-            }
-
-            return $response;
-        } catch (SiasnRequestException $e) {
-            throw new SiasnRequestException('Gagal mengambil data UNOR: ' . $e->getMessage(), $e->getCode());
+        if ($storeCache && $this->cache->has($cacheKey)) {
+            return $this->cache->get($cacheKey);
         }
+
+        $response = $this->requestUnorData();
+        
+        if ($storeCache) {
+            $this->cache->set($cacheKey, $response);
+        }
+        
+        return $response;
     }
 
     /**
@@ -85,7 +89,7 @@ class Referensi extends Authentication
     private function requestUnorData(): array
     {
         $requestOptions = [
-            'url'     => $this->config->getApiBaseUrl() . '/referensi/ref-unor',
+            'url' => $this->config->getApiBaseUrl() . self::UNOR_ENDPOINT,
             'headers' => [
                 'Accept: application/json',
                 'Auth: bearer ' . $this->getSsoAccessToken(),
@@ -95,6 +99,10 @@ class Referensi extends Authentication
 
         $response = $this->get($requestOptions)->getBody();
 
-        return $response['data'] ?? [];
+        if (!isset($response['data'])) {
+            throw new SiasnRequestException('Data UNOR tidak ditemukan.', 404);
+        }
+
+        return $response['data'];
     }
 }

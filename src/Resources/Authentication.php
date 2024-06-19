@@ -11,8 +11,8 @@ class Authentication extends \SiASN\Sdk\RestRequest
     protected $config;
     protected $cache;
 
-    private const WSO_TOKEN_CACHE_PREFIX = 'wso.token.';
-    private const SSO_TOKEN_CACHE_PREFIX = 'sso.token.';
+    protected const WSO_TOKEN_CACHE_PREFIX = 'wso.token.';
+    protected const SSO_TOKEN_CACHE_PREFIX = 'sso.token.';
 
     /**
      * Authentication constructor.
@@ -128,7 +128,7 @@ class Authentication extends \SiASN\Sdk\RestRequest
      * @param array|null $response Respon yang telah didekode.
      * @throws SiasnRequestException Jika terjadi kesalahan dalam respons.
      */
-    private function handleResponseError(?array $response): void
+    protected function handleResponseError(?array $response): void
     {
         if ($response === false) {
             throw new SiasnRequestException('Gagal melakukan permintaan HTTP.');
@@ -154,7 +154,7 @@ class Authentication extends \SiASN\Sdk\RestRequest
      * @param string $cacheKey Key untuk cache.
      * @param string $token Token yang akan disimpan.
      */
-    private function cacheToken(string $cacheKey, string $token): void
+    protected function cacheToken(string $cacheKey, string $token): void
     {
         $expiresIn = isset($response['expires_in']) ? $response['expires_in'] - 10 : 3600; 
         $this->cache->set($cacheKey, $token, $expiresIn);
@@ -165,7 +165,7 @@ class Authentication extends \SiASN\Sdk\RestRequest
      *
      * @return array Opsi POST untuk WSO.
      */
-    private function getWsoPostOptions(): array
+    protected function getWsoPostOptions(): array
     {
         return [
             'url'         => $this->config->getWsoBaseUrl(),
@@ -181,7 +181,7 @@ class Authentication extends \SiASN\Sdk\RestRequest
      *
      * @return array Opsi POST untuk SSO.
      */
-    private function getSsoPostOptions(): array
+    protected function getSsoPostOptions(): array
     {
         return [
             'url'         => $this->config->getSsoBaseUrl(),

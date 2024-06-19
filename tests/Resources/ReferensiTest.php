@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use SiASN\Sdk\Resources\Referensi;
 use SiASN\Sdk\Config;
 use SiASN\Sdk\Cache;
+use SiASN\Sdk\Exceptions\SiasnRequestException;
 
 class ReferensiTest extends TestCase
 {
@@ -15,36 +16,48 @@ class ReferensiTest extends TestCase
     /** @var Config */
     private $config;
 
-    /** @var Cache */
+    /** @var Cache|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->config = $this->createMock(Config::class);
-        $this->cache  = $this->createMock(Cache::class);
-        
+        $this->cache = $this->createMock(Cache::class);
+
         $this->config->method('getClientId')->willReturn('testClientId');
+        $this->config->method('getApiBaseUrl')->willReturn('https://example.com/api');
         $this->config->method('getUsername')->willReturn('testUsername');
         $this->config->method('getPassword')->willReturn('testPassword');
-        $this->config->method('getSsoBaseUrl')->willReturn('https://example.com/auth/token');
-        
-        // Create instance of Referensi with mocked Config and actual Cache
+        $this->config->method('getConsumerKey')->willReturn('testConsumerKey');
+        $this->config->method('getConsumerSecret')->willReturn('testConsumerSecret');
+
         $this->referensi = new Referensi($this->config);
         $this->referensi->setCache($this->cache);
     }
 
-    public function testGetUnorFromCache()
+    protected function tearDown(): void
     {
-        $cacheKey      = 'ref.unor.testClientId';
-        $expectedData  = ['unit_1', 'unit_2'];
+        parent::tearDown();
 
-        $this->cache->method('has')
+        $this->referensi = null;
+        $this->config = null;
+        $this->cache = null;
+    }
+
+    public function testUnorFromCache()
+    {
+        $cacheKey = 'ref.unor.testClientId-testConsumerKey';
+        $expectedData = ['mocked' => 'unor_data'];
+
+        $this->cache->expects($this->once())
+            ->method('has')
             ->with($cacheKey)
             ->willReturn(true);
 
-        $this->cache->method('get')
+        $this->cache->expects($this->once())
+            ->method('get')
             ->with($cacheKey)
             ->willReturn($expectedData);
 

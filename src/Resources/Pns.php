@@ -49,7 +49,7 @@ class Pns extends Authentication
      * @return array Data yang diambil dari API.
      * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
-    protected function fetchData(string $endpoint, string $nip): array
+    protected function fetchDataFromApi(string $endpoint, string $nip): array
     {
         $this->validateNip($nip);
 
@@ -78,9 +78,9 @@ class Pns extends Authentication
      * @return array Data utama PNS.
      * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
-    public function getDataUtama(string $nip): array
+    public function dataUtama(string $nip): array
     {
-        return $this->fetchData('/pns/data-utama/', $nip);
+        return $this->fetchDataFromApi('/pns/data-utama/', $nip);
     }
 
     /**
@@ -90,9 +90,9 @@ class Pns extends Authentication
      * @return array Data pasangan PNS.
      * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
-    public function getDataPasangan(string $nip): array
+    public function dataPasangan(string $nip): array
     {
-        return $this->fetchData('/pns/data-pasangan/', $nip);
+        return $this->fetchDataFromApi('/pns/data-pasangan/', $nip);
     }
 
     /**
@@ -102,9 +102,9 @@ class Pns extends Authentication
      * @return array Data anak PNS.
      * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
-    public function getDataAnak(string $nip): array
+    public function dataAnak(string $nip): array
     {
-        return $this->fetchData('/pns/data-anak/', $nip);
+        return $this->fetchDataFromApi('/pns/data-anak/', $nip);
     }
 
     /**
@@ -114,15 +114,15 @@ class Pns extends Authentication
      * @return array Data orang tua PNS.
      * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
-    public function getDataOrangTua(string $nip): array
+    public function dataOrangTua(string $nip): array
     {
-        return $this->fetchData('/pns/data-ortu/', $nip);
+        return $this->fetchDataFromApi('/pns/data-ortu/', $nip);
     }
 
     /**
      * Memperbarui data jabatan PNS berdasarkan NIP.
      *
-     * @param string $pnsOrangId Nomor Induk Pegawai.
+     * @param string $pnsOrangId ID Orang PNS.
      * @return bool True jika pembaruan berhasil, false jika gagal.
      * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
@@ -134,7 +134,7 @@ class Pns extends Authentication
     /**
      * Memperbarui data golongan PNS berdasarkan NIP.
      *
-     * @param string $pnsOrangId Nomor Induk Pegawai.
+     * @param string $pnsOrangId ID Orang PNS.
      * @return bool True jika pembaruan berhasil, false jika gagal.
      * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
@@ -150,9 +150,9 @@ class Pns extends Authentication
      * @return array Data nilai IP ASN.
      * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
-    public function getNilaiIpAsn(string $nip): array
+    public function nilaiIpAsn(string $nip): array
     {
-        return $this->fetchData('/pns/nilaiipasn/', $nip . '?nipBaru='.$nip);
+        return $this->fetchDataFromApi('/pns/nilaiipasn/', $nip . '?nipBaru=' . $nip);
     }
 
     /**
@@ -162,7 +162,7 @@ class Pns extends Authentication
      * @return $this
      * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
-    public function getFoto(string $pnsOrangId)
+    public function foto(string $pnsOrangId): self
     {
         $requestOptions = [
             'url'     => $this->config->getApiBaseUrl() . '/pns/photo/' . $pnsOrangId,
@@ -188,12 +188,12 @@ class Pns extends Authentication
      * Menyimpan data foto ke lokasi tertentu.
      *
      * @param string $path Path lokasi penyimpanan.
-     * @return $this
+     * @return string $fileName
      */
-    public function saveTo(string $path)
+    public function saveTo(string $path): string
     {
         $this->filePath = $path;
-        return $this;
+        return $this->saveFotoToFile();
     }
 
     /**
@@ -201,9 +201,9 @@ class Pns extends Authentication
      *
      * @param string $path Path dari direktori.
      * @return void
-     * @throws DataFetchException Jika terjadi kesalahan saat membuat direktori.
+     * @throws SiasnRequestException Jika terjadi kesalahan saat membuat direktori.
      */
-    private function ensureDirectoryExists(string $path)
+    private function ensureDirectoryExists(string $path): void
     {
         if (!is_dir($path)) {
             if (!mkdir($path, 0777, true) && !is_dir($path)) {
@@ -216,20 +216,48 @@ class Pns extends Authentication
      * Menyimpan data foto dengan nama file tertentu.
      *
      * @param string $filename Nama file untuk menyimpan data foto.
-     * @return string
+     * @return $this
      */
-    public function withFileName(string $filename): string
+    public function setFileName(string $filename): self
     {
         $mime = $this->response->getHeader('content-type');
         $extension = (new Mime())->get($mime);
         $this->fileName = $filename . '.' . $extension;
-        return $this->saveFotoToFile();
+        return $this;
+    }
+
+    /**
+     * Mengirimkan data foto ke output stream untuk diunduh.
+     *
+     * @return void
+     */
+    public function outputStream(): void
+    {
+        $content  = $this->response->getContent();
+        $fileSize = strlen($content);
+        $mime     = $this->response->getHeader('content-type');
+
+        header('Content-Description: File Transfer');
+        header('Content-Type: ' . $mime);
+        header('Content-Disposition: attachment; filename="' . basename($this->fileName) . '"');
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . $fileSize);
+
+        ob_clean();
+        flush();
+
+        echo $content;
+        exit;
     }
 
     /**
      * Menyimpan data foto ke dalam file.
      *
-     * @return string
+     * @return string Nama file yang disimpan.
+     * @throws SiasnRequestException Jika foto tidak tersedia.
      */
     private function saveFotoToFile(): string
     {
@@ -240,7 +268,7 @@ class Pns extends Authentication
         $directory = rtrim($this->filePath, DIRECTORY_SEPARATOR);
         $this->ensureDirectoryExists($directory);
 
-        $fullPath = rtrim($this->filePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $this->fileName;
+        $fullPath = $directory . DIRECTORY_SEPARATOR . $this->fileName;
         file_put_contents($fullPath, $this->response->getContent());
         return $this->fileName;
     }
@@ -275,13 +303,12 @@ class Pns extends Authentication
         throw new SiasnRequestException('Gagal mengubah data utama: ' . $response['message']);
     }
 
-
     /**
      * Memperbarui data PNS berdasarkan NIP.
      *
      * @param string $endpoint Endpoint API yang akan diakses.
-     * @param string $pnsOrangId
-     *      * @return bool True jika pembaruan berhasil, false jika gagal.
+     * @param string $pnsOrangId ID Orang PNS.
+     * @return bool True jika pembaruan berhasil, false jika gagal.
      * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
     protected function refreshData(string $endpoint, string $pnsOrangId): bool
@@ -303,6 +330,6 @@ class Pns extends Authentication
             return true;
         }
         
-        throw new SiasnRequestException('Gagal merefresh data: '.$response['Message'], 500);
+        throw new SiasnRequestException('Gagal merefresh data: ' . $response['Message'], 500);
     }
 }

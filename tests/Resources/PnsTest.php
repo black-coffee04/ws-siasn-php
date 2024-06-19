@@ -34,11 +34,11 @@ class PnsTest extends TestCase
         $nip = '123456789';
         $expectedData = ['nama' => 'Contoh Nama', 'nip' => $nip];
 
-        $this->pns->shouldReceive('fetchData')
+        $this->pns->shouldReceive('fetchDataFromApi')
             ->with('/pns/data-utama/', $nip)
             ->andReturn($expectedData);
 
-        $actualData = $this->pns->getDataUtama($nip);
+        $actualData = $this->pns->dataUtama($nip);
         $this->assertEquals($expectedData, $actualData);
     }
 
@@ -47,11 +47,11 @@ class PnsTest extends TestCase
         $nip = '123456789';
         $expectedData = ['nama' => 'Nama Pasangan'];
 
-        $this->pns->shouldReceive('fetchData')
+        $this->pns->shouldReceive('fetchDataFromApi')
             ->with('/pns/data-pasangan/', $nip)
             ->andReturn($expectedData);
 
-        $actualData = $this->pns->getDataPasangan($nip);
+        $actualData = $this->pns->dataPasangan($nip);
         $this->assertEquals($expectedData, $actualData);
     }
 
@@ -60,11 +60,11 @@ class PnsTest extends TestCase
         $nip = '123456789';
         $expectedData = [['nama' => 'Anak 1'], ['nama' => 'Anak 2']];
 
-        $this->pns->shouldReceive('fetchData')
+        $this->pns->shouldReceive('fetchDataFromApi')
             ->with('/pns/data-anak/', $nip)
             ->andReturn($expectedData);
 
-        $actualData = $this->pns->getDataAnak($nip);
+        $actualData = $this->pns->dataAnak($nip);
         $this->assertEquals($expectedData, $actualData);
     }
 
@@ -73,11 +73,11 @@ class PnsTest extends TestCase
         $nip = '123456789';
         $expectedData = [['nama' => 'Orang Tua 1'], ['nama' => 'Orang Tua 2']];
 
-        $this->pns->shouldReceive('fetchData')
+        $this->pns->shouldReceive('fetchDataFromApi')
             ->with('/pns/data-ortu/', $nip)
             ->andReturn($expectedData);
 
-        $actualData = $this->pns->getDataOrangTua($nip);
+        $actualData = $this->pns->dataOrangTua($nip);
         $this->assertEquals($expectedData, $actualData);
     }
 
@@ -105,16 +105,16 @@ class PnsTest extends TestCase
         $this->assertTrue($actualResult);
     }
 
-    public function testGetNilaiIpAsn()
+    public function testNlaiIpAsn()
     {
         $nip = '123456789';
         $expectedData = ['nilai' => 95];
 
-        $this->pns->shouldReceive('fetchData')
+        $this->pns->shouldReceive('fetchDataFromApi')
                   ->with('/pns/nilaiipasn/', $nip . '?nipBaru=' . $nip)
                   ->andReturn($expectedData);
 
-        $actualData = $this->pns->getNilaiIpAsn($nip);
+        $actualData = $this->pns->nilaiIpAsn($nip);
         $this->assertEquals($expectedData, $actualData);
     }
 
@@ -123,7 +123,7 @@ class PnsTest extends TestCase
         $this->expectException(SiasnRequestException::class);
         $this->expectExceptionMessage('Nomor Induk Pegawai (NIP) harus diisi');
         
-        $this->pns->getDataUtama('');
+        $this->pns->dataUtama('');
     }
 
     public function testFetchDataThrowsExceptionForInvalidResponse()
@@ -140,7 +140,7 @@ class PnsTest extends TestCase
         $this->expectExceptionMessage('Gagal mengambil data dari API.');
 
         $reflection = new ReflectionClass($this->pns);
-        $method = $reflection->getMethod('fetchData');
+        $method = $reflection->getMethod('fetchDataFromApi');
         $method->setAccessible(true);
         $method->invokeArgs($this->pns, ['/pns/data-utama/', $nip]);
     }

@@ -20,5 +20,5 @@ $siasnClient = new SiasnClient($config);
  * @param boolean $cache atur menjadi true apabila anda akan menyimpannya ke cache, cache akan expired dalam 1 jam
  */
 $cache = true;
-// echo json_encode($siasnClient->referensi()->unor($cache));
+echo json_encode($siasnClient->referensi()->unor($cache));
 var_dump($siasnClient->referensi()->golonganPns());

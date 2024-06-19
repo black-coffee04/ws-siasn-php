@@ -30,6 +30,8 @@ class AuthenticationTest extends TestCase
         $this->config->method('getClientId')->willReturn('testClientId');
         $this->config->method('getUsername')->willReturn('testUsername');
         $this->config->method('getPassword')->willReturn('testPassword');
+        $this->config->method('getConsumerKey')->willReturn('testConsumerKey');
+        $this->config->method('getConsumerSecret')->willReturn('testConsumerSecret');
         $this->config->method('getSsoBaseUrl')->willReturn('https://example.com/auth/token');
         
         $this->authentication = new Authentication($this->config);
