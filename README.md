@@ -263,9 +263,7 @@ Untuk menjalankan tes pada SDK ini, pastikan Anda telah menginstal dependensi de
     ```bash
    composer test
 
-   composer test:core #Testing Core
-
-   composer test:resource #Testing Resource
+   composer test:service #Testing service
     ```
 
 ## License
