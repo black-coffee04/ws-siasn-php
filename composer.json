@@ -1,0 +1,41 @@
+{
+    "name": "black-coffee04/ws-siasn-php",
+    "description": "Software Development Kit Web Service SiASN",
+    "keywords": ["siasn","ws siasn","sdk","ws siasn php","web service siasn","siasn bkn"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "black-coffee04",
+            "email": "bkdegy@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "guzzlehttp/guzzle": "^7.8"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6"
+    },
+    "autoload":{
+        "psr-4": {
+            "SiASN\\Sdk\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit --colors=always",
+        "test:resource": "phpunit --configuration phpunit.xml --testsuite service --colors=always"
+    },
+     "extra": {
+        "branch-alias": {
+            "dev-main": "1.0.x-dev"
+        }
+    }
+}

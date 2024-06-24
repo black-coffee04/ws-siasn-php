@@ -1,0 +1,8 @@
+composer.lock
+composer.phar
+vendor/
+.env
+.idea
+.DS_STORE
+.phpunit.result.cache
+examples/*.png
