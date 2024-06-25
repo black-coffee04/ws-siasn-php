@@ -19,7 +19,7 @@ class JabatanService implements ServiceInterface
     private $config;
 
     /**
-     * Constructor untuk ReferensiService.
+     * Constructor untuk JabatanService.
      *
      * @param AuthenticationService $authentication Instance AuthenticationService untuk otentikasi.
      * @param Config $config Instance Config yang menyimpan konfigurasi aplikasi.

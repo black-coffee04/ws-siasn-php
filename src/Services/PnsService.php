@@ -196,8 +196,8 @@ class PnsService implements ServiceInterface
         $this->response = $httpClient->get("/apisiasn/1.0/pns/photo/{$pns['id']}", [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->getWsoAccessToken(),
-                'Auth' => 'bearer ' . $this->getSsoAccessToken(),
-                'Accept' => 'application/json'
+                'Auth'          => 'bearer ' . $this->getSsoAccessToken(),
+                'Accept'        => 'application/json'
             ]
         ]);
 
