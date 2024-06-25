@@ -31,6 +31,11 @@ Selamat datang di SiASN Web Service SDK! SDK ini dirancang untuk memudahkan peng
   - [Referensi](#referensi)
     - [Contoh Penggunaan Referensi](#contoh-penggunaan-referensi)
   - [PNS](#pns)
+    - [Contoh Penggunaan Api PNS](#contoh-penggunaan-api-pns)
+  - [Jabatan](#jabatan)
+    - [Contoh Penggunaan Api jabatan](#contoh-penggunaan-api-jabatan)
+  - [Dokumen](#dokumen)
+    - [Contoh Penggunaan Api dokumen](#contoh-penggunaan-api-dokumen)
 - [Menjalankan Tes](#menjalankan-tes)
 - [Lisensi](#lisensi)
 
@@ -223,6 +228,8 @@ $siasnClient->referensi()->agama()->get();
 - **`->limit($limit)`**: Membatasi jumlah data yang ditampilkan berdasarkan nilai `$limit`.
 - **`->get()`**: Mengambil hasil akhir dari pencarian dan penyaringan data.
 
+> **Note:** Metode ini hanya berlaku untuk pemanggilan resource referensi saja, dan tidak dapat digunakan pada resource lain
+
 #### Contoh Penggunaan Metode Tambahan
 
 ```php
@@ -264,7 +271,7 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource PNS:
 | `$siasnClient->pns()->refreshGolongan($nipAsn)`         | Memperbarui data golongan ASN berdasarkan NIP ASN.     | `$nipAsn` (string): NIP ASN                           | `true` jika berhasil memperbarui, `false` jika tidak.         |
 | `$siasnClient->pns()->nilaiIpAsn($nipAsn)`                  | Mengambil nilai IP ASN berdasarkan NIP ASN.                 | `$nipAsn` (string): NIP ASN                                    | Array nilai IP ASN.                                           |
 | `$siasnClient->pns()->foto($nipAsn)->setFileName($fileName)->outputStream()` | Mengambil foto profil ASN berdasarkan NIP ASN dan menyimpannya sebagai file dengan nama tertentu. | `$nipAsn` (string): NIP ASN, `$fileName` (string): Nama file | Menghasilkan output stream foto profil ASN.                    |
-| `$siasnClient->pns()->foto($nipAsn)->setFileName($fileName)->saveTo($path)` | Menyimpan foto profil ASN ke direktori yang ditentukan. | `$nipAsn` (string): NIP ASN, `$path ` (string): direktori | Void.                    |
+| `$siasnClient->pns()->foto($nipAsn)->setFileName($fileName)->saveTo($path)` | Menyimpan foto profil ASN ke direktori yang ditentukan. | `$nipAsn` (string): NIP ASN, `$path ` (string): direktori | String nama file.                    |
 | `$siasnClient->pns()->updateDataUtama([...])`               | Memperbarui data utama ASN dengan parameter yang diberikan. | `$data` (array): Data yang akan diperbarui pada data utama ASN  | Array.         |
 
 #### Contoh Penggunaan Api PNS
@@ -277,6 +284,34 @@ $nipAsn = 'xxxxxxxxxxxxxxxxxxxxx';
 #Mengambil data pns berdasarkan NIP
 $siasnClient->pns()->dataUtama($nipAsn);
 ```
+### Jabatan
+
+Berikut adalah daftar lengkap metode yang tersedia pada resource Jabatan:
+
+| Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
+|---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
+| `$siasnClient->jabatan()->pns($nipAsn)`                   | Mengambil data jabatan ASN berdasarkan NIP ASN.               | `$nipAsn` (string): NIP ASN                                    | Array data jabatan ASN.                                         |
+| `$siasnClient->jabatan()->riwayat($idJabatan)`                | Mengambil data riwayat jabatan berdasarkan Id Jabatan.            | `$idJabatan` (string): Id Jabatan                                 | Array data riwayat jabatan.
+
+#### Contoh Penggunaan Api Jabatan
+
+Berikut adalah beberapa contoh penggunaan dasar SDK SiASN untuk berbagai operasi seperti pengambilan Access Token dan akses ke data referensi:
+
+Mendapatkan Access Token WSO:
+
+```php
+$siasnClient->jabatan()->pns($nipAsn);
+```
+
+### Dokumen
+
+Berikut adalah daftar lengkap metode yang tersedia pada resource dokumen:
+| Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
+|---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
+| `$siasnClient->dokumen()->download($args)->setFileName($fileName)->outputStream()` | Mengambil dokumen pada siasn dan langsung menampilkan tanpa disimpan pada local server. | `$args` >(json), (array), (object): respon upload file pada siasn >(string) $dokUri, `$fileName` (string): Nama file | Menghasilkan output stream foto profil ASN.                    |
+| `$siasnClient->dokumen()->download($args)->setFileName($fileName)->saveTo($path)` | Menyimpan dokumen ke direktori yang ditentukan. | `$args` >(json), (array), (object): respon upload file pada siasn >(string) $dokUri, `$fileName` (string): Nama file, `$path ` (string): direktori | String $filename.                    |
+| `$siasnClient->dokumen()->upload($idRefDokumen, $file)`                                    | Mengunggah dokumen ke SiASN dari file lokal.                                                        | `(string) $idRefDokumen`, `(string) $file`: Path file lokal atau URL                                    | Data dari respons upload dokumen ke SiASN. |
+| `$siasnClient->dokumen()->uploadRiwayat($idRiwayat, $idRefDokumen, $file)`                 | Mengunggah riwayat dokumen ke SiASN dari file lokal.                                               | `(string) $idRiwayat`, `(string) $idRefDokumen`, `(string) $file`: Path file lokal atau URL             | Data dari respons upload riwayat dokumen ke SiASN. |
 
 ## Menjalankan Tes
 

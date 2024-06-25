@@ -14,7 +14,9 @@ $config = [
 
 $siasn = new SiasnClient($config);
 
-$response = $siasn->dokumen()->upload('872', 'path\to\esample.pdf');
+$idRefDokumen = '872';
+$dokumen = 'path\to\esample.pdf';
+$response = $siasn->dokumen()->upload($idRefDokumen, $dokumen);
 
 //Save ke file/local server
 $path = __DIR__ . DIRECTORY_SEPARATOR;
