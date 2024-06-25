@@ -95,14 +95,20 @@ class DokumenService implements ServiceInterface
     private function resolveDokUri($args): string
     {
         if (is_string($args)) {
+
+            $decoded = json_decode($args, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded) && isset($decoded['dok_uri'])) {
+                return $decoded['dok_uri'];
+            }
+            
             return $args;
         }
 
-        if (is_array($args)) {
+        if (is_array($args) && isset($args['dok_uri'])) {
             return $args['dok_uri'];
         }
 
-        if (is_object($args)) {
+        if (is_object($args) && property_exists($args, 'dok_uri')) {
             return $args->dok_uri;
         }
 
@@ -165,7 +171,7 @@ class DokumenService implements ServiceInterface
         $this->ensureDirectoryExists($directory);
 
         $fullPath = $directory . DIRECTORY_SEPARATOR . $this->fileName;
-        $file = $this->response->getBody()->getContents();
+        $file     = $this->response->getBody()->getContents();
         file_put_contents($fullPath, $file);
 
         return $this->fileName;
@@ -178,9 +184,9 @@ class DokumenService implements ServiceInterface
      */
     public function outputStream(): void
     {
-        $content = $this->response->getBody()->getContents();
+        $content  = $this->response->getBody()->getContents();
         $fileSize = strlen($content);
-        $mime = $this->response->getHeaderLine('Content-Type');
+        $mime     = $this->response->getHeaderLine('Content-Type');
 
         header('Content-Description: File Transfer');
         header('Content-Type: ' . $mime);
