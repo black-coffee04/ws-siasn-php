@@ -297,7 +297,7 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource Jabatan:
 
 Anda dapat mengakses data Jabatan sebagai berikut menggunakan SDK SiASN:
 
-Mendapatkan Access Token WSO:
+Mendapatkan data jabatan PNS:
 
 ```php
 $siasnClient->jabatan()->pns($nipAsn);

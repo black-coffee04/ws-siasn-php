@@ -75,6 +75,10 @@ class HttpClient implements ClientInterface
             }
         }
 
+        if (empty($errorMessage)) {
+            $errorMessage = 'Service Unavailable dari SiASN';
+        }
+
         throw new SiasnHttpClientException($errorMessage, $statusCode);
     }
 
