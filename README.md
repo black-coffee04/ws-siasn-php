@@ -320,15 +320,15 @@ Anda dapat mengolala dokumen menggunakan SDK SiASN:
 ```php
 $idRefDokumen = 'string';
 $dokumen      = 'path\to\esample.pdf' #Dapat menggunakan binary dokumen/URL dokumen;
-$response     = $siasn->dokumen()->upload($idRefDokumen, $dokumen);
 $path         = 'path/to/penyimpanan/dokumen';
 $fileName     = 'nama file tanpa extensi'; #Nama file tanpa extensi
 
+$response     = $siasnClient->dokumen()->upload($idRefDokumen, $dokumen);
 #Save dokumen ke local server
-echo $siasn->dokumen()->download($response)->setName($fileName)->saveTo($path);
+echo $siasnClient->dokumen()->download($response)->setName($fileName)->saveTo($path);
 
 #Tampilkan dokumen tanpa menyimpan
-$siasn->dokumen()->download($response)->setName($fileName)->outputStream();
+$siasnClient->dokumen()->download($response)->setName($fileName)->outputStream();
 ```
 
 ## Menjalankan Tes
