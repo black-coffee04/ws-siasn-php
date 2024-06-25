@@ -20,7 +20,7 @@ $response = $siasn->dokumen()->upload($idRefDokumen, $dokumen);
 
 //Save ke file/local server
 $path = __DIR__ . DIRECTORY_SEPARATOR;
-echo $siasn->dokumen()->download($response)->setFileName('jabatan')->saveTo($path);
+echo $siasn->dokumen()->download($response)->setName('jabatan')->saveTo($path);
 
 //Tampilkan dokumen tanpa menyimpan
-$siasn->dokumen()->download($response)->setFileName('jabatan')->outputStream();
+$siasn->dokumen()->download($response)->setName('jabatan')->outputStream();

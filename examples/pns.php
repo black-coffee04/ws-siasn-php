@@ -46,7 +46,7 @@ echo json_encode($pns->dataOrangTua($nipAsn)) . PHP_EOL . PHP_EOL;
 
 echo json_encode($pns->nilaiIpAsn($nipAsn)) . PHP_EOL . PHP_EOL;
 
-// echo $pns->refreshJabatan($nipAsn);
-// echo $pns->refreshGolongan($nipAsn);
-// $path = __DIR__ . DIRECTORY_SEPARATOR;
-// $pns->foto($nipAsn)->setFileName('profile')->outputStream();
+echo $pns->refreshJabatan($nipAsn);
+echo $pns->refreshGolongan($nipAsn);
+$path = __DIR__ . DIRECTORY_SEPARATOR;
+$pns->foto($nipAsn)->setName('profile')->outputStream();

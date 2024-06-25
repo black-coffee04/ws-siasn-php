@@ -121,7 +121,7 @@ class DokumenService implements ServiceInterface
      * @param string $fileName Nama file.
      * @return $this
      */
-    public function setFileName(string $fileName)
+    public function setName(string $fileName)
     {
         $contentType = $this->response->getHeaderLine('Content-Type');
         $extension = (new Mime)->get($contentType);
