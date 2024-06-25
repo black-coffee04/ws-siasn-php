@@ -12,22 +12,9 @@ $config = [
     "password"       => getenv('PASSWORD')
 ];
 
-$siasn = new SiasnClient($config);
+$nipAsn      = getenv('NIP');
+$siasn       = new SiasnClient($config);
 
-
-/**
- * Contoh Pengambilan Access Token WSO
- */
-
-$referensi        = $siasn->referensi();
-$searchTerm       = 'layanan operasional';
-$limit            = 10;
-
-$agama = $siasn
-    ->referensi()
-    ->agama(true)
-    ->like('is')
-    ->search('nama')
-    ->get();
-
-var_dump($agama);
+$jabatan = $siasn->jabatan()->pns($nipAsn);
+echo json_encode($jabatan) . PHP_EOL . PHP_EOL;
+echo json_encode($siasn->jabatan()->riwayat($jabatan['0']['id']));

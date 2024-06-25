@@ -20,25 +20,25 @@ class ReferensiService implements ServiceInterface
     private const DATA_PATH = __DIR__ . '/../Data/Referensi';
 
     /**
-     * @var AuthenticationService Instance dari AuthenticationService untuk otentikasi.
+     * @var AuthenticationService Instance of AuthenticationService for authentication.
      */
     private $authentication;
 
     /**
-     * @var Config Instance dari Config yang menyimpan konfigurasi aplikasi.
+     * @var Config Instance of Config that holds the application configuration.
      */
     private $config;
 
     /**
-     * @var Cache Instance dari Cache untuk menyimpan data yang di-cache.
+     * @var Cache Instance of Cache for storing cached data.
      */
     private $cache;
 
     /**
-     * Constructor untuk ReferensiService.
+     * Constructor for ReferensiService.
      *
-     * @param AuthenticationService $authentication Instance AuthenticationService untuk otentikasi.
-     * @param Config $config Instance Config yang menyimpan konfigurasi aplikasi.
+     * @param AuthenticationService $authentication Instance of AuthenticationService for authentication.
+     * @param Config $config Instance of Config that holds the application configuration.
      */
     public function __construct(AuthenticationService $authentication, Config $config)
     {
@@ -48,12 +48,12 @@ class ReferensiService implements ServiceInterface
     }
 
     /**
-     * Magic method untuk memanggil data dari file JSON yang terkompresi.
+     * Magic method to retrieve data from compressed JSON file.
      *
-     * @param string $method Nama metode yang dipanggil (nama file JSON tanpa ekstensi).
-     * @param array $args Argumen yang dilewatkan ke metode (tidak digunakan dalam kasus ini).
-     * @return array Data dari file JSON yang terkompresi.
-     * @throws SiasnServiceException Jika file JSON tidak ditemukan.
+     * @param string $method Method name being called (JSON file name without extension).
+     * @param array $args Arguments passed to the method (not used in this case).
+     * @return QueryBuilder QueryBuilder instance with data from JSON file.
+     * @throws SiasnServiceException If JSON file is not found.
      */
     public function __call($method, $args)
     {
@@ -72,36 +72,33 @@ class ReferensiService implements ServiceInterface
             throw new SiasnServiceException("Gagal memproses data: $fileName");
         }
 
-        return $data ?: [];
+        return (new QueryBuilder($data, true));
     }
 
     /**
-     * Mengambil data JSON dari file yang terkompresi.
+     * Retrieve JSON data from compressed file.
      *
-     * @param string $filePath Lokasi file JSON yang terkompresi.
-     * @return array|null Data dari file JSON atau null jika gagal.
+     * @param string $filePath Path to the compressed JSON file.
+     * @return array|null Data from the JSON file or null if failed.
      */
     public function getJsonData(string $filePath)
     {
-        $compressedData = file_get_contents($filePath);
-        $jsonData = gzdecode($compressedData);
-        $data = json_decode($jsonData, true);
-        return $data;
+        return json_decode(gzdecode(file_get_contents($filePath)), true);
     }
 
     /**
-     * Mengambil data UNOR dari API.
+     * Retrieve UNOR data.
      *
-     * @param bool $storeCache Menentukan apakah data akan disimpan di cache atau tidak.
-     * @return array Data UNOR.
-     * @throws SiasnDataException Jika data UNOR tidak ditemukan dalam respons.
+     * @param bool $storeCache Determines whether to store data in cache or not.
+     * @return QueryBuilder QueryBuilder instance with UNOR data.
+     * @throws SiasnDataException If UNOR data is not found in the response.
      */
-    public function unor(bool $storeCache = false): array
+    public function unor(bool $storeCache = false): QueryBuilder
     {
         $cacheKey = self::UNOR_CACHE_PREFIX . $this->config->getClientId() . '-' . $this->config->getConsumerKey();
 
         if ($storeCache && $this->cache->has($cacheKey)) {
-            return $this->cache->get($cacheKey);
+            return new QueryBuilder($this->cache->get($cacheKey));
         }
 
         $response = $this->request();
@@ -114,22 +111,22 @@ class ReferensiService implements ServiceInterface
             $this->cache->set($cacheKey, $response['data']);
         }
 
-        return $response['data'];
+        return new QueryBuilder($response['data']);
     }
 
     /**
-     * Melakukan request ke API untuk mendapatkan data UNOR.
+     * Make a request to API to fetch UNOR data.
      *
-     * @return array Respons dari API.
+     * @return array Response from the API.
      */
     public function request(): array
     {
         $httpClient = new HttpClient($this->config->getApiBaseUrl());
-        $response = $httpClient->get('/apisiasn/1.0/referensi/ref-unor', [
+        $response   = $httpClient->get('/apisiasn/1.0/referensi/ref-unor', [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->getWsoAccessToken(),
-                'Auth' => 'bearer ' . $this->getSsoAccessToken(),
-                'Accept' => 'application/json'
+                'Auth'          => 'bearer ' . $this->getSsoAccessToken(),
+                'Accept'        => 'application/json'
             ]
         ]);
 
@@ -137,9 +134,9 @@ class ReferensiService implements ServiceInterface
     }
 
     /**
-     * Mendapatkan access token dari layanan SSO.
+     * Get SSO access token.
      *
-     * @return string Access token SSO.
+     * @return string SSO access token.
      */
     public function getSsoAccessToken(): string
     {
@@ -147,9 +144,9 @@ class ReferensiService implements ServiceInterface
     }
 
     /**
-     * Mendapatkan access token dari layanan WSO.
+     * Get WSO access token.
      *
-     * @return string Access token WSO.
+     * @return string WSO access token.
      */
     public function getWsoAccessToken(): string
     {

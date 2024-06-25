@@ -25,10 +25,11 @@ Selamat datang di SiASN Web Service SDK! SDK ini dirancang untuk memudahkan peng
   - [Instalasi Manual](#instalasi-manual)
 - [Konfigurasi](#konfigurasi)
   - [Detail Konfigurasi](#detail-konfigurasi)
-- [Contoh Penggunaan](#contoh-penggunaan)
 - [Dokumentasi API](#dokumentasi-api)
   - [Authentication](#authentication)
+    - [Contoh Penggunaan Authentication](#contoh-penggunaan-authentication)
   - [Referensi](#referensi)
+    - [Contoh Penggunaan Referensi](#contoh-penggunaan-referensi)
   - [PNS](#pns)
 - [Menjalankan Tes](#menjalankan-tes)
 - [Lisensi](#lisensi)
@@ -121,35 +122,6 @@ $siasnClient = new SiasnClient($config);
 | `username`      | -             | Nama pengguna untuk otentikasi SSO.            |
 | `password`      | -             | Kata sandi untuk otentikasi SSO.               |
 
-
-## Contoh Penggunaan
-
-Berikut adalah beberapa contoh penggunaan dasar SDK SiASN untuk berbagai operasi seperti pengambilan Access Token dan akses ke data referensi:
-
-### Pengambilan Access Token WSO
-
-Mendapatkan Access Token WSO:
-
-```php
-echo $siasnClient->authentication()->getWsoAccessToken() . PHP_EOL;
-```
-
-Mendapatkan Access Token SSO:
-
-```php
-echo $siasnClient->authentication()->getSsoAccessToken() . PHP_EOL;
-```
-
-### Penggunaan Data Referensi
-
-Anda dapat mengakses data referensi seperti data golongan PNS atau data UNOR menggunakan SDK SiASN:
-
-#### Contoh Pengambilan Data UNOR
-
-```php
-$cache = true; // Atur menjadi true untuk menyimpan ke cache, cache akan expired dalam 1 jam
-echo json_encode($siasnClient->referensi()->unor($cache)) . PHP_EOL;
-```
 **atau**
 
 Anda dapat melihat contoh penggunaan pada folder [examples](https://github.com/black-coffee04/ws-siasn-php/tree/main/examples).
@@ -164,6 +136,22 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource Authentication:
 |---------------------------------------------------|-------------------------------------------------------|-------------------------------|
 | `$siasnClient->authentication()->getWsoAccessToken()` | Mengambil access token untuk layanan WSO SiASN.        | `string` Access token         |
 | `$siasnClient->authentication()->getSsoAccessToken()` | Mengambil access token untuk layanan SSO SiASN.        | `string` Access token         |
+
+#### Contoh Penggunaan Authentication
+
+Berikut adalah beberapa contoh penggunaan dasar SDK SiASN untuk berbagai operasi seperti pengambilan Access Token dan akses ke data referensi:
+
+Mendapatkan Access Token WSO:
+
+```php
+$siasnClient->authentication()->getWsoAccessToken();
+```
+
+Mendapatkan Access Token SSO:
+
+```php
+$siasnClient->authentication()->getSsoAccessToken();
+```
 
 ### Referensi
 
@@ -214,6 +202,54 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource Referensi:
 | `$siasnClient->referensi()->subJabatan()`    | Mengambil data referensi sub jabatan.                        | `Array` data referensi sub jabatan.                        |
 | `$siasnClient->referensi()->taspen()`        | Mengambil data referensi taspen.                             | `Array` data referensi taspen.                             |
 
+#### Contoh Penggunaan Referensi
+
+Anda dapat mengakses data referensi sebagai berikut menggunakan SDK SiASN:
+
+```php
+#Buat ke true apa bila ingin menyimpan dalam cache, cache akan expired dalam 1 jam
+$storeCache = true; 
+
+#Mengambil referensi data unor
+$siasnClient->referensi()->unor($cache)->get();
+
+#Mengambil referensi data agama
+$siasnClient->referensi()->agama()->get();
+```
+#### Metode Tambahan
+
+- **`->search($attributes)`**:  Melakukan pencarian berdasarkan atribut yang ditentukan.
+- **`->like($keywords)`**: Melakukan penyaringan dengan menggunakan kata kunci tertentu pada atribut yang telah ditentukan.
+- **`->limit($limit)`**: Membatasi jumlah data yang ditampilkan berdasarkan nilai `$limit`.
+- **`->get()`**: Mengambil hasil akhir dari pencarian dan penyaringan data.
+
+#### Contoh Penggunaan Metode Tambahan
+
+```php
+# Mengambil semua data referensi Unit Organisasi (UNOR)
+$unorData = $siasnClient->referensi()->unor()->get();
+
+# Mengambil data referensi UNOR dengan batasan 3 data
+$unorDataLimited = $siasnClient->referensi()->unor()->limit(3)->get();
+
+# Mengambil data referensi UNOR berdasarkan atribut 'NamaUnor' yang mengandung kata 'puskesmas' dengan batasan 3 data
+$filteredUnorData = $siasnClient->referensi()
+                                ->agama()
+                                ->search('NamaUnor')
+                                ->like('puskesmas')
+                                ->limit(3)
+                                ->get();
+
+# Mengambil semua data referensi UNOR berdasarkan atribut 'NamaUnor' yang mengandung kata 'puskesmas'
+$unfilteredUnorData = $siasnClient->referensi()
+                                  ->agama()
+                                  ->search('NamaUnor')
+                                  ->like('puskesmas')
+                                  ->get();
+
+
+```
+
 ### PNS
 
 Berikut adalah daftar lengkap metode yang tersedia pada resource PNS:
@@ -224,12 +260,23 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource PNS:
 | `$siasnClient->pns()->dataPasangan($nipAsn)`                | Mengambil data pasangan ASN berdasarkan NIP ASN.            | `$nipAsn` (string): NIP ASN                                    | Array data pasangan ASN.                                      |
 | `$siasnClient->pns()->dataAnak($nipAsn)`                    | Mengambil data anak ASN berdasarkan NIP ASN.                | `$nipAsn` (string): NIP ASN                                    | Array data anak ASN.                                          |
 | `$siasnClient->pns()->dataOrangTua($nipAsn)`                | Mengambil data orang tua ASN berdasarkan NIP ASN.           | `$nipAsn` (string): NIP ASN                                    | Array data orang tua ASN.                                     |
-| `$siasnClient->pns()->refreshJabatan($pnsOrangId)`          | Memperbarui data jabatan ASN berdasarkan ID orang ASN.      | `$pnsOrangId` (string): ID orang ASN                           | `true` jika berhasil memperbarui, `false` jika tidak.         |
-| `$siasnClient->pns()->refreshGolongan($pnsOrangId)`         | Memperbarui data golongan ASN berdasarkan ID orang ASN.     | `$pnsOrangId` (string): ID orang ASN                           | `true` jika berhasil memperbarui, `false` jika tidak.         |
+| `$siasnClient->pns()->refreshJabatan($nipAsn)`          | Memperbarui data jabatan ASN berdasarkan NIP ASN.      | `$nipAsn` (string): NIP ASN                           | `true` jika berhasil memperbarui, `false` jika tidak.         |
+| `$siasnClient->pns()->refreshGolongan($nipAsn)`         | Memperbarui data golongan ASN berdasarkan NIP ASN.     | `$nipAsn` (string): NIP ASN                           | `true` jika berhasil memperbarui, `false` jika tidak.         |
 | `$siasnClient->pns()->nilaiIpAsn($nipAsn)`                  | Mengambil nilai IP ASN berdasarkan NIP ASN.                 | `$nipAsn` (string): NIP ASN                                    | Array nilai IP ASN.                                           |
-| `$siasnClient->pns()->foto($pnsOrangId)->setFileName($fileName)->outputStream()` | Mengambil foto profil ASN berdasarkan ID orang ASN dan menyimpannya sebagai file dengan nama tertentu. | `$pnsOrangId` (string): ID orang ASN, `$fileName` (string): Nama file | Menghasilkan output stream foto profil ASN.                    |
-| `$siasnClient->pns()->foto($pnsOrangId)->setFileName($fileName)->saveTo($path)` | Menyimpan foto profil ASN ke direktori yang ditentukan. | `$pnsOrangId` (string): ID orang ASN, `$path ` (string): direktori | Void.                    |
+| `$siasnClient->pns()->foto($nipAsn)->setFileName($fileName)->outputStream()` | Mengambil foto profil ASN berdasarkan NIP ASN dan menyimpannya sebagai file dengan nama tertentu. | `$nipAsn` (string): NIP ASN, `$fileName` (string): Nama file | Menghasilkan output stream foto profil ASN.                    |
+| `$siasnClient->pns()->foto($nipAsn)->setFileName($fileName)->saveTo($path)` | Menyimpan foto profil ASN ke direktori yang ditentukan. | `$nipAsn` (string): NIP ASN, `$path ` (string): direktori | Void.                    |
 | `$siasnClient->pns()->updateDataUtama([...])`               | Memperbarui data utama ASN dengan parameter yang diberikan. | `$data` (array): Data yang akan diperbarui pada data utama ASN  | Array.         |
+
+#### Contoh Penggunaan Api PNS
+
+Anda dapat mengakses data PNS sebagai berikut menggunakan SDK SiASN:
+
+```php
+$nipAsn = 'xxxxxxxxxxxxxxxxxxxxx';
+
+#Mengambil data pns berdasarkan NIP
+$siasnClient->pns()->dataUtama($nipAsn);
+```
 
 ## Menjalankan Tes
 

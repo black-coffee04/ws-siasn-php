@@ -4,6 +4,7 @@ namespace SiASN\Sdk;
 
 use SiASN\Sdk\Config\Config;
 use SiASN\Sdk\Services\AuthenticationService;
+use SiASN\Sdk\Services\JabatanService;
 use SiASN\Sdk\Services\PnsService;
 use SiASN\Sdk\Services\ReferensiService;
 
@@ -56,12 +57,22 @@ class SiasnClient
     }
 
     /**
-     * Mendapatkan instance dari PnsService untuk mengakses data referensi.
+     * Mendapatkan instance dari PnsService untuk mengakses data pns.
      *
      * @return PnsService Instance dari PnsService.
      */
     public function pns(): PnsService
     {
         return new PnsService($this->authentication, $this->config);
+    }
+
+    /**
+     * Mendapatkan instance dari JabatanService untuk mengakses data jabatan.
+     *
+     * @return JabatanService Instance dari PnsService.
+     */
+    public function jabatan(): JabatanService
+    {
+        return new JabatanService($this->authentication, $this->config);
     }
 }
