@@ -13,10 +13,12 @@ $config = [
 ];
 
 $siasn = new SiasnClient($config);
-$args  = '{"dok_id":"872","dok_nama":"Dok SK Jabatan","dok_uri":"peremajaan\/usulan\/8ae4839a6e924c71016e958fdeee7c48_20240624_033111_sk-jabatan.pdf","slug":"872","object":"peremajaan\/usulan\/8ae4839a6e924c71016e958fdeee7c48_20240624_033111_sk-jabatan.pdf"}';
-$args  = json_decode($args);
-// $args = "peremajaan\/usulan\/8ae4839a6e924c71016e958fdeee7c48_20240624_033111_sk-jabatan.pdf";
-$path = __DIR__ . DIRECTORY_SEPARATOR;
-// echo $siasn->dokumen()->download($args)->setFileName('jabatan')->saveTo($path);
 
-var_dump($siasn->dokumen()->upload('872', 'C:\Users\MLD - Hitam\Desktop\invoicesample.pdf'));
+$response = $siasn->dokumen()->upload('872', 'path\to\esample.pdf');
+
+//Save ke file/local server
+$path = __DIR__ . DIRECTORY_SEPARATOR;
+echo $siasn->dokumen()->download($response)->setFileName('jabatan')->saveTo($path);
+
+//Tampilkan dokumen tanpa menyimpan
+$siasn->dokumen()->download($response)->setFileName('jabatan')->outputStream();
