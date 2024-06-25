@@ -100,7 +100,7 @@ class DokumenService implements ServiceInterface
             if (json_last_error() === JSON_ERROR_NONE && is_array($decoded) && isset($decoded['dok_uri'])) {
                 return $decoded['dok_uri'];
             }
-            
+
             return $args;
         }
 
@@ -202,6 +202,67 @@ class DokumenService implements ServiceInterface
 
         echo $content;
         exit;
+    }
+
+    /**
+     * Mengunggah dokumen dengan menyertakan ID referensi dokumen.
+     *
+     * @param string $idRefDokumen ID referensi dokumen.
+     * @param string $file Lokasi file yang akan diunggah.
+     * @return array Data yang dikembalikan dari respons API.
+     * @throws SiasnServiceException Jika gagal melakukan pengunggahan.
+     */
+    public function upload(string $idRefDokumen, $file)
+    {
+        $response = $this->httpClient->post('/apisiasn/1.0/upload-dok', [
+            'multipart' => [
+                [
+                    'name'     => 'file',
+                    'contents' => fopen($file, 'r'),
+                    'filename' => basename($file)
+                ],
+                [
+                    'name'     => 'id_ref_dokumen',
+                    'contents' => $idRefDokumen
+                ]
+            ],
+            'headers' => $this->getRequestHeaders()
+        ]);
+        
+        return $response['data'] ?? [];
+    }
+
+    /**
+     * Mengunggah riwayat dokumen dengan menyertakan ID riwayat dan ID referensi dokumen.
+     *
+     * @param string $idRiwayat ID riwayat dokumen.
+     * @param string $idRefDokumen ID referensi dokumen.
+     * @param string $file Lokasi file yang akan diunggah.
+     * @return array Data yang dikembalikan dari respons API.
+     * @throws SiasnServiceException Jika gagal melakukan pengunggahan.
+     */
+    public function uploadRiwayat(string $idRiwayat, string $idRefDokumen, $file)
+    {
+        $response = $this->httpClient->post('/apisiasn/1.0/upload-dok-rw', [
+            'multipart' => [
+                [
+                    'name'     => 'file',
+                    'contents' => fopen($file, 'r'),
+                    'filename' => basename($file)
+                ],
+                [
+                    'name'     => 'id_riwayat ',
+                    'contents' => $idRiwayat
+                ],
+                [
+                    'name'     => 'id_ref_dokumen',
+                    'contents' => $idRefDokumen
+                ]
+            ],
+            'headers' => $this->getRequestHeaders()
+        ]);
+        
+        return $response['data'] ?? [];
     }
 
     /**
