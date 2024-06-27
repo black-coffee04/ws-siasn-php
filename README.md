@@ -311,7 +311,7 @@ $siasnClient->jabatan()->pns($nipAsn);
 
 #Menambahakan data jabatan beserta dokumennya
 $dokumen = "http://url/to/pdf"; #Bisa mengunakan url/binary file
-$riwayatJabatanId = $siasn->jabatan()
+$riwayatJabatanId = $siasnClient->jabatan()
     ->create($data)
     ->includeDokumen($dokumen) 
     ->save();
