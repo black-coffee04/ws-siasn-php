@@ -292,6 +292,13 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource Jabatan:
 |---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
 | `$siasnClient->jabatan()->pns($nipAsn)`                   | Mengambil data jabatan ASN berdasarkan NIP ASN.               | `$nipAsn` (string): NIP ASN                                    | Array data jabatan ASN.                                         |
 | `$siasnClient->jabatan()->riwayat($idJabatan)`                | Mengambil data riwayat jabatan berdasarkan Id Jabatan.            | `$idJabatan` (string): Id Jabatan                                 | Array data riwayat jabatan.
+| `$siasnClient->jabatan()->create($data)->save()`                | Menambahkan data jabatan.            | `$data` (Array): Data Jabatan                                 | String Id riwayat jabatan.
+| `$siasnClient->jabatan()->createUnorJabatan($data)->save()`                | Menambahkan data unor jabatan.            | `$data` (Array): Data Jabatan                                 | String Id riwayat jabatan.
+| `$siasnClient->jabatan()->remove($idRiwayatJabatan)`                | Menghapus riwayat jabatan.            | `$idRiwayatJabatan` (String): ID Riwayat Jabatan                                 | Boolean true|false.
+
+#### Metode Tambahan
+
+**`->includeDokumen($file)`**:  Menambahkan dokumen/file saat menambahkan data jabatan `$file` bisa menggunakan url/binary file.
 
 #### Contoh Penggunaan Api Jabatan
 
@@ -301,6 +308,13 @@ Mendapatkan data jabatan PNS:
 
 ```php
 $siasnClient->jabatan()->pns($nipAsn);
+
+#Menambahakan data jabatan beserta dokumennya
+$dokumen = "http://url/to/pdf"; #Bisa mengunakan url/binary file
+$riwayatJabatanId = $siasn->jabatan()
+    ->create($data)
+    ->includeDokumen($dokumen) 
+    ->save();
 ```
 
 ### Dokumen
