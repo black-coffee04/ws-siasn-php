@@ -3,9 +3,15 @@
 namespace SiASN\Sdk\Services;
 
 use SiASN\Sdk\Config\Config;
+use SiASN\Sdk\Exceptions\SiasnDataException;
 use SiASN\Sdk\Interfaces\ServiceInterface;
 use SiASN\Sdk\Resources\HttpClient;
 
+/**
+ * Class JabatanService
+ *
+ * Layanan untuk mengelola data jabatan PNS.
+ */
 class JabatanService implements ServiceInterface
 {
     /**
@@ -19,6 +25,26 @@ class JabatanService implements ServiceInterface
     private $config;
 
     /**
+     * @var array|null Data yang akan dikirimkan dalam permintaan.
+     */
+    private $data;
+
+    /**
+     * @var mixed|null Dokumen yang akan disertakan dalam permintaan.
+     */
+    private $dokumen = null;
+
+    /**
+     * @var string ID referensi dokumen jabatan.
+     */
+    private $idRefDokumenJabatan = '872';
+
+    /**
+     * @var string Endpoint default untuk permintaan.
+     */
+    private $endPoint = 'jabatan/save';
+
+    /**
      * Constructor untuk JabatanService.
      *
      * @param AuthenticationService $authentication Instance AuthenticationService untuk otentikasi.
@@ -27,7 +53,7 @@ class JabatanService implements ServiceInterface
     public function __construct(AuthenticationService $authentication, Config $config)
     {
         $this->authentication = $authentication;
-        $this->config         = $config;
+        $this->config = $config;
     }
 
     /**
@@ -53,25 +79,116 @@ class JabatanService implements ServiceInterface
     }
 
     /**
+     * Membuat Unor Jabatan baru.
+     *
+     * @param array $data Data Unor Jabatan.
+     * @return $this
+     */
+    public function createUnorJabatan(array $data)
+    {
+        $this->data = $data;
+        $this->endPoint = 'jabatan/unorjabatan/save';
+        return $this;
+    }
+
+    /**
+     * Menyertakan dokumen dalam pembuatan jabatan.
+     *
+     * @param mixed $file File dokumen yang akan diunggah.
+     * @return $this
+     */
+    public function includeDokumen($file)
+    {
+        $dokumenService = new DokumenService($this->authentication, $this->config);
+        $this->dokumen  = $dokumenService->upload($this->idRefDokumenJabatan, $file);
+        return $this;
+    }
+
+    /**
+     * Membuat jabatan baru.
+     *
+     * @param array $data Data jabatan.
+     * @return $this
+     */
+    public function create(array $data)
+    {
+        $this->data = $data;
+        $this->endPoint = 'jabatan/save';
+        return $this;
+    }
+
+    /**
+     * Menyimpan data jabatan ke sistem.
+     *
+     * @return mixed ID Riwayat Jabatan atau pesan error.
+     */
+    public function save()
+    {
+        if ($this->dokumen !== null && is_array($this->dokumen)) {
+            $this->data = array_merge($this->data, ['path' => [$this->dokumen]]);
+        }
+
+        $httpClient = new HttpClient($this->config->getApiBaseUrl());
+        $response   = $httpClient->post("/apisiasn/1.0/{$this->endPoint}", [
+            'json'    => $this->data,
+            'headers' => $this->getHeaders()
+        ]);
+
+        return $response['mapData']['rwJabatanId'] ?? $response['message'];
+    }
+
+    /**
+     * Menghapus riwayat jabatan berdasarkan ID.
+     *
+     * @param string $riwayatJabatanId ID Riwayat Jabatan.
+     * @return bool Status penghapusan.
+     * @throws SiasnDataException Jika riwayat jabatan tidak ditemukan.
+     */
+    public function remove(string $riwayatJabatanId): bool
+    {
+        $riwayatJabatan = $this->riwayat($riwayatJabatanId);
+        if (empty($riwayatJabatan)) {
+            throw new SiasnDataException('Riwayat Jabatan tidak ditemukan.');
+        }
+
+        $httpClient = new HttpClient($this->config->getApiBaseUrl());
+        $response   = $httpClient->delete("/apisiasn/1.0/jabatan/delete/{$riwayatJabatanId}", [
+            'headers' => $this->getHeaders()
+        ]);
+
+        return $response['success'] ?? false;
+    }
+
+    /**
      * Mengirim permintaan HTTP ke endpoint API.
      *
      * @param string $endpoint Endpoint API yang dituju.
      * @param string $args Argumen yang diteruskan ke endpoint.
      * @return array Data respon dari API.
-     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
+     * @throws SiasnDataException Jika terjadi kesalahan saat meminta data.
      */
     protected function request(string $endpoint, string $args): array
     {
         $httpClient = new HttpClient($this->config->getApiBaseUrl());
         $response   = $httpClient->get("/apisiasn/1.0/{$endpoint}/{$args}", [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->getWsoAccessToken(),
-                'Auth'          => 'bearer ' . $this->getSsoAccessToken(),
-                'Accept'        => 'application/json'
-            ]
+            'headers' => $this->getHeaders()
         ]);
 
         return $response['data'] ?? [];
+    }
+
+    /**
+     * Mendapatkan header untuk permintaan HTTP.
+     *
+     * @return array Header untuk permintaan HTTP.
+     */
+    private function getHeaders(): array
+    {
+        return [
+            'Authorization' => 'Bearer ' . $this->getWsoAccessToken(),
+            'Auth'          => 'bearer ' . $this->getSsoAccessToken(),
+            'Accept'        => 'application/json'
+        ];
     }
 
     /**

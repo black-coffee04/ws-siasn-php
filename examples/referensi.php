@@ -19,15 +19,13 @@ $siasn = new SiasnClient($config);
  * Contoh Pengambilan Access Token WSO
  */
 
-$referensi        = $siasn->referensi();
-$searchTerm       = 'layanan operasional';
-$limit            = 10;
+$referensi  = $siasn->referensi();
+$attributes = 'NamaUnor';
+$keyword    = 'puskesmas';
+$limit      = 10;
 
-$agama = $siasn
+$unor = $siasn
     ->referensi()
-    ->agama(true)
-    ->like('is')
-    ->search('nama')
-    ->get();
+    ->subJabatan(true)->get();
 
-var_dump($agama);
+var_dump($unor);

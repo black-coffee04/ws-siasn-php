@@ -3,6 +3,7 @@
 namespace SiASN\Sdk\Services;
 
 use SiASN\Sdk\Config\Config;
+use SiASN\Sdk\Exceptions\SiasnDataException;
 use SiASN\Sdk\Exceptions\SiasnServiceException;
 use SiASN\Sdk\Interfaces\ServiceInterface;
 use SiASN\Sdk\Resources\HttpClient;
@@ -214,6 +215,8 @@ class DokumenService implements ServiceInterface
      */
     public function upload(string $idRefDokumen, $file)
     {
+        $fileStream = $this->getFileStream($file);
+
         $response = $this->httpClient->post('/apisiasn/1.0/upload-dok', [
             'multipart' => [
                 [
@@ -230,6 +233,51 @@ class DokumenService implements ServiceInterface
         ]);
         
         return $response['data'] ?? [];
+    }
+
+    /**
+     * Mendapatkan file stream dari path atau URL.
+     *
+     * @param mixed $file Path ke file atau URL dari dokumen.
+     * @return resource File stream.
+     * @throws SiasnDataException Jika file tidak ada atau tidak valid.
+     */
+    private function getFileStream($file)
+    {
+        if (empty($file)) {
+            throw new SiasnDataException('File tidak boleh kosong.');
+        }
+
+        if (filter_var($file, FILTER_VALIDATE_URL)) {
+            if (!$this->isUrlAccessible($file)) {
+                throw new SiasnDataException('URL tidak dapat diakses.');
+            }
+            $fileStream = fopen($file, 'r');
+            if (!$fileStream) {
+                throw new SiasnDataException('Gagal membuka URL.');
+            }
+        } elseif (file_exists($file)) {
+            $fileStream = fopen($file, 'r');
+            if (!$fileStream) {
+                throw new SiasnDataException('Gagal membuka file.');
+            }
+        } else {
+            throw new SiasnDataException('File tidak ditemukan.');
+        }
+
+        return $fileStream;
+    }
+
+    /**
+     * Memeriksa apakah URL dapat diakses.
+     *
+     * @param string $url URL yang akan diperiksa.
+     * @return bool True jika URL dapat diakses, false jika tidak.
+     */
+    private function isUrlAccessible(string $url): bool
+    {
+        $response = $this->httpClient->head($url);
+        return $response->getStatusCode() === 200;
     }
 
     /**

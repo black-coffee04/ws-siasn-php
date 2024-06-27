@@ -154,6 +154,23 @@ class HttpClient implements ClientInterface
     }
 
     /**
+     * Melakukan permintaan HEAD ke server.
+     *
+     * @param string $endPoint End-point atau path yang dituju.
+     * @param array $options Opsi tambahan untuk dikirim dalam permintaan.
+     * @return ResponseInterface Respons HTTP dari permintaan.
+     * @throws SiasnHttpClientException Ketika terjadi kesalahan pada permintaan.
+     */
+    public function head(string $endPoint = '', array $options = []): ResponseInterface
+    {
+        try {
+            return $this->client->request('HEAD', $endPoint, $options);
+        } catch (RequestException | GuzzleException $e) {
+            $this->handleException($e);
+        }
+    }
+
+    /**
      * Mengelola respons HTTP yang diterima dari server.
      *
      * @param ResponseInterface $response Objek respons PSR-7 dari server.

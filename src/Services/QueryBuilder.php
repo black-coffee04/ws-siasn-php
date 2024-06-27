@@ -32,6 +32,11 @@ class QueryBuilder
     private $filteredData;
 
     /**
+     * @var int|null $limit Batas jumlah data yang akan ditampilkan.
+     */
+    private $limit;
+
+    /**
      * Constructor untuk QueryBuilder.
      *
      * @param array $data Data awal yang akan diolah.
@@ -63,7 +68,6 @@ class QueryBuilder
     public function like(string $keyword)
     {
         $this->keyword = $keyword;
-        $this->filterByAttribute();
         return $this;
     }
 
@@ -75,7 +79,7 @@ class QueryBuilder
      */
     public function limit(int $limit)
     {
-        $this->filteredData = array_slice($this->filteredData, 0, $limit);
+        $this->limit = $limit;
         return $this;
     }
 
@@ -86,6 +90,16 @@ class QueryBuilder
      */
     public function get(): array
     {
+        $this->filteredData = $this->data;
+
+        if ($this->attribute !== null && $this->keyword !== null) {
+            $this->filterByAttribute();
+        }
+
+        if ($this->limit !== null) {
+            $this->filteredData = array_slice($this->filteredData, 0, $this->limit);
+        }
+
         return $this->filteredData;
     }
 
@@ -97,7 +111,7 @@ class QueryBuilder
      */
     private function filterByAttribute()
     {
-        $this->filteredData = array_filter($this->data, function($item) {
+        $this->filteredData = array_filter($this->filteredData, function($item) {
             if (!isset($item[$this->attribute])) {
                 throw new SiasnServiceException("Atribut '{$this->attribute}' tidak ditemukan dalam data.");
             }
