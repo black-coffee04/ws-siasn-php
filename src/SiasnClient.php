@@ -6,6 +6,9 @@ use SiASN\Sdk\Config\Config;
 use SiASN\Sdk\Services\AuthenticationService;
 use SiASN\Sdk\Services\DokumenService;
 use SiASN\Sdk\Services\JabatanService;
+use SiASN\Sdk\Services\KenaikanPangkatService;
+use SiASN\Sdk\Services\PemberhentianService;
+use SiASN\Sdk\Services\PengadaanService;
 use SiASN\Sdk\Services\PnsService;
 use SiASN\Sdk\Services\ReferensiService;
 
@@ -85,5 +88,35 @@ class SiasnClient
     public function dokumen(): DokumenService
     {
         return new DokumenService($this->authentication, $this->config);
+    }
+
+    /**
+     * Mendapatkan instance dari PemberhentianService untuk mengakses data jabatan.
+     *
+     * @return PemberhentianService Instance dari PemberhentianService.
+     */
+    public function pemberhentian(): PemberhentianService
+    {
+        return new PemberhentianService($this->authentication, $this->config);
+    }
+
+    /**
+     * Mendapatkan instance dari PemberhentianService untuk mengakses data jabatan.
+     *
+     * @return PengadaanService Instance dari PemberhentianService.
+     */
+    public function pengadaan(): PengadaanService
+    {
+        return new PengadaanService($this->authentication, $this->config);
+    }
+
+    /**
+     * Mendapatkan instance dari PemberhentianService untuk mengakses data jabatan.
+     *
+     * @return KenaikanPangkatService Instance dari PemberhentianService.
+     */
+    public function kp(): KenaikanPangkatService
+    {
+        return new KenaikanPangkatService($this->authentication, $this->config);
     }
 }
