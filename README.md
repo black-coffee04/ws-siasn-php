@@ -27,15 +27,13 @@ Selamat datang di SiASN Web Service SDK! SDK ini dirancang untuk memudahkan peng
   - [Detail Konfigurasi](#detail-konfigurasi)
 - [Dokumentasi API](#dokumentasi-api)
   - [Authentication](#authentication)
-    - [Contoh Penggunaan Authentication](#contoh-penggunaan-authentication)
   - [Referensi](#referensi)
-    - [Contoh Penggunaan Referensi](#contoh-penggunaan-referensi)
   - [PNS](#pns)
-    - [Contoh Penggunaan Api PNS](#contoh-penggunaan-api-pns)
   - [Jabatan](#jabatan)
-    - [Contoh Penggunaan Api jabatan](#contoh-penggunaan-api-jabatan)
   - [Dokumen](#dokumen)
-    - [Contoh Penggunaan Api dokumen](#contoh-penggunaan-api-dokumen)
+  - [Pemberhentian](#pemberhentiaan)
+  - [Pengadaan](#pengadaan)
+  - [Kenaikan Pangkat](#kenaikan-pangkat)
 - [Menjalankan Tes](#menjalankan-tes)
 - [Lisensi](#lisensi)
 
@@ -320,6 +318,7 @@ $riwayatJabatanId = $siasnClient->jabatan()
 ### Dokumen
 
 Berikut adalah daftar lengkap metode yang tersedia pada resource dokumen:
+
 | Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
 |---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
 | `$siasnClient->dokumen()->download($args)->setName($fileName)->outputStream()` | Mengambil dokumen pada siasn dan langsung menampilkan tanpa disimpan pada local server. | `$args` >(json), (array), (object): respon upload file pada siasn >(string) $dokUri, `$fileName` (string): Nama file | Menghasilkan output stream foto profil ASN.                    |
@@ -343,6 +342,63 @@ echo $siasnClient->dokumen()->download($response)->setName($fileName)->saveTo($p
 
 #Tampilkan dokumen tanpa menyimpan
 $siasnClient->dokumen()->download($response)->setName($fileName)->outputStream();
+```
+
+### Pemberhentiaan
+
+Berikut adalah daftar lengkap metode yang tersedia pada resource pemberhentian:
+
+| Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
+|---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
+| `$siasnClient->pemberhentian()->get($tanggalAwal, $tanggalAkhir)`                   | Mengambil semua data pensiun instansi berdasarkan periode tanggal.               | `$tanggalAwal` (string): Tanggal Awal, `$tanggalAkhir` (string): Tanggal Akhir                                    | Array data pemberhentian Instansi.   
+
+#### Contoh Penggunaan Api Pemberhentian
+
+Anda dapat mengolala dokumen menggunakan SDK SiASN:
+
+```php
+$tanggalAwal   = '2022-01-01';
+$tanggalAkhir  = '2022-12-01';
+
+$daftarPemberhentian   = $siasnClient->pemberhentian()->get($tanggalAwal, $tanggalAkhir);
+```
+
+### Pengadaan
+
+Berikut adalah daftar lengkap metode yang tersedia pada resource pengadaan:
+
+| Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
+|---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
+| `$siasnClient->pengadaan()->get($tahun)`                   | Mengambil semua data pengadaan instansi berdasarkan tahun pengadaan.               | `$tahun` (string): Tanggal Awal                                    | Array data pengadaan Instansi.   
+| `$siasnClient->pengadaan()->dokumen()`                   | Mengambil semua data dokumen pengadaan instansi.               | -                                    | Array data dokumen pengadaan Instansi.   
+
+#### Contoh Penggunaan Api pengadaan
+
+Anda dapat mengolala dokumen menggunakan SDK SiASN:
+
+```php
+$tahunAnggaran = '2023';
+
+$daftarPengadaan  = $siasnClient->pengadaan()->get($tahunAnggaran);
+$dokumenPengadaan = $siasnClient->pengadaan()->dokumen();
+```
+
+### Kenaikan Pangkat
+
+Berikut adalah daftar lengkap metode yang tersedia pada resource kp:
+
+| Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
+|---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
+| `$siasnClient->kp()->get($tanggalAwal, $tanggalAkhir)`                   | Mengambil semua data kenaikan pangkat instansi berdasarkan periode kp.               | `$periode` (string): Periode KP                                    | Array data KP Instansi.   
+
+#### Contoh Penggunaan Api Kenaikan Pangkat
+
+Anda dapat mengolala dokumen menggunakan SDK SiASN:
+
+```php
+$periode = '2022-04-01';
+
+$daftarKp = $siasnClient->kp()->get($periode);
 ```
 
 ## Menjalankan Tes
