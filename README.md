@@ -34,6 +34,7 @@ Selamat datang di SiASN Web Service SDK! SDK ini dirancang untuk memudahkan peng
   - [Pemberhentian](#pemberhentiaan)
   - [Pengadaan](#pengadaan)
   - [Kenaikan Pangkat](#kenaikan-pangkat)
+  - [Riwayat](#riwayat)
 - [Menjalankan Tes](#menjalankan-tes)
 - [Lisensi](#lisensi)
 
@@ -354,8 +355,6 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource pemberhentian:
 
 #### Contoh Penggunaan Api Pemberhentian
 
-Anda dapat mengolala dokumen menggunakan SDK SiASN:
-
 ```php
 $tanggalAwal   = '2022-01-01';
 $tanggalAkhir  = '2022-12-01';
@@ -374,8 +373,6 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource pengadaan:
 
 #### Contoh Penggunaan Api pengadaan
 
-Anda dapat mengolala dokumen menggunakan SDK SiASN:
-
 ```php
 $tahunAnggaran = '2023';
 
@@ -393,12 +390,45 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource kp:
 
 #### Contoh Penggunaan Api Kenaikan Pangkat
 
-Anda dapat mengolala dokumen menggunakan SDK SiASN:
-
 ```php
 $periode = '2022-04-01';
 
 $daftarKp = $siasnClient->kp()->get($periode);
+```
+
+### Riwayat
+
+Berikut adalah daftar lengkap metode yang tersedia pada resource riwayat:
+
+| Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
+|---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
+| `$siasnClient->riwayat()->angkaKredit($nip)`                   | Mengambil data riwayat angka kredit dari ASN.               | `$nip` (string): NIP Asn                                    | Array data riwayat angka kredit.   
+| `$siasnClient->riwayat()->cltn($nip)`                   | Mengambil data riwayat cltn dari ASN.               | `$nip` (string): NIP Asn                                    | Array data riwayat cltn.   
+| `$siasnClient->riwayat()->diklat($nip)`                   | Mengambil data riwayat diklat dari ASN.               | `$nip` (string): NIP Asn                                    | Array data riwayat diklat.   
+| `$siasnClient->riwayat()->dp3($nip)`                   | Mengambil data riwayat dp3 dari ASN.               | `$nip` (string): NIP Asn                                    | Array data riwayat dp3.   
+| `$siasnClient->riwayat()->golongan($nip)`                   | Mengambil data riwayat golongan dari ASN.               | `$nip` (string): NIP Asn                                    | Array data riwayat golongan.  
+| `$siasnClient->riwayat()->hukdis($nip)`                   | Mengambil data riwayat hukdis dari ASN.               | `$nip` (string): NIP Asn                                    | Array data riwayat hukdis.  
+| `$siasnClient->riwayat()->jabatan($nip)`                   | Mengambil data riwayat jabatan dari ASN.               | `$nip` (string): NIP Asn                                    | Array data riwayat jabatan.  
+| `$siasnClient->riwayat()->kinerjaPeriodik($nip)`                   | Mengambil data riwayat kinerja periodik dari ASN.               | `$nip` (string): NIP Asn                                    | Array data riwayat kinerja periodik.  
+| `$siasnClient->riwayat()->kursus($nip)`                   | Mengambil data riwayat kursus dari ASN.               | `$nip` (string): NIP Asn                                    | Array data riwayat kursus.  
+| `$siasnClient->riwayat()->masaKerja($nip)`                   | Mengambil data riwayat masa kerja dari ASN.               | `$nip` (string): NIP Asn                                    | Array data riwayat masa kerja.  
+| `$siasnClient->riwayat()->pemberhentian($nip)`                   | Mengambil data riwayat pemberhentian dari ASN.               | `$nip` (string): NIP Asn                                    | Array data riwayat pemberhentian. 
+| `$siasnClient->riwayat()->pendidikan($nip)`                   | Mengambil data riwayat pendidikan dari ASN.               | `$nip` (string): NIP Asn                                    | Array data riwayat pendidikan.  
+| `$siasnClient->riwayat()->penghargaan($nip)`                   | Mengambil data riwayat penghargaan dari ASN.               | `$nip` (string): NIP Asn                                    | Array data riwayat penghargaan. 
+| `$siasnClient->riwayat()->pindahInstansi($nip)`                   | Mengambil data riwayat pindah instansi dari ASN.               | `$nip` (string): NIP Asn                                    | Array data riwayat pindah instansi. 
+| `$siasnClient->riwayat()->unor($nip)`                   | Mengambil data riwayat unor dari ASN.               | `$nip` (string): NIP Asn                                    | Array data riwayat unor. 
+| `$siasnClient->riwayat()->pwk($nip)`                   | Mengambil data riwayat pwk dari ASN.               | `$nip` (string): NIP Asn                                    | Array data riwayat pwk. 
+| `$siasnClient->riwayat()->skp($nip)`                   | Mengambil data riwayat skp dari ASN.               | `$nip` (string): NIP Asn                                    | Array data riwayat skp. 
+| `$siasnClient->riwayat()->skp22($nip)`                   | Mengambil data riwayat skp 2022 dari ASN.               | `$nip` (string): NIP Asn                                    | Array data riwayat skp 2022. 
+
+#### Contoh Penggunaan Api Riwayat
+
+Anda dapat mengolala dokumen menggunakan SDK SiASN:
+
+```php
+$nip  = 'xxxxxxxxxxxxxxxxxx';
+
+$riwayatKursus = $siasnClient->riwayat()->kursus($nip);
 ```
 
 ## Menjalankan Tes

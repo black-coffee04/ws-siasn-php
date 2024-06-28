@@ -11,6 +11,7 @@ use SiASN\Sdk\Services\PemberhentianService;
 use SiASN\Sdk\Services\PengadaanService;
 use SiASN\Sdk\Services\PnsService;
 use SiASN\Sdk\Services\ReferensiService;
+use SiASN\Sdk\Services\RiwayatService;
 
 /**
  * Class SiasnClient
@@ -91,7 +92,7 @@ class SiasnClient
     }
 
     /**
-     * Mendapatkan instance dari PemberhentianService untuk mengakses data jabatan.
+     * Mendapatkan instance dari PemberhentianService untuk mengakses data pemberhentian.
      *
      * @return PemberhentianService Instance dari PemberhentianService.
      */
@@ -101,7 +102,7 @@ class SiasnClient
     }
 
     /**
-     * Mendapatkan instance dari PemberhentianService untuk mengakses data jabatan.
+     * Mendapatkan instance dari PengadaanService untuk mengakses data pengadaan.
      *
      * @return PengadaanService Instance dari PemberhentianService.
      */
@@ -111,12 +112,22 @@ class SiasnClient
     }
 
     /**
-     * Mendapatkan instance dari PemberhentianService untuk mengakses data jabatan.
+     * Mendapatkan instance dari KenaikanPangkatService untuk mengakses data kenaikan pangkat.
      *
-     * @return KenaikanPangkatService Instance dari PemberhentianService.
+     * @return KenaikanPangkatService Instance dari KenaikanPangkatService.
      */
     public function kp(): KenaikanPangkatService
     {
         return new KenaikanPangkatService($this->authentication, $this->config);
+    }
+
+    /**
+     * Mendapatkan instance dari RiwayatService untuk mengakses data riwayat pns.
+     *
+     * @return RiwayatService Instance dari RiwayatService.
+     */
+    public function riwayat(): RiwayatService
+    {
+        return new RiwayatService($this->authentication, $this->config);
     }
 }
