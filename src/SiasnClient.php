@@ -3,6 +3,7 @@
 namespace SiASN\Sdk;
 
 use SiASN\Sdk\Config\Config;
+use SiASN\Sdk\Services\AngkaKreditService;
 use SiASN\Sdk\Services\AuthenticationService;
 use SiASN\Sdk\Services\DokumenService;
 use SiASN\Sdk\Services\JabatanService;
@@ -129,5 +130,15 @@ class SiasnClient
     public function riwayat(): RiwayatService
     {
         return new RiwayatService($this->authentication, $this->config);
+    }
+
+    /**
+     * Mendapatkan instance dari AngkaKreditService untuk mengelola angka kredit.
+     *
+     * @return AngkaKreditService Instance dari AngkaKreditService.
+     */
+    public function angkaKredit(): AngkaKreditService
+    {
+        return new AngkaKreditService($this->authentication, $this->config);
     }
 }
