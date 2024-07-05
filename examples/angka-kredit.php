@@ -12,10 +12,8 @@ $config = [
     "password"       => getenv('PASSWORD')
 ];
 
-$nipAsn      = getenv('NIP');
 $siasnClient = new SiasnClient($config);
-
-$idRiwayatAngkaKredit = $siasnClient->angkaKredit()->create([
+$data = [
     "bulanMulaiPenailan"   => "string",
     "bulanSelesaiPenailan" => "string",
     "isAngkaKreditPertama" => "string",
@@ -30,7 +28,12 @@ $idRiwayatAngkaKredit = $siasnClient->angkaKredit()->create([
     "tahunMulaiPenailan"   => "string",
     "tahunSelesaiPenailan" => "string",
     "tanggalSk"            => "string",
-])->save();
+];
+
+$idRiwayatAngkaKredit = $siasnClient->angkaKredit()
+    ->create($data)
+    ->includeDokumen("http://url/to/dokumen.pdf")
+    ->save();
 
 $angkaKredit = $siasnClient->angkaKredit()->get($idRiwayatAngkaKredit);
 $angkaKredit = $siasnClient->angkaKredit()->remove($idRiwayatAngkaKredit);

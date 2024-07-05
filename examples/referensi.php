@@ -26,6 +26,6 @@ $limit      = 10;
 
 $unor = $siasn
     ->referensi()
-    ->subJabatan(true)->get();
+    ->dokumen(true)->get();
 
 var_dump($unor);

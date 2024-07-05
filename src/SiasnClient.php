@@ -5,6 +5,7 @@ namespace SiASN\Sdk;
 use SiASN\Sdk\Config\Config;
 use SiASN\Sdk\Services\AngkaKreditService;
 use SiASN\Sdk\Services\AuthenticationService;
+use SiASN\Sdk\Services\CpnsService;
 use SiASN\Sdk\Services\DokumenService;
 use SiASN\Sdk\Services\JabatanService;
 use SiASN\Sdk\Services\KenaikanPangkatService;
@@ -15,8 +16,6 @@ use SiASN\Sdk\Services\ReferensiService;
 use SiASN\Sdk\Services\RiwayatService;
 
 /**
- * Class SiasnClient
- *
  * Kelas utama untuk berinteraksi dengan SDK SiASN.
  */
 class SiasnClient
@@ -32,13 +31,13 @@ class SiasnClient
     private $authentication;
 
     /**
-     * SiasnClient constructor.
+     * Constructor untuk SiasnClient.
      *
      * @param array $config Array konfigurasi untuk menginisialisasi SDK.
      */
     public function __construct(array $config = [])
     {
-        $this->config         = new Config($config);
+        $this->config = new Config($config);
         $this->authentication = new AuthenticationService($this->config);
     }
 
@@ -63,7 +62,7 @@ class SiasnClient
     }
 
     /**
-     * Mendapatkan instance dari PnsService untuk mengakses data pns.
+     * Mendapatkan instance dari PnsService untuk mengakses data PNS.
      *
      * @return PnsService Instance dari PnsService.
      */
@@ -83,7 +82,7 @@ class SiasnClient
     }
 
     /**
-     * Mendapatkan instance dari DokumenService untuk mengakses data jabatan.
+     * Mendapatkan instance dari DokumenService untuk mengelola dokumen.
      *
      * @return DokumenService Instance dari DokumenService.
      */
@@ -105,7 +104,7 @@ class SiasnClient
     /**
      * Mendapatkan instance dari PengadaanService untuk mengakses data pengadaan.
      *
-     * @return PengadaanService Instance dari PemberhentianService.
+     * @return PengadaanService Instance dari PengadaanService.
      */
     public function pengadaan(): PengadaanService
     {
@@ -123,7 +122,7 @@ class SiasnClient
     }
 
     /**
-     * Mendapatkan instance dari RiwayatService untuk mengakses data riwayat pns.
+     * Mendapatkan instance dari RiwayatService untuk mengakses data riwayat PNS.
      *
      * @return RiwayatService Instance dari RiwayatService.
      */
@@ -140,5 +139,15 @@ class SiasnClient
     public function angkaKredit(): AngkaKreditService
     {
         return new AngkaKreditService($this->authentication, $this->config);
+    }
+
+    /**
+     * Mendapatkan instance dari CpnsService untuk mengelola data CPNS.
+     *
+     * @return CpnsService Instance dari CpnsService.
+     */
+    public function cpns(): CpnsService
+    {
+        return new CpnsService($this->authentication, $this->config);
     }
 }
