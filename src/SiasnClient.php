@@ -11,6 +11,7 @@ use SiASN\Sdk\Services\DokumenService;
 use SiASN\Sdk\Services\HukdisService;
 use SiASN\Sdk\Services\JabatanService;
 use SiASN\Sdk\Services\KenaikanPangkatService;
+use SiASN\Sdk\Services\KinerjaPeriodikService;
 use SiASN\Sdk\Services\PemberhentianService;
 use SiASN\Sdk\Services\PengadaanService;
 use SiASN\Sdk\Services\PnsService;
@@ -171,5 +172,15 @@ class SiasnClient
     public function hukdis(): HukdisService
     {
         return new HukdisService($this->authentication, $this->config);
+    }
+
+    /**
+     * Mendapatkan instance dari KinerjaPeriodikService untuk mengelola data kinerja periodik.
+     *
+     * @return KinerjaPeriodikService Instance dari KinerjaPeriodikService.
+     */
+    public function kinerjaPeriodik(): KinerjaPeriodikService
+    {
+        return new KinerjaPeriodikService($this->authentication, $this->config);
     }
 }
