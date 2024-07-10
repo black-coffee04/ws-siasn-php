@@ -39,6 +39,9 @@ Selamat datang di SiASN Web Service SDK! SDK ini dirancang untuk memudahkan peng
   - [CPNS](#cpns)
   - [Diklat](#diklat)
   - [Hukuman Disiplin](#hukuman-disiplin)
+  - [Kinerja Periodik](#kinerja-periodik)
+  - [Kursus](#kursus)
+  - [SKP](#skp)
 - [Menjalankan Tes](#menjalankan-tes)
 - [Lisensi](#lisensi)
 
@@ -496,6 +499,28 @@ $idRiwayatHukdis = $siasnClient->hukdis()
     ->save();
 
 print_r($siasnClient->hukdis()->get($idRiwayatHukdis));
+```
+## Kinerja Periodik
+
+Berikut adalah daftar lengkap metode yang tersedia pada resource kinerja periodik:
+
+| Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
+|---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
+| `$siasnClient->kinerjaPeriodik()->create($data)->save()`                   | Membuat data riwayat kinerja periodik tanpa dokumen. | `$data` (array): data kinerja periodik                                    | String id riwayat kinerja periodik.  
+| `$siasnClient->kinerjaPeriodik()->create($data)->includeDokumen($file)->save()`                   | Membuat data riwayat kinerja periodik dengan dokumen. | `$data` (array): data kinerja periodik, `$file` (string) path file atau url dokumen | String id riwayat kinerja periodik.
+| `$siasnClient->kinerjaPeriodik()->remove($idRiwayatKinerjaPeriodik)` | Menghapus data riwayat kinerja periodik. | `$idRiwayatKinerjaPeriodik` (string) Id riwayat kinerja periodik | Boolean true|false.  
+
+#### Contoh Penggunaan Api Kinerja Periodik
+
+```php
+$idRiwayatKinerjaPeriodik = $siasnClient->kinerjaPeriodik()
+    ->create($data)
+    ->includeDokumen($file)
+    ->save();
+
+if ($siasnClient->kinerjaPeriodik()->remove($idRiwayatKinerjaPeriodik)) {
+    echo "Sukses Menghapus data";
+}
 ```
 
 ## Menjalankan Tes
