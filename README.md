@@ -35,6 +35,10 @@ Selamat datang di SiASN Web Service SDK! SDK ini dirancang untuk memudahkan peng
   - [Pengadaan](#pengadaan)
   - [Kenaikan Pangkat](#kenaikan-pangkat)
   - [Riwayat](#riwayat)
+  - [Angka Kredit](#angka-kredit)
+  - [CPNS](#cpns)
+  - [Diklat](#diklat)
+  - [Hukuman Disiplin](#hukuman-disiplin)
 - [Menjalankan Tes](#menjalankan-tes)
 - [Lisensi](#lisensi)
 
@@ -143,8 +147,6 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource Authentication:
 
 #### Contoh Penggunaan Authentication
 
-Berikut adalah beberapa contoh penggunaan dasar SDK SiASN untuk berbagai operasi seperti pengambilan Access Token dan akses ke data referensi:
-
 Mendapatkan Access Token WSO:
 
 ```php
@@ -207,8 +209,6 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource Referensi:
 | `$siasnClient->referensi()->taspen()`        | Mengambil data referensi taspen.                             | `Array` data referensi taspen.                             |
 
 #### Contoh Penggunaan Referensi
-
-Anda dapat mengakses data referensi sebagai berikut menggunakan SDK SiASN:
 
 ```php
 #Buat ke true apa bila ingin menyimpan dalam cache, cache akan expired dalam 1 jam
@@ -275,8 +275,6 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource PNS:
 
 #### Contoh Penggunaan Api PNS
 
-Anda dapat mengakses data PNS sebagai berikut menggunakan SDK SiASN:
-
 ```php
 $nipAsn = 'xxxxxxxxxxxxxxxxxxxxx';
 
@@ -300,8 +298,6 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource Jabatan:
 **`->includeDokumen($file)`**:  Menambahkan dokumen/file saat menambahkan data jabatan `$file` bisa menggunakan url/binary file.
 
 #### Contoh Penggunaan Api Jabatan
-
-Anda dapat mengakses data Jabatan sebagai berikut menggunakan SDK SiASN:
 
 Mendapatkan data jabatan PNS:
 
@@ -328,8 +324,6 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource dokumen:
 | `$siasnClient->dokumen()->uploadRiwayat($idRiwayat, $idRefDokumen, $file)`                 | Mengunggah riwayat dokumen ke SiASN dari file lokal.                                               | `(string) $idRiwayat`, `(string) $idRefDokumen`, `(string) $file`: Path file lokal atau URL             | Data dari respons upload riwayat dokumen ke SiASN. |
 
 #### Contoh Penggunaan Api Dokumen
-
-Anda dapat mengolala dokumen menggunakan SDK SiASN:
 
 ```php
 $idRefDokumen = 'string';
@@ -423,12 +417,85 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource riwayat:
 
 #### Contoh Penggunaan Api Riwayat
 
-Anda dapat mengolala dokumen menggunakan SDK SiASN:
-
 ```php
 $nip  = 'xxxxxxxxxxxxxxxxxx';
 
 $riwayatKursus = $siasnClient->riwayat()->kursus($nip);
+```
+
+## Angka Kredit
+
+Berikut adalah daftar lengkap metode yang tersedia pada resource angka kredit:
+
+| Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
+|---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
+| `$siasnClient->angkaKredit()->get($idRiwayatAngkaKredit)`                   | Mengambil data riwayat angka kredit berdasarkan id riwayat.               | `$idRiwayatAngkaKredit` (string): Id riwayat angka kredit                                    | Array data riwayat angka kredit.   
+| `$siasnClient->angkaKredit()->create($data)->save()`                   | Membuat data riwayat angka kredit tanpa dokumen. | `$data` (array): data angka kredit                                    | String id riwayat angka kredit.  
+| `$siasnClient->angkaKredit()->create($data)->includeDokumen($file)->save()`                   | Membuat data riwayat angka kredit dengan dokumen. | `$data` (array): data angka kredit, `$file` (string) path file atau url dokumen | String id riwayat angka kredit.  
+| `$siasnClient->angkaKredit()->remove($idRiwayatAngkaKredit)` | Menghapus data riwayat angka kredit. | `$idRiwayatAngkaKredit` (string) Id riwayat angka kredit | Boolean true|false.  
+
+#### Contoh Penggunaan Api Angka Kredit
+
+```php
+$idRiwayatAngkaKredit  = 'xxxxxxxxxxxxxxxxxx';
+
+$riwayatAngkaKredit =$siasnClient->angkaKredit()->get($idRiwayatAngkaKredit);
+```
+
+## CPNS
+
+Berikut adalah daftar lengkap metode yang tersedia pada resource cpns:
+
+| Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
+|---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
+| `$siasnClient->cpns()->create($data)->includeDokumen($file)->save()`                   | Menambahkan data cpns dengan dokumen.| `$data` (array): Data CPNS, `$file` (string) Dokumen SK CPNS file/URL | Array data.  
+| `$siasnClient->cpns()->create($data)->save()`                   | Menambahkan data cpns tanpa dokumen.| `$data` (array): Data CPNS | Array data. 
+
+#### Contoh Penggunaan Api CPNS
+
+```php
+$siasnClient->cpns()
+    ->create($data)
+    ->includeDokumen("path/to/dokumen.pdf") #URL FILE atau Path to dokumen
+    ->save()
+```
+
+## Diklat
+
+Berikut adalah daftar lengkap metode yang tersedia pada resource diklat:
+
+| Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
+|---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
+| `$siasnClient->diklat()->get($idRiwayatDiklat)`                   | Mengambil data riwayat diklat berdasarkan id riwayat.               | `$idRiwayatDiklat` (string): Id riwayat diklat                                    | Array data riwayat diklat.   
+| `$siasnClient->diklat()->create($data)->save()`                   | Membuat data riwayat diklat tanpa dokumen. | `$data` (array): data diklat                                    | String id riwayat diklat.  
+| `$siasnClient->diklat()->create($data)->includeDokumen($file)->save()`                   | Membuat data riwayat diklat dengan dokumen. | `$data` (array): data diklat, `$file` (string) path file atau url dokumen | String id riwayat diklat.  
+| `$siasnClient->diklat()->remove($idRiwayatDiklat)` | Menghapus data riwayat diklat. | `$idRiwayatDiklat` (string) Id riwayat diklat | Boolean true|false.  
+
+#### Contoh Penggunaan Api Diklat
+
+```php
+$riwayatDiklat = $siasnClient->diklat()->get($idRiwayatDiklat);
+```
+
+## Hukuman Disiplin
+
+Berikut adalah daftar lengkap metode yang tersedia pada resource hukuman disiplin:
+
+| Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
+|---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
+| `$siasnClient->hukdis()->get($idRiwayatHukdis)`                   | Mengambil data riwayat hukdis berdasarkan id riwayat.               | `$idRiwayatHukdis` (string): Id riwayat hukdis                                    | Array data riwayat hukdis.   
+| `$siasnClient->hukdis()->create($data)->save()`                   | Membuat data riwayat hukdis tanpa dokumen. | `$data` (array): data hukdis                                    | String id riwayat hukdis.  
+| `$siasnClient->hukdis()->create($data)->includeDokumen($file)->save()`                   | Membuat data riwayat hukdis dengan dokumen. | `$data` (array): data hukdis, `$file` (string) path file atau url dokumen | String id riwayat hukdis.
+
+#### Contoh Penggunaan Api Hukdis
+
+```php
+$idRiwayatHukdis = $siasnClient->hukdis()
+    ->create($data)
+    ->includeDokumen("path/to/dokumen.pdf") //Hapus metod ini apabila tidak menggunakan dokumen
+    ->save();
+
+print_r($siasnClient->hukdis()->get($idRiwayatHukdis));
 ```
 
 ## Menjalankan Tes

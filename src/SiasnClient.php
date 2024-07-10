@@ -8,6 +8,7 @@ use SiASN\Sdk\Services\AuthenticationService;
 use SiASN\Sdk\Services\CpnsService;
 use SiASN\Sdk\Services\DiklatService;
 use SiASN\Sdk\Services\DokumenService;
+use SiASN\Sdk\Services\HukdisService;
 use SiASN\Sdk\Services\JabatanService;
 use SiASN\Sdk\Services\KenaikanPangkatService;
 use SiASN\Sdk\Services\PemberhentianService;
@@ -152,8 +153,23 @@ class SiasnClient
         return new CpnsService($this->authentication, $this->config);
     }
 
+    /**
+     * Mendapatkan instance dari DiklatService untuk mengelola data diklat.
+     *
+     * @return DiklatService Instance dari DiklatService.
+     */
     public function diklat(): DiklatService
     {
         return new DiklatService($this->authentication, $this->config);
+    }
+
+    /**
+     * Mendapatkan instance dari HukdisService untuk mengelola data hukuman disiplin.
+     *
+     * @return HukdisService Instance dari HukdisService.
+     */
+    public function hukdis(): HukdisService
+    {
+        return new HukdisService($this->authentication, $this->config);
     }
 }
