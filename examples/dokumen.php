@@ -15,12 +15,12 @@ $config = [
 $siasn = new SiasnClient($config);
 
 $idRefDokumen = '872';
-$dokumen = 'path\to\esample.pdf';
+$dokumen  = 'https://pdfobject.com/pdf/sample.pdf';
 $response = $siasn->dokumen()->upload($idRefDokumen, $dokumen);
 
 //Save ke file/local server
 $path = __DIR__ . DIRECTORY_SEPARATOR;
-echo $siasn->dokumen()->download($response)->setName('jabatan')->saveTo($path);
+// echo $siasn->dokumen()->download($response)->setName('jabatan')->saveTo($path);
 
 //Tampilkan dokumen tanpa menyimpan
 $siasn->dokumen()->download($response)->setName('jabatan')->outputStream();

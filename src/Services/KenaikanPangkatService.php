@@ -3,6 +3,7 @@
 namespace SiASN\Sdk\Services;
 
 use SiASN\Sdk\Config\Config;
+use SiASN\Sdk\Exceptions\SiasnDataException;
 use SiASN\Sdk\Interfaces\ServiceInterface;
 use SiASN\Sdk\Resources\HttpClient;
 
@@ -38,12 +39,111 @@ class KenaikanPangkatService implements ServiceInterface
      */
     public function get(string $periode): array
     {
-        $endpoint = '/apisiasn/1.0/pns/list-kp-instansi';
-        $query = [
-            'periode' => date('Y-m-d', strtotime($periode))
+        return $this->request('/apisiasn/1.0/pns/list-kp-instansi', ['periode' => date('Y-m-d', strtotime($periode))]);
+    }
+
+    /**
+     * Mengunggah dokumen SK kenaikan pangkat.
+     *
+     * @param string $idUsulan ID usulan kenaikan pangkat.
+     * @param string $nomorSk Nomor SK.
+     * @param string $tanggalSk Tanggal SK.
+     * @param mixed $file Path atau URL file yang akan diunggah.
+     * @return array Response data dari API.
+     * @throws SiasnDataException Jika terjadi kesalahan saat mengunggah dokumen.
+     */
+    public function uploadDokumenSk(string $idUsulan, string $nomorSk, string $tanggalSk, $file): array
+    {
+        $fileStream = $this->getFileStream($file);
+        $httpClient = new HttpClient($this->config->getApiBaseUrl());
+
+        $multipart = [
+            ['name' => 'file', 'contents' => $fileStream, 'filename' => basename($file)],
+            ['name' => 'id_usulan', 'contents' => $idUsulan],
+            ['name' => 'no_sk', 'contents' => $nomorSk],
+            ['name' => 'tgl_sk', 'contents' => $tanggalSk]
         ];
 
-        return $this->request($endpoint, $query);
+        $response = $httpClient->post('/apisiasn/1.0/upload-dok-sk-kp', [
+            'multipart' => $multipart,
+            'headers'   => $this->getHeaders()
+        ]);
+
+        return $response['data'] ?? [];
+    }
+
+    /**
+     * Mendapatkan file stream dari path atau URL.
+     *
+     * @param mixed $file Path ke file atau URL dari dokumen.
+     * @return resource File stream.
+     * @throws SiasnDataException Jika file tidak ada atau tidak valid.
+     */
+    private function getFileStream($file)
+    {
+        if (empty($file)) {
+            throw new SiasnDataException('File tidak boleh kosong.');
+        }
+
+        if (filter_var($file, FILTER_VALIDATE_URL)) {
+            return $this->openUrlStream($file);
+        }
+
+        return $this->openFileStream($file);
+    }
+
+    /**
+     * Membuka stream dari URL.
+     *
+     * @param string $url URL dari file.
+     * @return resource File stream.
+     * @throws SiasnDataException Jika URL tidak dapat diakses atau stream gagal dibuka.
+     */
+    private function openUrlStream(string $url)
+    {
+        if (!$this->isUrlAccessible($url)) {
+            throw new SiasnDataException('URL tidak dapat diakses.');
+        }
+
+        $fileStream = fopen($url, 'r');
+        if (!$fileStream) {
+            throw new SiasnDataException('Gagal membuka URL.');
+        }
+
+        return $fileStream;
+    }
+
+    /**
+     * Membuka stream dari path file.
+     *
+     * @param string $filePath Path ke file.
+     * @return resource File stream.
+     * @throws SiasnDataException Jika file tidak ditemukan atau stream gagal dibuka.
+     */
+    private function openFileStream(string $filePath)
+    {
+        if (!file_exists($filePath)) {
+            throw new SiasnDataException('File tidak ditemukan.');
+        }
+
+        $fileStream = fopen($filePath, 'r');
+        if (!$fileStream) {
+            throw new SiasnDataException('Gagal membuka file.');
+        }
+
+        return $fileStream;
+    }
+
+    /**
+     * Memeriksa apakah URL dapat diakses.
+     *
+     * @param string $url URL yang akan diperiksa.
+     * @return bool True jika URL dapat diakses, false jika tidak.
+     */
+    private function isUrlAccessible(string $url): bool
+    {
+        $httpClient = new HttpClient($this->config->getApiBaseUrl());
+        return $httpClient->head($url)->getStatusCode() === 200;
     }
 
     /**
@@ -53,12 +153,12 @@ class KenaikanPangkatService implements ServiceInterface
      * @param array $query Argumen yang diteruskan ke endpoint.
      * @return array Data respon dari API.
      */
-    protected function request(string $endpoint, array $query): array
+    private function request(string $endpoint, array $query): array
     {
         $httpClient = new HttpClient($this->config->getApiBaseUrl());
         $response = $httpClient->get($endpoint, [
-            'query'   => $query,
-            'headers' => $this->getHeaders(),
+            'query' => $query,
+            'headers' => $this->getHeaders()
         ]);
 
         return $response['data'] ?? [];
@@ -75,7 +175,7 @@ class KenaikanPangkatService implements ServiceInterface
             'Authorization' => 'Bearer ' . $this->getWsoAccessToken(),
             'Auth'          => 'bearer ' . $this->getSsoAccessToken(),
             'Accept'        => 'application/json',
-            'Content-Type'  => 'application/json',
+            'Content-Type'  => 'application/json'
         ];
     }
 

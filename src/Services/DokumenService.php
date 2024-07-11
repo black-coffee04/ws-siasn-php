@@ -66,7 +66,7 @@ class DokumenService implements ServiceInterface
         $dokUri = $this->resolveDokUri($args);
 
         $this->response = $this->httpClient->get('/apisiasn/1.0/download-dok?filePath=' . $dokUri, [
-            'headers' => $this->getRequestHeaders(),
+            'headers' => $this->getHeaders(),
         ]);
 
         return $this;
@@ -77,7 +77,7 @@ class DokumenService implements ServiceInterface
      *
      * @return array Headers untuk permintaan HTTP.
      */
-    private function getRequestHeaders(): array
+    private function getHeaders(): array
     {
         return [
             'Authorization' => 'Bearer ' . $this->getWsoAccessToken(),
@@ -216,20 +216,21 @@ class DokumenService implements ServiceInterface
     public function upload(string $idRefDokumen, $file)
     {
         $fileStream = $this->getFileStream($file);
+        $multipart  = [
+            [
+                'name'     => 'file',
+                'contents' => $fileStream,
+                'filename' => basename($file)
+            ],
+            [
+                'name'     => 'id_ref_dokumen',
+                'contents' => $idRefDokumen
+            ]
+        ];
 
         $response = $this->httpClient->post('/apisiasn/1.0/upload-dok', [
-            'multipart' => [
-                [
-                    'name'     => 'file',
-                    'contents' => fopen($file, 'r'),
-                    'filename' => basename($file)
-                ],
-                [
-                    'name'     => 'id_ref_dokumen',
-                    'contents' => $idRefDokumen
-                ]
-            ],
-            'headers' => $this->getRequestHeaders()
+            'multipart' => $multipart,
+            'headers'   => $this->getHeaders()
         ]);
         
         return $response['data'] ?? [];
@@ -249,20 +250,49 @@ class DokumenService implements ServiceInterface
         }
 
         if (filter_var($file, FILTER_VALIDATE_URL)) {
-            if (!$this->isUrlAccessible($file)) {
-                throw new SiasnDataException('URL tidak dapat diakses.');
-            }
-            $fileStream = fopen($file, 'r');
-            if (!$fileStream) {
-                throw new SiasnDataException('Gagal membuka URL.');
-            }
-        } elseif (file_exists($file)) {
-            $fileStream = fopen($file, 'r');
-            if (!$fileStream) {
-                throw new SiasnDataException('Gagal membuka file.');
-            }
-        } else {
+            return $this->openUrlStream($file);
+        }
+
+        return $this->openFileStream($file);
+    }
+
+    /**
+     * Membuka stream dari URL.
+     *
+     * @param string $url URL dari file.
+     * @return resource File stream.
+     * @throws SiasnDataException Jika URL tidak dapat diakses atau stream gagal dibuka.
+     */
+    private function openUrlStream(string $url)
+    {
+        if (!$this->isUrlAccessible($url)) {
+            throw new SiasnDataException('URL tidak dapat diakses.');
+        }
+
+        $fileStream = fopen($url, 'r');
+        if (!$fileStream) {
+            throw new SiasnDataException('Gagal membuka URL.');
+        }
+
+        return $fileStream;
+    }
+
+    /**
+     * Membuka stream dari path file.
+     *
+     * @param string $filePath Path ke file.
+     * @return resource File stream.
+     * @throws SiasnDataException Jika file tidak ditemukan atau stream gagal dibuka.
+     */
+    private function openFileStream(string $filePath)
+    {
+        if (!file_exists($filePath)) {
             throw new SiasnDataException('File tidak ditemukan.');
+        }
+
+        $fileStream = fopen($filePath, 'r');
+        if (!$fileStream) {
+            throw new SiasnDataException('Gagal membuka file.');
         }
 
         return $fileStream;
@@ -291,23 +321,27 @@ class DokumenService implements ServiceInterface
      */
     public function uploadRiwayat(string $idRiwayat, string $idRefDokumen, $file)
     {
-        $response = $this->httpClient->post('/apisiasn/1.0/upload-dok-rw', [
-            'multipart' => [
-                [
-                    'name'     => 'file',
-                    'contents' => fopen($file, 'r'),
-                    'filename' => basename($file)
-                ],
-                [
-                    'name'     => 'id_riwayat ',
-                    'contents' => $idRiwayat
-                ],
-                [
-                    'name'     => 'id_ref_dokumen',
-                    'contents' => $idRefDokumen
-                ]
+        $fileStream = $this->getFileStream($file);
+
+        $multipart = [
+            [
+                'name'     => 'file',
+                'contents' => $fileStream,
+                'filename' => basename($file)
             ],
-            'headers' => $this->getRequestHeaders()
+            [
+                'name'     => 'id_riwayat ',
+                'contents' => $idRiwayat
+            ],
+            [
+                'name'     => 'id_ref_dokumen',
+                'contents' => $idRefDokumen
+            ]
+        ];
+
+        $response = $this->httpClient->post('/apisiasn/1.0/upload-dok-rw', [
+            'multipart' => $multipart,
+            'headers'   => $this->getHeaders()
         ]);
         
         return $response['data'] ?? [];
