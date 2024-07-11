@@ -321,7 +321,7 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource dokumen:
 
 | Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
 |---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
-| `$siasnClient->dokumen()->download($args)->setName($fileName)->outputStream()` | Mengambil dokumen pada siasn dan langsung menampilkan tanpa disimpan pada local server. | `$args` >(json), (array), (object): respon upload file pada siasn >(string) $dokUri, `$fileName` (string): Nama file | Menghasilkan output stream foto profil ASN.                    |
+| `$siasnClient->dokumen()->download($args)->setName($fileName)->outputStream()` | Mengambil dokumen pada siasn dan langsung menampilkan tanpa disimpan pada local server. | `$args` >(json), (array), (object): respon upload file pada siasn >(string) $dokUri, `$fileName` (string): Nama file | Menghasilkan output stream dokumen.                    |
 | `$siasnClient->dokumen()->download($args)->setName($fileName)->saveTo($path)` | Menyimpan dokumen ke direktori yang ditentukan. | `$args` >(json), (array), (object): respon upload file pada siasn >(string) $dokUri, `$fileName` (string): Nama file, `$path ` (string): direktori | String $filename.                    |
 | `$siasnClient->dokumen()->upload($idRefDokumen, $file)`                                    | Mengunggah dokumen ke SiASN dari file lokal.                                                        | `(string) $idRefDokumen`, `(string) $file`: Path file lokal atau URL                                    | Data dari respons upload dokumen ke SiASN. |
 | `$siasnClient->dokumen()->uploadRiwayat($idRiwayat, $idRefDokumen, $file)`                 | Mengunggah riwayat dokumen ke SiASN dari file lokal.                                               | `(string) $idRiwayat`, `(string) $idRefDokumen`, `(string) $file`: Path file lokal atau URL             | Data dari respons upload riwayat dokumen ke SiASN. |
@@ -520,6 +520,34 @@ $idRiwayatKinerjaPeriodik = $siasnClient->kinerjaPeriodik()
 
 if ($siasnClient->kinerjaPeriodik()->remove($idRiwayatKinerjaPeriodik)) {
     echo "Sukses Menghapus data";
+}
+```
+
+## Kursus
+
+Berikut adalah daftar lengkap metode yang tersedia pada resource kursus:
+
+| Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
+|---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
+| `$siasnClient->kursus()->get($idRiwayatKursus)`                   | Mengambil data riwayat kursus berdasarkan id riwayat.               | `$idRiwayatKursus` (string): Id riwayat kursus                                    | Array data riwayat kursus.   
+| `$siasnClient->kursus()->create($data)->save()`                   | Membuat data riwayat kursus tanpa dokumen. | `$data` (array): data kursus                                    | String id riwayat kursus.  
+| `$siasnClient->kursus()->create($data)->includeDokumen($file)->save()`                   | Membuat data riwayat kursus dengan dokumen. | `$data` (array): data kursus, `$file` (string) path file atau url dokumen | String id riwayat kursus.  
+| `$siasnClient->kursus()->remove($idRiwayatKursus)` | Menghapus data riwayat kursus. | `$idRiwayatKursus` (string) Id riwayat kursus | Boolean true|false.  
+
+#### Contoh Penggunaan Api CPNS
+
+```php
+#minyam data kursus
+$idRiwayatKursus = $siasnClient->kursus()->create($data)->save();
+
+#mengambil data riwayat kursus
+$kursus = $siasnClient->kursus()->get($idRiwayatKursus);
+
+print_r($kursus);
+
+#Hapus data riwayat kursus
+if ($siasnClient->kursus()->remove($idRiwayatKursus)) {
+    echo "Sukses Hapus kursus";
 }
 ```
 

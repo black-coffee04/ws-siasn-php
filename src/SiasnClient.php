@@ -12,6 +12,7 @@ use SiASN\Sdk\Services\HukdisService;
 use SiASN\Sdk\Services\JabatanService;
 use SiASN\Sdk\Services\KenaikanPangkatService;
 use SiASN\Sdk\Services\KinerjaPeriodikService;
+use SiASN\Sdk\Services\KursusService;
 use SiASN\Sdk\Services\PemberhentianService;
 use SiASN\Sdk\Services\PengadaanService;
 use SiASN\Sdk\Services\PnsService;
@@ -182,5 +183,15 @@ class SiasnClient
     public function kinerjaPeriodik(): KinerjaPeriodikService
     {
         return new KinerjaPeriodikService($this->authentication, $this->config);
+    }
+
+    /**
+     * Mendapatkan instance dari KursusService untuk mengelola data kursus.
+     *
+     * @return KursusService Instance dari KursusService.
+     */
+    public function kursus(): KursusService
+    {
+        return new KursusService($this->authentication, $this->config);
     }
 }
