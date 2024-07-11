@@ -381,9 +381,13 @@ $dokumenPengadaan = $siasnClient->pengadaan()->dokumen();
 
 Berikut adalah daftar lengkap metode yang tersedia pada resource kp:
 
+## Daftar Metode SiASN Client
+
 | Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
 |---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
-| `$siasnClient->kp()->get($tanggalAwal, $tanggalAkhir)`                   | Mengambil semua data kenaikan pangkat instansi berdasarkan periode kp.               | `$periode` (string): Periode KP                                    | Array data KP Instansi.   
+| `$siasnClient->kp()->get($tanggalAwal, $tanggalAkhir)` | Mengambil semua data kenaikan pangkat instansi berdasarkan periode kp. | `$tanggalAwal` (string): Tanggal awal periode KP<br>`$tanggalAkhir` (string): Tanggal akhir periode KP | Array data kenaikan pangkat instansi sesuai periode KP. |
+| `$siasnClient->kp()->uploadDokumenSk($idUsulan, $nomorSk, $tanggalSk, $file)` | Mengunggah dokumen SK terkait usulan kenaikan pangkat instansi. | `$idUsulan` (string): ID usulan kenaikan pangkat<br>`$nomorSk` (string): Nomor SK<br>`$tanggalSk` (string): Tanggal SK<br>`$file` (mixed): Dokumen SK yang akan diunggah | Array data kenaikan pangkat instansi yang telah diperbarui dengan dokumen SK terlampir. |
+
 
 #### Contoh Penggunaan Api Kenaikan Pangkat
 
@@ -534,7 +538,7 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource kursus:
 | `$siasnClient->kursus()->create($data)->includeDokumen($file)->save()`                   | Membuat data riwayat kursus dengan dokumen. | `$data` (array): data kursus, `$file` (string) path file atau url dokumen | String id riwayat kursus.  
 | `$siasnClient->kursus()->remove($idRiwayatKursus)` | Menghapus data riwayat kursus. | `$idRiwayatKursus` (string) Id riwayat kursus | Boolean true|false.  
 
-#### Contoh Penggunaan Api CPNS
+#### Contoh Penggunaan Api Kursus
 
 ```php
 #minyam data kursus
@@ -549,6 +553,32 @@ print_r($kursus);
 if ($siasnClient->kursus()->remove($idRiwayatKursus)) {
     echo "Sukses Hapus kursus";
 }
+```
+
+## SKP
+
+Berikut adalah daftar lengkap metode yang tersedia pada resource skp:
+
+## Daftar Metode SiASN Client untuk SKP
+
+| Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
+|---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
+| `$skp = $siasnClient->skp()->get($tahun, $idRiwayatSkp);` | Mengambil data SKP berdasarkan tahun dan ID riwayat SKP. | `$tahun` (string): Tahun data SKP<br>`$idRiwayatSkp` (string): ID riwayat SKP | Array data SKP sesuai dengan tahun dan ID riwayat SKP. |
+| `$skp = $siasnClient->skp()->create($tahun, $data)->includeDokumen($file)->save();` | Membuat data SKP baru, menyertakan dokumen, dan menyimpannya. | `$tahun` (string): Tahun data SKP<br>`$data` (array): Data untuk dibuat<br>`$file` (mixed): Dokumen yang akan disertakan | Array data SKP yang disimpan setelah operasi berhasil. |
+
+#### Contoh Penggunaan Api SKP
+
+```php
+#minyam data kursus
+$response = $siasnClient->skp()
+    ->create($tahun, $data)
+    ->includeDokumen($file)
+    ->save();
+
+#mengambil data riwayat skp
+$skp = $siasnClient->skp()->get($tahun, $idRiwayatSkp);
+
+print_r($skp);
 ```
 
 ## Menjalankan Tes

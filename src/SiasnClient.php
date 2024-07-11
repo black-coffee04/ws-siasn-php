@@ -18,6 +18,7 @@ use SiASN\Sdk\Services\PengadaanService;
 use SiASN\Sdk\Services\PnsService;
 use SiASN\Sdk\Services\ReferensiService;
 use SiASN\Sdk\Services\RiwayatService;
+use SiASN\Sdk\Services\SkpService;
 
 /**
  * Kelas utama untuk berinteraksi dengan SDK SiASN.
@@ -193,5 +194,15 @@ class SiasnClient
     public function kursus(): KursusService
     {
         return new KursusService($this->authentication, $this->config);
+    }
+
+    /**
+     * Mendapatkan instance dari SkpService untuk mengelola data skp.
+     *
+     * @return SkpService Instance dari SkpService.
+     */
+    public function skp(): SkpService
+    {
+        return new SkpService($this->authentication, $this->config);
     }
 }
