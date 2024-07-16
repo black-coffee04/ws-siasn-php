@@ -42,7 +42,7 @@ class PemberhentianService implements ServiceInterface
         $tanggalAwalFormatted  = date('d-m-Y', strtotime($tanggalAwal));
         $tanggalAkhirFormatted = date('d-m-Y', strtotime($tanggalAkhir));
 
-        $endpoint = '/apisiasn/1.0/pemberhentian/list';
+        $endpoint = '/apisiasn/1.0/pns/list-pensiun-instansi';
         $args     = [
             'tglAwal'  => $tanggalAwalFormatted,
             'tglAkhir' => $tanggalAkhirFormatted,
