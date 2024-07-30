@@ -232,7 +232,7 @@ class DokumenService implements ServiceInterface
             'multipart' => $multipart,
             'headers'   => $this->getHeaders()
         ]);
-        
+
         return $response['data'] ?? [];
     }
 
@@ -330,7 +330,7 @@ class DokumenService implements ServiceInterface
                 'filename' => basename($file)
             ],
             [
-                'name'     => 'id_riwayat ',
+                'name'     => 'id_riwayat',
                 'contents' => $idRiwayat
             ],
             [
@@ -343,7 +343,7 @@ class DokumenService implements ServiceInterface
             'multipart' => $multipart,
             'headers'   => $this->getHeaders()
         ]);
-        
+
         return $response['data'] ?? [];
     }
 
