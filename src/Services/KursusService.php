@@ -36,7 +36,7 @@ class KursusService implements ServiceInterface
     /**
      * @var string ID referensi dokumen angka kredit.
      */
-    private $idRefDokumenKursus = '891';
+    private $idRefDokumenKursus = '881';
 
     /**
      * Constructor untuk KursusService.
