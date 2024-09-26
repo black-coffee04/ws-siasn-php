@@ -30,11 +30,13 @@ $data = [
     "tanggalSk"            => "string",
 ];
 
-$idRiwayatAngkaKredit = $siasnClient->angkaKredit()
+$response = $siasnClient->angkaKredit()
     ->create($data)
     ->includeDokumen("http://url/to/dokumen.pdf")
     ->save();
 
-$angkaKredit = $siasnClient->angkaKredit()->get($idRiwayatAngkaKredit);
-$angkaKredit = $siasnClient->angkaKredit()->remove($idRiwayatAngkaKredit);
+if (isset($response['success']) && $response['success']) {
+    $angkaKredit = $siasnClient->angkaKredit()->get($response['data']['id']);
+    $angkaKredit = $siasnClient->angkaKredit()->remove($response['data']['id']);
+}
 var_dump($angkaKredit);die();
