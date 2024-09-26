@@ -86,10 +86,9 @@ class DiklatService implements ServiceInterface
      * @param mixed $file Dokumen yang akan diunggah.
      * @return self
      */
-    public function includeDokumen($file): self
+    public function includeDokumen($file)
     {
-        $dokumenService = new DokumenService($this->authentication, $this->config);
-        $this->dokumen = $dokumenService->upload($this->idRefDokumenDiklat, $file);
+        $this->dokumen = $file;
         return $this;
     }
 
@@ -100,14 +99,19 @@ class DiklatService implements ServiceInterface
      */
     public function save(): string
     {
-        if ($this->dokumen !== null) {
-            $this->data['path'] = [$this->dokumen];
-        }
-
         $response = $this->httpClient->post(
             "/apisiasn/1.0/diklat/save", 
             ['json' => $this->data, 'headers' => $this->getHeaders()]
         );
+
+        if (!isset($response['mapData']['rwDiklatId'])) {
+            return $response['message'];
+        }
+
+        if ($this->dokumen !== null && is_string($this->dokumen)) {
+            $dokumenService = new DokumenService($this->authentication, $this->config);
+            $dokumenService->uploadRiwayat($response['mapData']['rwDiklatId'], $this->idRefDokumenDiklat, $this->dokumen);
+        }
 
         return $response['mapData']['rwDiklatId'] ?? $response['message'];
     }

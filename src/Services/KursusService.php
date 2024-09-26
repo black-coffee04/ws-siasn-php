@@ -86,8 +86,7 @@ class KursusService implements ServiceInterface
      */
     public function includeDokumen($file): self
     {
-        $dokumenService = new DokumenService($this->authentication, $this->config);
-        $this->dokumen  = $dokumenService->upload($this->idRefDokumenKursus, $file);
+        $this->dokumen = $file;
         return $this;
     }
 
@@ -98,15 +97,20 @@ class KursusService implements ServiceInterface
      */
     public function save(): string
     {
-        if ($this->dokumen !== null && is_array($this->dokumen)) {
-            $this->data['path'] = [$this->dokumen];
-        }
-
         $response = $this->httpClient->post("/apisiasn/1.0/kursus/save", [
             'json'    => $this->data,
             'headers' => $this->getHeaders()
         ]);
 
+        if (!isset($response['mapData']['rwKursusId'])) {
+            return $response['message'];
+        }
+
+        if ($this->dokumen !== null && is_string($this->dokumen)) {
+            $dokumenService = new DokumenService($this->authentication, $this->config);
+            $dokumenService->uploadRiwayat($response['mapData']['rwKursusId'], $this->idRefDokumenKursus, $this->dokumen);
+        }
+        
         return $response['mapData']['rwKursusId'] ?? $response['message'];
     }
 

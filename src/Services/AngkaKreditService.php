@@ -37,6 +37,7 @@ class AngkaKreditService implements ServiceInterface
      * @var string ID referensi dokumen angka kredit.
      */
     private $idRefDokumenAngkaKredit = '879';
+    
 
     /**
      * Constructor untuk AngkaKreditService.
@@ -85,10 +86,9 @@ class AngkaKreditService implements ServiceInterface
      * @param mixed $file File dokumen yang akan diunggah.
      * @return $this
      */
-    public function includeDokumen($file): self
+    public function includeDokumen($file)
     {
-        $dokumenService = new DokumenService($this->authentication, $this->config);
-        $this->dokumen  = $dokumenService->upload($this->idRefDokumenAngkaKredit, $file);
+        $this->dokumen  = $file;
         return $this;
     }
 
@@ -100,14 +100,19 @@ class AngkaKreditService implements ServiceInterface
      */
     public function save(): string
     {
-        if ($this->dokumen !== null && is_array($this->dokumen)) {
-            $this->data['path'] = [$this->dokumen];
-        }
-
         $response = $this->httpClient->post("/apisiasn/1.0/angkakredit/save", [
             'json'    => $this->data,
             'headers' => $this->getHeaders()
         ]);
+
+        if (!isset($response['mapData']['rwAngkaKreditId'])) {
+            return $response['message'];
+        }
+
+        if ($this->dokumen !== null && is_string($this->dokumen)) {
+            $dokumenService = new DokumenService($this->authentication, $this->config);
+            $dokumenService->uploadRiwayat($response['mapData']['rwAngkaKreditId'], $this->idRefDokumenAngkaKredit, $this->dokumen);
+        }
 
         return $response['mapData']['rwAngkaKreditId'] ?? $response['message'];
     }

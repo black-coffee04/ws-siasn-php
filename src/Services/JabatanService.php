@@ -99,8 +99,7 @@ class JabatanService implements ServiceInterface
      */
     public function includeDokumen($file)
     {
-        $dokumenService = new DokumenService($this->authentication, $this->config);
-        $this->dokumen  = $dokumenService->upload($this->idRefDokumenJabatan, $file);
+        $this->dokumen  = $file;
         return $this;
     }
 
@@ -124,15 +123,20 @@ class JabatanService implements ServiceInterface
      */
     public function save()
     {
-        if ($this->dokumen !== null && is_array($this->dokumen)) {
-            $this->data = array_merge($this->data, ['path' => [$this->dokumen]]);
-        }
-
         $httpClient = new HttpClient($this->config->getApiBaseUrl());
         $response   = $httpClient->post("/apisiasn/1.0/{$this->endPoint}", [
             'json'    => $this->data,
             'headers' => $this->getHeaders()
         ]);
+
+        if (!isset($response['mapData']['rwJabatanId'])) {
+            return $response['message'];
+        }
+
+        if ($this->dokumen !== null && is_string($this->dokumen)) {
+            $dokumenService = new DokumenService($this->authentication, $this->config);
+            $dokumenService->uploadRiwayat($response['mapData']['rwJabatanId'], $this->idRefDokumenJabatan, $this->dokumen);
+        }
 
         return $response['mapData']['rwJabatanId'] ?? $response['message'];
     }

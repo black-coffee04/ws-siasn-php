@@ -85,10 +85,9 @@ class HukdisService implements ServiceInterface
      * @param mixed $file Dokumen yang akan diunggah.
      * @return self
      */
-    public function includeDokumen($file): self
+    public function includeDokumen($file)
     {
-        $dokumenService = new DokumenService($this->authentication, $this->config);
-        $this->dokumen  = $dokumenService->upload($this->idRefDokumenHukdis, $file);
+        $this->dokumen = $file;
         return $this;
     }
 
@@ -99,14 +98,19 @@ class HukdisService implements ServiceInterface
      */
     public function save(): string
     {
-        if ($this->dokumen !== null) {
-            $this->data['path'] = [$this->dokumen];
-        }
-
         $response = $this->httpClient->post(
             "/apisiasn/1.0/hukdis/save", 
             ['json' => $this->data, 'headers' => $this->getHeaders()]
         );
+
+        if (!isset($response['mapData']['rwHukdisId'])) {
+            return $response['message'];
+        }
+
+        if ($this->dokumen !== null) {
+            $dokumenService = new DokumenService($this->authentication, $this->config);
+            $dokumenService->uploadRiwayat($response['mapData']['rwHukdisId'], $this->idRefDokumenHukdis, $this->dokumen);
+        }
 
         return $response['mapData']['rwHukdisId'] ?? $response['message'];
     }
