@@ -129,26 +129,50 @@ class JabatanService implements ServiceInterface
             'headers' => $this->getHeaders()
         ]);
 
-        if (!isset($response['mapData']['rwJabatanId'])) {
-            return $response['message'];
+        if ($this->dokumen !== null && isset($response['mapData']['rwAngkaKreditId'])) {
+           $this->uploadDokumen($response['mapData']['rwJabatanId']);
         }
 
-        if ($this->dokumen !== null && is_string($this->dokumen)) {
-            $dokumenService = new DokumenService($this->authentication, $this->config);
-            $dokumenService->uploadRiwayat($response['mapData']['rwJabatanId'], $this->idRefDokumenJabatan, $this->dokumen);
-        }
+        return $this->transformResponse($response);
+    }
 
-        return $response['mapData']['rwJabatanId'] ?? $response['message'];
+    /**
+     * Mengunggah dokumen terkait riwayat jabatan.
+     *
+     * @param string $riwayatId ID riwayat jabatan.
+     * @return void
+     */
+    private function uploadDokumen(string $riwayatId): void
+    {
+        $dokumenService = new DokumenService($this->authentication, $this->config);
+        $dokumenService->uploadRiwayat($riwayatId, $this->idRefDokumenJabatan, $this->dokumen);
+    }
+
+    /**
+     * Transformasi respons dari API dengan mengubah kunci `mapData` menjadi `data`.
+     *
+     * @param array $response Respons asli dari API.
+     * @return array Respons yang sudah ditransformasi.
+     */
+    private function transformResponse(array $response): array
+    {
+        $response['data'] = !empty($response['mapData']) && is_array($response['mapData'])
+            ? ['id' => $response['mapData']['rwJabatanId'] ?? null] 
+            : [];
+
+        unset($response['mapData']);
+
+        return $response;
     }
 
     /**
      * Menghapus riwayat jabatan berdasarkan ID.
      *
      * @param string $riwayatJabatanId ID Riwayat Jabatan.
-     * @return bool Status penghapusan.
+     * @return array response.
      * @throws SiasnDataException Jika riwayat jabatan tidak ditemukan.
      */
-    public function remove(string $riwayatJabatanId): bool
+    public function remove(string $riwayatJabatanId): array
     {
         $riwayatJabatan = $this->riwayat($riwayatJabatanId);
         if (empty($riwayatJabatan)) {
@@ -160,7 +184,7 @@ class JabatanService implements ServiceInterface
             'headers' => $this->getHeaders()
         ]);
 
-        return $response['success'] ?? false;
+        return $this->transformResponse($response);
     }
 
     /**
@@ -178,7 +202,7 @@ class JabatanService implements ServiceInterface
             'headers' => $this->getHeaders()
         ]);
 
-        return $response['data'] ?? [];
+        return $response;
     }
 
     /**

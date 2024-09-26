@@ -1,4 +1,5 @@
 <?php
+
 namespace SiASN\Sdk\Services;
 
 use SiASN\Sdk\Interfaces\ServiceInterface;
@@ -29,7 +30,7 @@ class AngkaKreditService implements ServiceInterface
     private $data = [];
 
     /**
-     * @var mixed Dokumen yang akan disertakan dalam permintaan.
+     * @var mixed|null Dokumen yang akan disertakan dalam permintaan.
      */
     private $dokumen = null;
 
@@ -37,7 +38,6 @@ class AngkaKreditService implements ServiceInterface
      * @var string ID referensi dokumen angka kredit.
      */
     private $idRefDokumenAngkaKredit = '879';
-    
 
     /**
      * Constructor untuk AngkaKreditService.
@@ -65,14 +65,14 @@ class AngkaKreditService implements ServiceInterface
             "headers" => $this->getHeaders()
         ]);
         
-        return isset($response['data']) && is_array($response['data']) ? $response['data'] : [];
+        return $response;
     }
 
     /**
      * Membuat permintaan angka kredit baru.
      *
      * @param array $data Data angka kredit.
-     * @return $this
+     * @return self
      */
     public function create(array $data): self
     {
@@ -84,11 +84,11 @@ class AngkaKreditService implements ServiceInterface
      * Menyertakan dokumen dalam permintaan.
      *
      * @param mixed $file File dokumen yang akan diunggah.
-     * @return $this
+     * @return self
      */
-    public function includeDokumen($file)
+    public function includeDokumen($file): self
     {
-        $this->dokumen  = $file;
+        $this->dokumen = $file;
         return $this;
     }
 
@@ -98,23 +98,47 @@ class AngkaKreditService implements ServiceInterface
      * @return string ID riwayat angka kredit atau pesan kesalahan.
      * @throws SiasnDataException Jika terjadi kesalahan saat menyimpan data.
      */
-    public function save(): string
+    public function save(): array
     {
         $response = $this->httpClient->post("/apisiasn/1.0/angkakredit/save", [
             'json'    => $this->data,
             'headers' => $this->getHeaders()
         ]);
 
-        if (!isset($response['mapData']['rwAngkaKreditId'])) {
-            return $response['message'];
+        if ($this->dokumen && isset($response['mapData']['rwAngkaKreditId'])) {
+            $this->uploadDokumen($response['mapData']['rwAngkaKreditId']);
         }
 
-        if ($this->dokumen !== null && is_string($this->dokumen)) {
-            $dokumenService = new DokumenService($this->authentication, $this->config);
-            $dokumenService->uploadRiwayat($response['mapData']['rwAngkaKreditId'], $this->idRefDokumenAngkaKredit, $this->dokumen);
-        }
+        return $this->transformResponse($response);
+    }
 
-        return $response['mapData']['rwAngkaKreditId'] ?? $response['message'];
+    /**
+     * Transformasi respons dari API dengan mengubah kunci `mapData` menjadi `data`.
+     *
+     * @param array $response Respons asli dari API.
+     * @return array Respons yang sudah ditransformasi.
+     */
+    private function transformResponse(array $response): array
+    {
+        $response['data'] = !empty($response['mapData']) && is_array($response['mapData'])
+            ? ['id' => $response['mapData']['rwAngkaKreditId'] ?? null] 
+            : [];
+
+        unset($response['mapData']);
+
+        return $response;
+    }
+
+    /**
+     * Mengunggah dokumen terkait riwayat angka kredit.
+     *
+     * @param string $riwayatId ID riwayat angka kredit.
+     * @return void
+     */
+    private function uploadDokumen(string $riwayatId): void
+    {
+        $dokumenService = new DokumenService($this->authentication, $this->config);
+        $dokumenService->uploadRiwayat($riwayatId, $this->idRefDokumenAngkaKredit, $this->dokumen);
     }
 
     /**
@@ -124,7 +148,7 @@ class AngkaKreditService implements ServiceInterface
      * @return bool Status keberhasilan penghapusan.
      * @throws SiasnDataException Jika data tidak ditemukan atau terjadi kesalahan.
      */
-    public function remove(string $idRiwayatAngkaKredit): bool
+    public function remove(string $idRiwayatAngkaKredit): array
     {
         $angkaKredit = $this->get($idRiwayatAngkaKredit);
 
@@ -136,7 +160,7 @@ class AngkaKreditService implements ServiceInterface
             'headers' => $this->getHeaders()
         ]);
 
-        return $response['success'] ?? false;
+        return $response;
     }
 
     /**
