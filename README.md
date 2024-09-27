@@ -481,15 +481,35 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource angka kredit:
 #### Contoh Penggunaan Api Angka Kredit
 
 ```php
+$data = [
+    "bulanMulaiPenailan"   => "string",
+    "bulanSelesaiPenailan" => "string",
+    "isAngkaKreditPertama" => "string",
+    "isIntegrasi"          => "string",
+    "isKonversi"           => "string",
+    "kreditBaruTotal"      => "string",
+    "kreditPenunjangBaru"  => "string",
+    "kreditUtamaBaru"      => "string",
+    "nomorSk"              => "string",
+    "pnsId"                => "pnsId",
+    "rwJabatanId"          => "rwJabatanId",
+    "tahunMulaiPenailan"   => "yyyy",
+    "tahunSelesaiPenailan" => "yyyy",
+    "tanggalSk"            => "dd-mm-yyyy",
+];
+
+#Menyimpan data angka kredir
 $response = $siasnClient->angkaKredit()
     ->create($data)
-    ->includeDokumen("http://url/to/dokumen.pdf")
+    ->includeDokumen("https://url_to_file_angka_kredit.pdf")
     ->save();
-
 if (isset($response['success']) && $response['success']) {
+    #Mengambil data angka kredir
     $angkaKredit = $siasnClient->angkaKredit()->get($response['data']['id']);
+    #Menghapus data angka kredir
     $angkaKredit = $siasnClient->angkaKredit()->remove($response['data']['id']);
-};
+}
+var_dump($angkaKredit);die();
 ```
 
 ## CPNS

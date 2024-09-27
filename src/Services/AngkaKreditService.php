@@ -6,9 +6,12 @@ use SiASN\Sdk\Interfaces\ServiceInterface;
 use SiASN\Sdk\Config\Config;
 use SiASN\Sdk\Exceptions\SiasnDataException;
 use SiASN\Sdk\Resources\HttpClient;
+use SiASN\Sdk\Traits\ResponseTransformerTrait;
 
 class AngkaKreditService implements ServiceInterface
 {
+    use ResponseTransformerTrait; 
+
     /**
      * @var AuthenticationService Instance dari AuthenticationService untuk otentikasi.
      */
@@ -65,7 +68,7 @@ class AngkaKreditService implements ServiceInterface
             "headers" => $this->getHeaders()
         ]);
         
-        return $response;
+        return $this->transformResponse($response, 'rwAngkaKreditId');
     }
 
     /**
@@ -109,24 +112,7 @@ class AngkaKreditService implements ServiceInterface
             $this->uploadDokumen($response['mapData']['rwAngkaKreditId']);
         }
 
-        return $this->transformResponse($response);
-    }
-
-    /**
-     * Transformasi respons dari API dengan mengubah kunci `mapData` menjadi `data`.
-     *
-     * @param array $response Respons asli dari API.
-     * @return array Respons yang sudah ditransformasi.
-     */
-    private function transformResponse(array $response): array
-    {
-        $response['data'] = !empty($response['mapData']) && is_array($response['mapData'])
-            ? ['id' => $response['mapData']['rwAngkaKreditId'] ?? null] 
-            : [];
-
-        unset($response['mapData']);
-
-        return $response;
+        return $this->transformResponse($response, 'rwAngkaKreditId');
     }
 
     /**
@@ -160,7 +146,7 @@ class AngkaKreditService implements ServiceInterface
             'headers' => $this->getHeaders()
         ]);
 
-        return $response;
+        return $this->transformResponse($response, 'rwAngkaKreditId');
     }
 
     /**
