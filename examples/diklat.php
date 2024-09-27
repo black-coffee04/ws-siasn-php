@@ -27,14 +27,12 @@ $data = [
     "tanggal"                => "d-m-Y",
     "tanggalSelesai"         => "d-m-Y",
 ];
-$idRiwayatDiklat = $siasnClient->diklat()
+$response = $siasnClient->diklat()
     ->create($data)
-    ->includeDokumen("C:\Users\MLD - Hitam\Desktop\sample.pdf") //Hapus methods ini jika tidak menggunakan dokumen
+    ->includeDokumen("file.pdf") //Hapus methods ini jika tidak menggunakan dokumen
     ->save();
 
-$riwayatDiklat = $siasnClient->diklat()->get($idRiwayatDiklat);
+$riwayatDiklat = $siasnClient->diklat()->get($response['data']['id']);
 print_r($riwayatDiklat);
 
-if ($siasnClient->diklat()->remove($idRiwayatDiklat)) {
-    echo "Riwayat diklat berhasil dihapus";
-}
+$riwayatDiklat = $siasnClient->diklat()->remove($response['data']['id']);

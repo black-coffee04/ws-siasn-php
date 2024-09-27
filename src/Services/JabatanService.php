@@ -6,6 +6,7 @@ use SiASN\Sdk\Config\Config;
 use SiASN\Sdk\Exceptions\SiasnDataException;
 use SiASN\Sdk\Interfaces\ServiceInterface;
 use SiASN\Sdk\Resources\HttpClient;
+use SiASN\Sdk\Traits\ResponseTransformerTrait;
 
 /**
  * Class JabatanService
@@ -14,6 +15,8 @@ use SiASN\Sdk\Resources\HttpClient;
  */
 class JabatanService implements ServiceInterface
 {
+    use ResponseTransformerTrait;
+
     /**
      * @var AuthenticationService Instance dari AuthenticationService untuk otentikasi.
      */
@@ -99,8 +102,7 @@ class JabatanService implements ServiceInterface
      */
     public function includeDokumen($file)
     {
-        $dokumenService = new DokumenService($this->authentication, $this->config);
-        $this->dokumen  = $dokumenService->upload($this->idRefDokumenJabatan, $file);
+        $this->dokumen  = $file;
         return $this;
     }
 
@@ -124,27 +126,39 @@ class JabatanService implements ServiceInterface
      */
     public function save()
     {
-        if ($this->dokumen !== null && is_array($this->dokumen)) {
-            $this->data = array_merge($this->data, ['path' => [$this->dokumen]]);
-        }
-
         $httpClient = new HttpClient($this->config->getApiBaseUrl());
         $response   = $httpClient->post("/apisiasn/1.0/{$this->endPoint}", [
             'json'    => $this->data,
             'headers' => $this->getHeaders()
         ]);
 
-        return $response['mapData']['rwJabatanId'] ?? $response['message'];
+        if ($this->dokumen !== null && isset($response['mapData']['rwAngkaKreditId'])) {
+           $this->uploadDokumen($response['mapData']['rwJabatanId']);
+        }
+
+        return $this->transformResponse($response, 'rwJabatanId');
+    }
+
+    /**
+     * Mengunggah dokumen terkait riwayat jabatan.
+     *
+     * @param string $riwayatId ID riwayat jabatan.
+     * @return void
+     */
+    private function uploadDokumen(string $riwayatId): void
+    {
+        $dokumenService = new DokumenService($this->authentication, $this->config);
+        $dokumenService->uploadRiwayat($riwayatId, $this->idRefDokumenJabatan, $this->dokumen);
     }
 
     /**
      * Menghapus riwayat jabatan berdasarkan ID.
      *
      * @param string $riwayatJabatanId ID Riwayat Jabatan.
-     * @return bool Status penghapusan.
+     * @return array response.
      * @throws SiasnDataException Jika riwayat jabatan tidak ditemukan.
      */
-    public function remove(string $riwayatJabatanId): bool
+    public function remove(string $riwayatJabatanId): array
     {
         $riwayatJabatan = $this->riwayat($riwayatJabatanId);
         if (empty($riwayatJabatan)) {
@@ -156,7 +170,7 @@ class JabatanService implements ServiceInterface
             'headers' => $this->getHeaders()
         ]);
 
-        return $response['success'] ?? false;
+        return $this->transformResponse($response, 'rwJabatanId');
     }
 
     /**
@@ -174,7 +188,7 @@ class JabatanService implements ServiceInterface
             'headers' => $this->getHeaders()
         ]);
 
-        return $response['data'] ?? [];
+        return $this->transformResponse($response, 'rwJabatanId');;
     }
 
     /**

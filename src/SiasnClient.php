@@ -15,6 +15,7 @@ use SiASN\Sdk\Services\KinerjaPeriodikService;
 use SiASN\Sdk\Services\KursusService;
 use SiASN\Sdk\Services\PemberhentianService;
 use SiASN\Sdk\Services\PengadaanService;
+use SiASN\Sdk\Services\PenghargaanService;
 use SiASN\Sdk\Services\PnsService;
 use SiASN\Sdk\Services\ReferensiService;
 use SiASN\Sdk\Services\RiwayatService;
@@ -204,5 +205,15 @@ class SiasnClient
     public function skp(): SkpService
     {
         return new SkpService($this->authentication, $this->config);
+    }
+
+    /**
+     * Mendapatkan instance dari PenghargaanService untuk mengelola data penghargaan.
+     *
+     * @return SkpService Instance dari SkpService.
+     */
+    public function penghargaan(): PenghargaanService
+    {
+        return new PenghargaanService($this->authentication, $this->config);
     }
 }

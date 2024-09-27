@@ -6,9 +6,12 @@ use SiASN\Sdk\Interfaces\ServiceInterface;
 use SiASN\Sdk\Config\Config;
 use SiASN\Sdk\Exceptions\SiasnDataException;
 use SiASN\Sdk\Resources\HttpClient;
+use SiASN\Sdk\Traits\ResponseTransformerTrait;
 
 class DiklatService implements ServiceInterface
 {
+    use ResponseTransformerTrait;
+
     /**
      * @var AuthenticationService Instance dari AuthenticationService untuk otentikasi.
      */
@@ -20,7 +23,7 @@ class DiklatService implements ServiceInterface
     private $config;
 
     /**
-     * @var HttpClient Instance dari HttpClient untuk request service.
+     * @var HttpClient Instance dari HttpClient untuk mengirim permintaan ke API.
      */
     private $httpClient;
 
@@ -35,15 +38,17 @@ class DiklatService implements ServiceInterface
     private $dokumen = null;
 
     /**
-     * @var string ID referensi dokumen angka kredit.
+     * @var string ID referensi dokumen diklat.
      */
     private $idRefDokumenDiklat = '874';
 
     /**
-     * Constructor untuk DiklatService.
+     * Konstruktor untuk DiklatService.
      *
-     * @param AuthenticationService $authentication Instance AuthenticationService untuk otentikasi.
-     * @param Config $config Instance Config yang menyimpan konfigurasi aplikasi.
+     * Menginisialisasi layanan diklat dengan otentikasi dan konfigurasi yang diberikan.
+     *
+     * @param AuthenticationService $authentication Instance dari AuthenticationService untuk otentikasi.
+     * @param Config $config Instance dari Config yang menyimpan konfigurasi aplikasi.
      */
     public function __construct(AuthenticationService $authentication, Config $config)
     {
@@ -57,6 +62,7 @@ class DiklatService implements ServiceInterface
      *
      * @param string $idRiwayatDiklat ID riwayat diklat.
      * @return array Data riwayat diklat.
+     * @throws SiasnDataException Jika data tidak ditemukan.
      */
     public function get(string $idRiwayatDiklat): array
     {
@@ -65,14 +71,14 @@ class DiklatService implements ServiceInterface
             ['headers' => $this->getHeaders()]
         );
 
-        return $response['data'] ?? [];
+        return $this->transformResponse($response, 'rwDiklatId');
     }
 
     /**
      * Membuat instance DiklatService dengan data yang diformat.
      *
      * @param array $data Data yang akan diformat dan disimpan.
-     * @return self
+     * @return self Instance dari DiklatService.
      */
     public function create(array $data): self
     {
@@ -84,42 +90,53 @@ class DiklatService implements ServiceInterface
      * Menyertakan dokumen dalam permintaan.
      *
      * @param mixed $file Dokumen yang akan diunggah.
-     * @return self
+     * @return self Instance dari DiklatService.
      */
     public function includeDokumen($file): self
     {
-        $dokumenService = new DokumenService($this->authentication, $this->config);
-        $this->dokumen = $dokumenService->upload($this->idRefDokumenDiklat, $file);
+        $this->dokumen = $file;
         return $this;
     }
 
     /**
      * Menyimpan data riwayat diklat.
      *
-     * @return string ID riwayat diklat yang disimpan atau pesan kesalahan.
+     * @return array ID riwayat diklat yang disimpan.
      */
-    public function save(): string
+    public function save(): array
     {
-        if ($this->dokumen !== null) {
-            $this->data['path'] = [$this->dokumen];
-        }
-
         $response = $this->httpClient->post(
             "/apisiasn/1.0/diklat/save", 
             ['json' => $this->data, 'headers' => $this->getHeaders()]
         );
 
-        return $response['mapData']['rwDiklatId'] ?? $response['message'];
+        if ($this->dokumen && isset($response['mapData']['rwDiklatId'])) {
+            $this->uploadDokumen($response['mapData']['rwDiklatId']);
+        }
+
+        return $this->transformResponse($response, 'rwDiklatId');
+    }
+
+    /**
+     * Mengunggah dokumen terkait riwayat diklat.
+     *
+     * @param string $riwayatId ID riwayat diklat.
+     * @return void
+     */
+    private function uploadDokumen(string $riwayatId): void
+    {
+        $dokumenService = new DokumenService($this->authentication, $this->config);
+        $dokumenService->uploadRiwayat($riwayatId, $this->idRefDokumenDiklat, $this->dokumen);
     }
 
     /**
      * Menghapus riwayat diklat berdasarkan ID.
      *
      * @param string $idRiwayatDiklat ID riwayat diklat yang akan dihapus.
-     * @return bool Status keberhasilan penghapusan.
+     * @return array Status keberhasilan penghapusan.
      * @throws SiasnDataException Jika riwayat diklat tidak ditemukan.
      */
-    public function remove(string $idRiwayatDiklat): bool
+    public function remove(string $idRiwayatDiklat): array
     {
         $diklat = $this->get($idRiwayatDiklat);
 
@@ -132,7 +149,7 @@ class DiklatService implements ServiceInterface
             ['headers' => $this->getHeaders()]
         );
 
-        return $response['success'] ?? false;
+        return $this->transformResponse($response, 'rwDiklatId');
     }
 
     /**

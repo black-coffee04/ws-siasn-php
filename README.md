@@ -33,6 +33,7 @@ Selamat datang di SiASN Web Service SDK! SDK ini dirancang untuk memudahkan peng
   - [Dokumen](#dokumen)
   - [Pemberhentian](#pemberhentiaan)
   - [Pengadaan](#pengadaan)
+  - [Penghargaan](#penghargaan)
   - [Kenaikan Pangkat](#kenaikan-pangkat)
   - [Riwayat](#riwayat)
   - [Angka Kredit](#angka-kredit)
@@ -269,8 +270,8 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource PNS:
 | `$siasnClient->pns()->dataPasangan($nipAsn)`                | Mengambil data pasangan ASN berdasarkan NIP ASN.            | `$nipAsn` (string): NIP ASN                                    | Array data pasangan ASN.                                      |
 | `$siasnClient->pns()->dataAnak($nipAsn)`                    | Mengambil data anak ASN berdasarkan NIP ASN.                | `$nipAsn` (string): NIP ASN                                    | Array data anak ASN.                                          |
 | `$siasnClient->pns()->dataOrangTua($nipAsn)`                | Mengambil data orang tua ASN berdasarkan NIP ASN.           | `$nipAsn` (string): NIP ASN                                    | Array data orang tua ASN.                                     |
-| `$siasnClient->pns()->refreshJabatan($nipAsn)`          | Memperbarui data jabatan ASN berdasarkan NIP ASN.      | `$nipAsn` (string): NIP ASN                           | `true` jika berhasil memperbarui, `false` jika tidak.         |
-| `$siasnClient->pns()->refreshGolongan($nipAsn)`         | Memperbarui data golongan ASN berdasarkan NIP ASN.     | `$nipAsn` (string): NIP ASN                           | `true` jika berhasil memperbarui, `false` jika tidak.         |
+| `$siasnClient->pns()->refreshJabatan($nipAsn)`          | Memperbarui data jabatan ASN berdasarkan NIP ASN.      | `$nipAsn` (string): NIP ASN                           | Array Respon api.         |
+| `$siasnClient->pns()->refreshGolongan($nipAsn)`         | Memperbarui data golongan ASN berdasarkan NIP ASN.     | `$nipAsn` (string): NIP ASN                           | Array Respon api.         |
 | `$siasnClient->pns()->nilaiIpAsn($nipAsn)`                  | Mengambil nilai IP ASN berdasarkan NIP ASN.                 | `$nipAsn` (string): NIP ASN                                    | Array nilai IP ASN.                                           |
 | `$siasnClient->pns()->foto($nipAsn)->setName($fileName)->outputStream()` | Mengambil foto profil ASN berdasarkan NIP ASN dan menyimpannya sebagai file dengan nama tertentu. | `$nipAsn` (string): NIP ASN, `$fileName` (string): Nama file | Menghasilkan output stream foto profil ASN.                    |
 | `$siasnClient->pns()->foto($nipAsn)->setName($fileName)->saveTo($path)` | Menyimpan foto profil ASN ke direktori yang ditentukan. | `$nipAsn` (string): NIP ASN, `$path ` (string): direktori | String nama file.                    |
@@ -292,9 +293,9 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource Jabatan:
 |---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
 | `$siasnClient->jabatan()->pns($nipAsn)`                   | Mengambil data jabatan ASN berdasarkan NIP ASN.               | `$nipAsn` (string): NIP ASN                                    | Array data jabatan ASN.                                         |
 | `$siasnClient->jabatan()->riwayat($idJabatan)`                | Mengambil data riwayat jabatan berdasarkan Id Jabatan.            | `$idJabatan` (string): Id Jabatan                                 | Array data riwayat jabatan.
-| `$siasnClient->jabatan()->create($data)->save()`                | Menambahkan data jabatan.            | `$data` (Array): Data Jabatan                                 | String Id riwayat jabatan.
-| `$siasnClient->jabatan()->createUnorJabatan($data)->save()`                | Menambahkan data unor jabatan.            | `$data` (Array): Data Jabatan                                 | String Id riwayat jabatan.
-| `$siasnClient->jabatan()->remove($idRiwayatJabatan)`                | Menghapus riwayat jabatan.            | `$idRiwayatJabatan` (String): ID Riwayat Jabatan                                 | Boolean true|false.
+| `$siasnClient->jabatan()->create($data)->save()`                | Menambahkan data jabatan.            | `$data` (Array): Data Jabatan                                 | Array Respon api.
+| `$siasnClient->jabatan()->createUnorJabatan($data)->save()`                | Menambahkan data unor jabatan.            | `$data` (Array): Data Jabatan                                 | Array Respon api.
+| `$siasnClient->jabatan()->remove($idRiwayatJabatan)`                | Menghapus riwayat jabatan.            | `$idRiwayatJabatan` (String): ID Riwayat Jabatan                                 | Array|false.
 
 #### Metode Tambahan
 
@@ -377,6 +378,42 @@ $daftarPengadaan  = $siasnClient->pengadaan()->get($tahunAnggaran);
 $dokumenPengadaan = $siasnClient->pengadaan()->dokumen();
 ```
 
+## Penghargaan
+
+Berikut adalah daftar lengkap metode yang tersedia pada resource penghargaan:
+
+| Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
+|---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
+| `$siasnClient->penghargaan()->get($idRiwayatPenghargaan)`                   | Mengambil data riwayat penghargaan berdasarkan id riwayat.               | `$idRiwayatPenghargaan` (string): Id riwayat penghargaan                                    | Array data riwayat penghargaan.   
+| `$siasnClient->penghargaan()->create($data)->save()`                   | Membuat data riwayat penghargaan tanpa dokumen. | `$data` (array): data penghargaan                                    | Array data penghargaan.  
+| `$siasnClient->penghargaan()->create($data)->includeDokumen($file)->save()`                   | Membuat data riwayat penghargaan dengan dokumen. | `$data` (array): data penghargaan, `$file` (string) path file atau url dokumen | Array data penghargaan.  
+| `$siasnClient->penghargaan()->remove($idRiwayatPenghargaan)` | Menghapus data riwayat penghargaan. | `$idRiwayatPenghargaan` (string) Id riwayat penghargaan | Array|false.  
+
+#### Contoh Penggunaan Api Penghargaan
+
+```php
+#minyam data penghargaan
+$data = [
+    "hargaId"    => "ref_penghargaan",
+    "pnsOrangId" => "pnsOrangId",
+    "skDate"     => "dd-mm-yyyy",
+    "skNomor"    => "string",
+    "tahun"      => int,
+];
+
+$response = $siasnClient->penghargaan()->create($data)->save();
+
+if (isset($response['success']) && $response['success']) {
+    #mengambil data riwayat penghargaan
+    $penghargaan = $siasnClient->penghargaan()->get($response['data']['id']);
+}
+
+print_r($penghargaan);
+
+#Hapus data riwayat penghargaan
+$siasnClient->penghargaan()->remove($idRiwayatPenghargaan)
+```
+
 ### Kenaikan Pangkat
 
 Berikut adalah daftar lengkap metode yang tersedia pada resource kp:
@@ -437,16 +474,42 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource angka kredit:
 | Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
 |---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
 | `$siasnClient->angkaKredit()->get($idRiwayatAngkaKredit)`                   | Mengambil data riwayat angka kredit berdasarkan id riwayat.               | `$idRiwayatAngkaKredit` (string): Id riwayat angka kredit                                    | Array data riwayat angka kredit.   
-| `$siasnClient->angkaKredit()->create($data)->save()`                   | Membuat data riwayat angka kredit tanpa dokumen. | `$data` (array): data angka kredit                                    | String id riwayat angka kredit.  
-| `$siasnClient->angkaKredit()->create($data)->includeDokumen($file)->save()`                   | Membuat data riwayat angka kredit dengan dokumen. | `$data` (array): data angka kredit, `$file` (string) path file atau url dokumen | String id riwayat angka kredit.  
-| `$siasnClient->angkaKredit()->remove($idRiwayatAngkaKredit)` | Menghapus data riwayat angka kredit. | `$idRiwayatAngkaKredit` (string) Id riwayat angka kredit | Boolean true|false.  
+| `$siasnClient->angkaKredit()->create($data)->save()`                   | Membuat data riwayat angka kredit tanpa dokumen. | `$data` (array): data angka kredit                                    | Array data angka kredit.  
+| `$siasnClient->angkaKredit()->create($data)->includeDokumen($file)->save()`                   | Membuat data riwayat angka kredit dengan dokumen. | `$data` (array): data angka kredit, `$file` (string) path file atau url dokumen | Array data angka kredit.  
+| `$siasnClient->angkaKredit()->remove($idRiwayatAngkaKredit)` | Menghapus data riwayat angka kredit. | `$idRiwayatAngkaKredit` (string) Id riwayat angka kredit | Array|false.  
 
 #### Contoh Penggunaan Api Angka Kredit
 
 ```php
-$idRiwayatAngkaKredit  = 'xxxxxxxxxxxxxxxxxx';
+$data = [
+    "bulanMulaiPenailan"   => "string",
+    "bulanSelesaiPenailan" => "string",
+    "isAngkaKreditPertama" => "string",
+    "isIntegrasi"          => "string",
+    "isKonversi"           => "string",
+    "kreditBaruTotal"      => "string",
+    "kreditPenunjangBaru"  => "string",
+    "kreditUtamaBaru"      => "string",
+    "nomorSk"              => "string",
+    "pnsId"                => "pnsId",
+    "rwJabatanId"          => "rwJabatanId",
+    "tahunMulaiPenailan"   => "yyyy",
+    "tahunSelesaiPenailan" => "yyyy",
+    "tanggalSk"            => "dd-mm-yyyy",
+];
 
-$riwayatAngkaKredit =$siasnClient->angkaKredit()->get($idRiwayatAngkaKredit);
+#Menyimpan data angka kredir
+$response = $siasnClient->angkaKredit()
+    ->create($data)
+    ->includeDokumen("https://url_to_file_angka_kredit.pdf")
+    ->save();
+if (isset($response['success']) && $response['success']) {
+    #Mengambil data angka kredir
+    $angkaKredit = $siasnClient->angkaKredit()->get($response['data']['id']);
+    #Menghapus data angka kredir
+    $angkaKredit = $siasnClient->angkaKredit()->remove($response['data']['id']);
+}
+var_dump($angkaKredit);die();
 ```
 
 ## CPNS
@@ -455,15 +518,17 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource cpns:
 
 | Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
 |---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
-| `$siasnClient->cpns()->create($data)->includeDokumen($file)->save()`                   | Menambahkan data cpns dengan dokumen.| `$data` (array): Data CPNS, `$file` (string) Dokumen SK CPNS file/URL | Array data.  
+| `$siasnClient->cpns()->create($data)->includeDokumen($skCpns, $spmt)->save()`                   | Menambahkan data cpns dengan dokumen.| `$data` (array): Data CPNS, `$file` (string) Dokumen SK CPNS file/URL | Array data.  
 | `$siasnClient->cpns()->create($data)->save()`                   | Menambahkan data cpns tanpa dokumen.| `$data` (array): Data CPNS | Array data. 
 
 #### Contoh Penggunaan Api CPNS
 
 ```php
+$skCpns = "path/to/dokumen.pdf";
+$spmt = "path/to/dokumen.pdf";
 $siasnClient->cpns()
     ->create($data)
-    ->includeDokumen("path/to/dokumen.pdf") #URL FILE atau Path to dokumen
+    ->includeDokumen($skCpns, $spmt) #URL FILE atau Path to dokumen
     ->save()
 ```
 
@@ -474,14 +539,35 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource diklat:
 | Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
 |---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
 | `$siasnClient->diklat()->get($idRiwayatDiklat)`                   | Mengambil data riwayat diklat berdasarkan id riwayat.               | `$idRiwayatDiklat` (string): Id riwayat diklat                                    | Array data riwayat diklat.   
-| `$siasnClient->diklat()->create($data)->save()`                   | Membuat data riwayat diklat tanpa dokumen. | `$data` (array): data diklat                                    | String id riwayat diklat.  
-| `$siasnClient->diklat()->create($data)->includeDokumen($file)->save()`                   | Membuat data riwayat diklat dengan dokumen. | `$data` (array): data diklat, `$file` (string) path file atau url dokumen | String id riwayat diklat.  
-| `$siasnClient->diklat()->remove($idRiwayatDiklat)` | Menghapus data riwayat diklat. | `$idRiwayatDiklat` (string) Id riwayat diklat | Boolean true|false.  
+| `$siasnClient->diklat()->create($data)->save()`                   | Membuat data riwayat diklat tanpa dokumen. | `$data` (array): data diklat                                    | Array data diklat.  
+| `$siasnClient->diklat()->create($data)->includeDokumen($file)->save()`                   | Membuat data riwayat diklat dengan dokumen. | `$data` (array): data diklat, `$file` (string) path file atau url dokumen | Array data diklat.  
+| `$siasnClient->diklat()->remove($idRiwayatDiklat)` | Menghapus data riwayat diklat. | `$idRiwayatDiklat` (string) Id riwayat diklat | Array.  
 
 #### Contoh Penggunaan Api Diklat
 
 ```php
-$riwayatDiklat = $siasnClient->diklat()->get($idRiwayatDiklat);
+$data = [
+    "bobot"                  => integer,
+    "id"                     => null,
+    "institusiPenyelenggara" => "string",
+    "jenisKompetensi"        => "string",
+    "jumlahJam"              => integer,
+    "latihanStrukturalId"    => "string",
+    "nomor"                  => "string",
+    "pnsOrangId"             => "string",
+    "tahun"                  => integer,
+    "tanggal"                => "d-m-Y",
+    "tanggalSelesai"         => "d-m-Y",
+];
+$response = $siasnClient->diklat()
+    ->create($data)
+    ->includeDokumen("file.pdf") //Hapus methods ini jika tidak menggunakan dokumen
+    ->save();
+
+$riwayatDiklat = $siasnClient->diklat()->get($response['data']['id']);
+print_r($riwayatDiklat);
+
+$riwayatDiklat = $siasnClient->diklat()->remove($response['data']['id']);
 ```
 
 ## Hukuman Disiplin
@@ -491,18 +577,39 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource hukuman disipli
 | Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
 |---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
 | `$siasnClient->hukdis()->get($idRiwayatHukdis)`                   | Mengambil data riwayat hukdis berdasarkan id riwayat.               | `$idRiwayatHukdis` (string): Id riwayat hukdis                                    | Array data riwayat hukdis.   
-| `$siasnClient->hukdis()->create($data)->save()`                   | Membuat data riwayat hukdis tanpa dokumen. | `$data` (array): data hukdis                                    | String id riwayat hukdis.  
-| `$siasnClient->hukdis()->create($data)->includeDokumen($file)->save()`                   | Membuat data riwayat hukdis dengan dokumen. | `$data` (array): data hukdis, `$file` (string) path file atau url dokumen | String id riwayat hukdis.
+| `$siasnClient->hukdis()->create($data)->save()`                   | Membuat data riwayat hukdis tanpa dokumen. | `$data` (array): data hukdis                                    | Array data hukdis.  
+| `$siasnClient->hukdis()->create($data)->includeDokumen($file)->save()`                   | Membuat data riwayat hukdis dengan dokumen. | `$data` (array): data hukdis, `$file` (string) path file atau url dokumen | Array data hukdis.
 
 #### Contoh Penggunaan Api Hukdis
 
 ```php
-$idRiwayatHukdis = $siasnClient->hukdis()
+$data = [
+    "akhirHukumanTanggal"       => "string",
+    "alasanHukumanDisiplinId"   => "string",
+    "golonganId"                => "string",
+    "golonganLama"              => "string",
+    "hukdisYangDiberhentikanId" => "string",
+    "hukumanTanggal"            => "string",
+    "id"                        => "string",
+    "jenisHukumanId"            => "string",
+    "jenisTingkatHukumanId"     => "string",
+    "kedudukanHukumId"          => "string",
+    "keterangan"                => "string",
+    "masaBulan"                 => "string",
+    "masaTahun"                 => "string",
+    "nomorPp"                   => "string",
+    "pnsOrangId"                => "string",
+    "skNomor"                   => "string",
+    "skPembatalanNomor"         => "string",
+    "skPembatalanTanggal"       => "string",
+    "skTanggal"                 => "string",
+];
+$response = $siasnClient->hukdis()
     ->create($data)
     ->includeDokumen("path/to/dokumen.pdf") //Hapus metod ini apabila tidak menggunakan dokumen
     ->save();
 
-print_r($siasnClient->hukdis()->get($idRiwayatHukdis));
+print_r($siasnClient->hukdis()->get($response['data']['id']));
 ```
 ## Kinerja Periodik
 
@@ -510,21 +617,39 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource kinerja periodi
 
 | Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
 |---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
-| `$siasnClient->kinerjaPeriodik()->create($data)->save()`                   | Membuat data riwayat kinerja periodik tanpa dokumen. | `$data` (array): data kinerja periodik                                    | String id riwayat kinerja periodik.  
-| `$siasnClient->kinerjaPeriodik()->create($data)->includeDokumen($file)->save()`                   | Membuat data riwayat kinerja periodik dengan dokumen. | `$data` (array): data kinerja periodik, `$file` (string) path file atau url dokumen | String id riwayat kinerja periodik.
-| `$siasnClient->kinerjaPeriodik()->remove($idRiwayatKinerjaPeriodik)` | Menghapus data riwayat kinerja periodik. | `$idRiwayatKinerjaPeriodik` (string) Id riwayat kinerja periodik | Boolean true|false.  
+| `$siasnClient->kinerjaPeriodik()->create($data)->save()`                   | Membuat data riwayat kinerja periodik tanpa dokumen. | `$data` (array): data kinerja periodik                                    | Array data kinerja periodik.  
+| `$siasnClient->kinerjaPeriodik()->create($data)->includeDokumen($file)->save()`                   | Membuat data riwayat kinerja periodik dengan dokumen. | `$data` (array): data kinerja periodik, `$file` (string) path file atau url dokumen | Array data kinerja periodik.
+| `$siasnClient->kinerjaPeriodik()->remove($idRiwayatKinerjaPeriodik)` | Menghapus data riwayat kinerja periodik. | `$idRiwayatKinerjaPeriodik` (string) Id riwayat kinerja periodik | Array|false.  
 
 #### Contoh Penggunaan Api Kinerja Periodik
 
 ```php
-$idRiwayatKinerjaPeriodik = $siasnClient->kinerjaPeriodik()
+$data        = [
+    "bulanMulaiPenilaian"   => "numeric",
+    "bulanSelesaiPenilaian" => "numeric",
+    "hasilKinerjaNilai"     => "referensi perilakuDanKinerja", //integer
+    "koefisienId"           => "referensi koefisien",
+    "kuadranKinerjaNilai"   => referensi kuadranNilai,
+    "penilaiGolongan"       => "referensi golonganPns",
+    "penilaiJabatanNama"    => "string",
+    "penilaiNama"           => "string",
+    "penilaiNipNrp"         => "string",
+    "penilaiUnorNama"       => "string",
+    "perilakuKerjaNilai"    => "referensi perilakuDanKinerja", //integer,
+    "periodikId"            => "referensi periodik",
+    "pnsDinilaiId"          => "string",
+    "statusPenilai"         => "ASN/NON ASN",
+    "tahun"                 => integer,
+    "tahunMulaiPenilaian"   => integer,
+    "tahunSelesaiPenilaian" => integer,
+];
+
+$response = $siasnClient->kinerjaPeriodik()
     ->create($data)
-    ->includeDokumen($file)
+    ->includeDokumen("https://pdfobject.com/pdf/sample.pdf")
     ->save();
 
-if ($siasnClient->kinerjaPeriodik()->remove($idRiwayatKinerjaPeriodik)) {
-    echo "Sukses Menghapus data";
-}
+$deleted = $siasnClient->kinerjaPeriodik()->remove($response['data']['id']);
 ```
 
 ## Kursus
@@ -534,25 +659,32 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource kursus:
 | Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
 |---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
 | `$siasnClient->kursus()->get($idRiwayatKursus)`                   | Mengambil data riwayat kursus berdasarkan id riwayat.               | `$idRiwayatKursus` (string): Id riwayat kursus                                    | Array data riwayat kursus.   
-| `$siasnClient->kursus()->create($data)->save()`                   | Membuat data riwayat kursus tanpa dokumen. | `$data` (array): data kursus                                    | String id riwayat kursus.  
-| `$siasnClient->kursus()->create($data)->includeDokumen($file)->save()`                   | Membuat data riwayat kursus dengan dokumen. | `$data` (array): data kursus, `$file` (string) path file atau url dokumen | String id riwayat kursus.  
-| `$siasnClient->kursus()->remove($idRiwayatKursus)` | Menghapus data riwayat kursus. | `$idRiwayatKursus` (string) Id riwayat kursus | Boolean true|false.  
+| `$siasnClient->kursus()->create($data)->save()`                   | Membuat data riwayat kursus tanpa dokumen. | `$data` (array): data kursus                                    | Array data kursus.  
+| `$siasnClient->kursus()->create($data)->includeDokumen($file)->save()`                   | Membuat data riwayat kursus dengan dokumen. | `$data` (array): data kursus, `$file` (string) path file atau url dokumen | Array data kursus.  
+| `$siasnClient->kursus()->remove($idRiwayatKursus)` | Menghapus data riwayat kursus. | `$idRiwayatKursus` (string) Id riwayat kursus | Array|false.  
 
 #### Contoh Penggunaan Api Kursus
 
 ```php
-#minyam data kursus
-$idRiwayatKursus = $siasnClient->kursus()->create($data)->save();
+$data = [
+    "instansiId"             => "string",
+    "institusiPenyelenggara" => "string",
+    "jenisDiklatId"          => "referensi jenis diklat",
+    "jenisKursus"            => "",
+    "jenisKursusSertipikat"  => "string",
+    "jumlahJam"              => integer,
+    "lokasiId"               => "",
+    "namaKursus"             => "string",
+    "nomorSertipikat"        => "string",
+    "pnsOrangId"             => "string",
+    "tahunKursus"            => integer,
+    "tanggalKursus"          => "string",
+    "tanggalSelesaiKursus"   => "string",
+];
+$response = $siasnClient->kursus()->create($data)->save();
+$kursus = $siasnClient->kursus()->get($response['data']['id']);
 
-#mengambil data riwayat kursus
-$kursus = $siasnClient->kursus()->get($idRiwayatKursus);
-
-print_r($kursus);
-
-#Hapus data riwayat kursus
-if ($siasnClient->kursus()->remove($idRiwayatKursus)) {
-    echo "Sukses Hapus kursus";
-}
+$siasnClient->kursus()->remove($response['data']['id']);
 ```
 
 ## SKP

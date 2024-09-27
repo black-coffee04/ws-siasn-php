@@ -5,9 +5,12 @@ namespace SiASN\Sdk\Services;
 use SiASN\Sdk\Interfaces\ServiceInterface;
 use SiASN\Sdk\Config\Config;
 use SiASN\Sdk\Resources\HttpClient;
+use SiASN\Sdk\Traits\ResponseTransformerTrait;
 
 class HukdisService implements ServiceInterface
 {
+    use ResponseTransformerTrait;
+
     /**
      * @var AuthenticationService Instance dari AuthenticationService untuk otentikasi.
      */
@@ -64,7 +67,7 @@ class HukdisService implements ServiceInterface
             ['headers' => $this->getHeaders()]
         );
 
-        return $response['data'] ?? [];
+        return $this->transformResponse($response, 'rwHukdisId');
     }
 
     /**
@@ -85,30 +88,45 @@ class HukdisService implements ServiceInterface
      * @param mixed $file Dokumen yang akan diunggah.
      * @return self
      */
-    public function includeDokumen($file): self
+    public function includeDokumen($file)
     {
-        $dokumenService = new DokumenService($this->authentication, $this->config);
-        $this->dokumen  = $dokumenService->upload($this->idRefDokumenHukdis, $file);
+        $this->dokumen = $file;
         return $this;
     }
 
     /**
      * Menyimpan data riwayat hukdis.
      *
-     * @return string ID riwayat hukdis yang disimpan atau pesan kesalahan.
+     * @return array riwayat hukdis yang disimpan atau pesan kesalahan.
      */
-    public function save(): string
+    public function save(): array
     {
-        if ($this->dokumen !== null) {
-            $this->data['path'] = [$this->dokumen];
-        }
-
         $response = $this->httpClient->post(
             "/apisiasn/1.0/hukdis/save", 
             ['json' => $this->data, 'headers' => $this->getHeaders()]
         );
 
-        return $response['mapData']['rwHukdisId'] ?? $response['message'];
+        if (!isset($response['mapData']['rwHukdisId'])) {
+            return $response['message'];
+        }
+
+        if ($this->dokumen && !empty($response['mapData']['rwHukdisId'])) {
+            $this->uploadDokumen($response['mapData']['rwHukdisId']);
+        }
+
+        return $this->transformResponse($response, 'rwHukdisId');
+    }
+
+    /**
+     * Mengunggah dokumen terkait riwayat hukuman disiplin.
+     *
+     * @param string $riwayatPenghargaanId ID riwayat hukuman disiplin.
+     * @return void
+     */
+    private function uploadDokumen(string $riwayatPenghargaanId): void
+    {
+        $dokumenService = new DokumenService($this->authentication, $this->config);
+        $dokumenService->uploadRiwayat($riwayatPenghargaanId, $this->idRefDokumenHukdis, $this->dokumen);
     }
 
     /**

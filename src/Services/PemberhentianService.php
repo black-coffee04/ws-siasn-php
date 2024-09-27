@@ -5,9 +5,12 @@ namespace SiASN\Sdk\Services;
 use SiASN\Sdk\Config\Config;
 use SiASN\Sdk\Interfaces\ServiceInterface;
 use SiASN\Sdk\Resources\HttpClient;
+use SiASN\Sdk\Traits\ResponseTransformerTrait;
 
 class PemberhentianService implements ServiceInterface
 {
+    use ResponseTransformerTrait;
+
     /**
      * @var AuthenticationService Instance dari AuthenticationService untuk otentikasi.
      */
@@ -66,7 +69,7 @@ class PemberhentianService implements ServiceInterface
             'headers' => $this->getHeaders(),
         ]);
 
-        return $response['data'] ?? [];
+        return $this->transformResponse($response);
     }
 
     /**

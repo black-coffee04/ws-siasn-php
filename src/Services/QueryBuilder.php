@@ -100,7 +100,11 @@ class QueryBuilder
             $this->filteredData = array_slice($this->filteredData, 0, $this->limit);
         }
 
-        return $this->filteredData;
+        return [
+            "success" => true,
+            "message" => "",
+            "data"    => $this->filteredData
+        ];
     }
 
     /**

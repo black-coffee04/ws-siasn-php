@@ -19,4 +19,4 @@ $tahunAnggaran = '2023';
 $daftarPengadaan  = $siasnClient->pengadaan()->get($tahunAnggaran);
 $dokumenPengadaan = $siasnClient->pengadaan()->dokumen();
 
-var_dump($dokumenPengadaan);
+var_dump($daftarPengadaan);

@@ -34,9 +34,9 @@ $data = [
     "skPembatalanTanggal"       => "string",
     "skTanggal"                 => "string",
 ];
-$idRiwayatHukdis = $siasnClient->hukdis()
+$response = $siasnClient->hukdis()
     ->create($data)
     ->includeDokumen("path/to/dokumen.pdf") //Hapus metod ini apabila tidak menggunakan dokumen
     ->save();
 
-print_r($siasnClient->hukdis()->get($idRiwayatHukdis));
+print_r($siasnClient->hukdis()->get($response['data']['id']));

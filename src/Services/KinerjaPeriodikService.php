@@ -4,9 +4,12 @@ namespace SiASN\Sdk\Services;
 use SiASN\Sdk\Interfaces\ServiceInterface;
 use SiASN\Sdk\Config\Config;
 use SiASN\Sdk\Resources\HttpClient;
+use SiASN\Sdk\Traits\ResponseTransformerTrait;
 
 class KinerjaPeriodikService implements ServiceInterface
 {
+    use ResponseTransformerTrait;
+
     /**
      * @var AuthenticationService Instance dari AuthenticationService untuk otentikasi.
      */
@@ -74,13 +77,14 @@ class KinerjaPeriodikService implements ServiceInterface
         $this->dokumen  = $dokumenService->upload($this->idRefDokumenKinerjaPeriodik, $file);
         return $this;
     }
+    
 
     /**
      * Menyimpan data kinerja periodik.
      *
-     * @return string Pesan atau mapData dari response.
+     * @return array data dari response.
      */
-    public function save(): string
+    public function save(): array
     {
         if ($this->dokumen !== null && is_array($this->dokumen)) {
             $this->data['path'] = [$this->dokumen];
@@ -91,22 +95,34 @@ class KinerjaPeriodikService implements ServiceInterface
             'headers' => $this->getHeaders()
         ]);
 
-        return $response['mapData'] ?? $response['message'];
+        return $this->transformResponse($response, 'rwKinerjaPeriodikId');
+    }
+
+    /**
+     * Mengunggah dokumen terkait riwayat kinerja.
+     *
+     * @param string $riwayatPenghargaanId ID riwayat kinerja.
+     * @return void
+     */
+    private function uploadDokumen(string $riwayatPenghargaanId): void
+    {
+        $dokumenService = new DokumenService($this->authentication, $this->config);
+        $dokumenService->uploadRiwayat($riwayatPenghargaanId, $this->idRefDokumenKinerjaPeriodik, $this->dokumen);
     }
 
     /**
      * Menghapus riwayat kinerja periodik.
      *
      * @param string $idRiwayatKinerjaPeriodik ID riwayat kinerja periodik yang akan dihapus.
-     * @return bool Status keberhasilan penghapusan.
+     * @return array Status keberhasilan penghapusan.
      */
-    public function remove(string $idRiwayatKinerjaPeriodik): bool
+    public function remove(string $idRiwayatKinerjaPeriodik): array
     {
         $response = $this->httpClient->delete("/apisiasn/1.0/kinerjaperiodik/delete/{$idRiwayatKinerjaPeriodik}", [
             'headers' => $this->getHeaders()
         ]);
 
-        return $response['success'] ?? false;
+        return $this->transformResponse($response, 'rwKinerjaPeriodikId');
     }
 
     /**
