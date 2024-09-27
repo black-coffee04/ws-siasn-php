@@ -6,9 +6,12 @@ use SiASN\Sdk\Interfaces\ServiceInterface;
 use SiASN\Sdk\Config\Config;
 use SiASN\Sdk\Exceptions\SiasnDataException;
 use SiASN\Sdk\Resources\HttpClient;
+use SiASN\Sdk\Traits\ResponseTransformerTrait;
 
 class PenghargaanService implements ServiceInterface
 {
+    use ResponseTransformerTrait; 
+
     private $authentication;
     private $config;
     private $httpClient;
@@ -41,7 +44,7 @@ class PenghargaanService implements ServiceInterface
             'headers' => $this->getHeaders()
         ]);
 
-        return $response;
+        return $this->transformResponse($response, 'rwPenghargaanId');
     }
 
     /**
@@ -85,7 +88,7 @@ class PenghargaanService implements ServiceInterface
             $this->uploadDokumen($response['mapData']['rwPenghargaanId']);
         }
 
-        return $this->transformResponse($response);
+        return $this->transformResponse($response, 'rwPenghargaanId');
     }
 
     /**
@@ -102,7 +105,7 @@ class PenghargaanService implements ServiceInterface
             'headers' => $this->getHeaders()
         ]);
 
-        return $this->transformResponse($response);
+        return $this->transformResponse($response, 'rwPenghargaanId');
     }
 
     /**
@@ -115,23 +118,6 @@ class PenghargaanService implements ServiceInterface
     {
         $dokumenService = new DokumenService($this->authentication, $this->config);
         $dokumenService->uploadRiwayat($riwayatPenghargaanId, $this->idRefDokumenPenghargaan, $this->dokumen);
-    }
-
-    /**
-     * Transformasi respons dari API dengan mengubah kunci `mapData` menjadi `data`.
-     *
-     * @param array $response Respons asli dari API.
-     * @return array Respons yang sudah ditransformasi.
-     */
-    private function transformResponse(array $response): array
-    {
-        $response['data'] = !empty($response['mapData']) && is_array($response['mapData'])
-            ? ['id' => $response['mapData']['rwPenghargaanId'] ?? null] 
-            : [];
-
-        unset($response['mapData']);
-
-        return $response;
     }
 
     /**
