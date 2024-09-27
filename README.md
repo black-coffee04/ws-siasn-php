@@ -270,8 +270,8 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource PNS:
 | `$siasnClient->pns()->dataPasangan($nipAsn)`                | Mengambil data pasangan ASN berdasarkan NIP ASN.            | `$nipAsn` (string): NIP ASN                                    | Array data pasangan ASN.                                      |
 | `$siasnClient->pns()->dataAnak($nipAsn)`                    | Mengambil data anak ASN berdasarkan NIP ASN.                | `$nipAsn` (string): NIP ASN                                    | Array data anak ASN.                                          |
 | `$siasnClient->pns()->dataOrangTua($nipAsn)`                | Mengambil data orang tua ASN berdasarkan NIP ASN.           | `$nipAsn` (string): NIP ASN                                    | Array data orang tua ASN.                                     |
-| `$siasnClient->pns()->refreshJabatan($nipAsn)`          | Memperbarui data jabatan ASN berdasarkan NIP ASN.      | `$nipAsn` (string): NIP ASN                           | `true` jika berhasil memperbarui, `false` jika tidak.         |
-| `$siasnClient->pns()->refreshGolongan($nipAsn)`         | Memperbarui data golongan ASN berdasarkan NIP ASN.     | `$nipAsn` (string): NIP ASN                           | `true` jika berhasil memperbarui, `false` jika tidak.         |
+| `$siasnClient->pns()->refreshJabatan($nipAsn)`          | Memperbarui data jabatan ASN berdasarkan NIP ASN.      | `$nipAsn` (string): NIP ASN                           | Array Respon api.         |
+| `$siasnClient->pns()->refreshGolongan($nipAsn)`         | Memperbarui data golongan ASN berdasarkan NIP ASN.     | `$nipAsn` (string): NIP ASN                           | Array Respon api.         |
 | `$siasnClient->pns()->nilaiIpAsn($nipAsn)`                  | Mengambil nilai IP ASN berdasarkan NIP ASN.                 | `$nipAsn` (string): NIP ASN                                    | Array nilai IP ASN.                                           |
 | `$siasnClient->pns()->foto($nipAsn)->setName($fileName)->outputStream()` | Mengambil foto profil ASN berdasarkan NIP ASN dan menyimpannya sebagai file dengan nama tertentu. | `$nipAsn` (string): NIP ASN, `$fileName` (string): Nama file | Menghasilkan output stream foto profil ASN.                    |
 | `$siasnClient->pns()->foto($nipAsn)->setName($fileName)->saveTo($path)` | Menyimpan foto profil ASN ke direktori yang ditentukan. | `$nipAsn` (string): NIP ASN, `$path ` (string): direktori | String nama file.                    |
@@ -293,8 +293,8 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource Jabatan:
 |---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
 | `$siasnClient->jabatan()->pns($nipAsn)`                   | Mengambil data jabatan ASN berdasarkan NIP ASN.               | `$nipAsn` (string): NIP ASN                                    | Array data jabatan ASN.                                         |
 | `$siasnClient->jabatan()->riwayat($idJabatan)`                | Mengambil data riwayat jabatan berdasarkan Id Jabatan.            | `$idJabatan` (string): Id Jabatan                                 | Array data riwayat jabatan.
-| `$siasnClient->jabatan()->create($data)->save()`                | Menambahkan data jabatan.            | `$data` (Array): Data Jabatan                                 | String Id riwayat jabatan.
-| `$siasnClient->jabatan()->createUnorJabatan($data)->save()`                | Menambahkan data unor jabatan.            | `$data` (Array): Data Jabatan                                 | String Id riwayat jabatan.
+| `$siasnClient->jabatan()->create($data)->save()`                | Menambahkan data jabatan.            | `$data` (Array): Data Jabatan                                 | Array Respon api.
+| `$siasnClient->jabatan()->createUnorJabatan($data)->save()`                | Menambahkan data unor jabatan.            | `$data` (Array): Data Jabatan                                 | Array Respon api.
 | `$siasnClient->jabatan()->remove($idRiwayatJabatan)`                | Menghapus riwayat jabatan.            | `$idRiwayatJabatan` (String): ID Riwayat Jabatan                                 | Array|false.
 
 #### Metode Tambahan
@@ -518,15 +518,17 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource cpns:
 
 | Metode                                      | Deskripsi                                                   | Parameter                                                      | Kembalian                                                     |
 |---------------------------------------------|-------------------------------------------------------------|----------------------------------------------------------------|---------------------------------------------------------------|
-| `$siasnClient->cpns()->create($data)->includeDokumen($file)->save()`                   | Menambahkan data cpns dengan dokumen.| `$data` (array): Data CPNS, `$file` (string) Dokumen SK CPNS file/URL | Array data.  
+| `$siasnClient->cpns()->create($data)->includeDokumen($skCpns, $spmt)->save()`                   | Menambahkan data cpns dengan dokumen.| `$data` (array): Data CPNS, `$file` (string) Dokumen SK CPNS file/URL | Array data.  
 | `$siasnClient->cpns()->create($data)->save()`                   | Menambahkan data cpns tanpa dokumen.| `$data` (array): Data CPNS | Array data. 
 
 #### Contoh Penggunaan Api CPNS
 
 ```php
+$skCpns = "path/to/dokumen.pdf";
+$spmt = "path/to/dokumen.pdf";
 $siasnClient->cpns()
     ->create($data)
-    ->includeDokumen("path/to/dokumen.pdf") #URL FILE atau Path to dokumen
+    ->includeDokumen($skCpns, $spmt) #URL FILE atau Path to dokumen
     ->save()
 ```
 
@@ -544,7 +546,28 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource diklat:
 #### Contoh Penggunaan Api Diklat
 
 ```php
-$riwayatDiklat = $siasnClient->diklat()->get($idRiwayatDiklat);
+$data = [
+    "bobot"                  => integer,
+    "id"                     => null,
+    "institusiPenyelenggara" => "string",
+    "jenisKompetensi"        => "string",
+    "jumlahJam"              => integer,
+    "latihanStrukturalId"    => "string",
+    "nomor"                  => "string",
+    "pnsOrangId"             => "string",
+    "tahun"                  => integer,
+    "tanggal"                => "d-m-Y",
+    "tanggalSelesai"         => "d-m-Y",
+];
+$response = $siasnClient->diklat()
+    ->create($data)
+    ->includeDokumen("file.pdf") //Hapus methods ini jika tidak menggunakan dokumen
+    ->save();
+
+$riwayatDiklat = $siasnClient->diklat()->get($response['data']['id']);
+print_r($riwayatDiklat);
+
+$riwayatDiklat = $siasnClient->diklat()->remove($response['data']['id']);
 ```
 
 ## Hukuman Disiplin
@@ -560,12 +583,33 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource hukuman disipli
 #### Contoh Penggunaan Api Hukdis
 
 ```php
-$idRiwayatHukdis = $siasnClient->hukdis()
+$data = [
+    "akhirHukumanTanggal"       => "string",
+    "alasanHukumanDisiplinId"   => "string",
+    "golonganId"                => "string",
+    "golonganLama"              => "string",
+    "hukdisYangDiberhentikanId" => "string",
+    "hukumanTanggal"            => "string",
+    "id"                        => "string",
+    "jenisHukumanId"            => "string",
+    "jenisTingkatHukumanId"     => "string",
+    "kedudukanHukumId"          => "string",
+    "keterangan"                => "string",
+    "masaBulan"                 => "string",
+    "masaTahun"                 => "string",
+    "nomorPp"                   => "string",
+    "pnsOrangId"                => "string",
+    "skNomor"                   => "string",
+    "skPembatalanNomor"         => "string",
+    "skPembatalanTanggal"       => "string",
+    "skTanggal"                 => "string",
+];
+$response = $siasnClient->hukdis()
     ->create($data)
     ->includeDokumen("path/to/dokumen.pdf") //Hapus metod ini apabila tidak menggunakan dokumen
     ->save();
 
-print_r($siasnClient->hukdis()->get($idRiwayatHukdis));
+print_r($siasnClient->hukdis()->get($response['data']['id']));
 ```
 ## Kinerja Periodik
 
@@ -580,14 +624,32 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource kinerja periodi
 #### Contoh Penggunaan Api Kinerja Periodik
 
 ```php
-$idRiwayatKinerjaPeriodik = $siasnClient->kinerjaPeriodik()
+$data        = [
+    "bulanMulaiPenilaian"   => "numeric",
+    "bulanSelesaiPenilaian" => "numeric",
+    "hasilKinerjaNilai"     => "referensi perilakuDanKinerja", //integer
+    "koefisienId"           => "referensi koefisien",
+    "kuadranKinerjaNilai"   => referensi kuadranNilai,
+    "penilaiGolongan"       => "referensi golonganPns",
+    "penilaiJabatanNama"    => "string",
+    "penilaiNama"           => "string",
+    "penilaiNipNrp"         => "string",
+    "penilaiUnorNama"       => "string",
+    "perilakuKerjaNilai"    => "referensi perilakuDanKinerja", //integer,
+    "periodikId"            => "referensi periodik",
+    "pnsDinilaiId"          => "string",
+    "statusPenilai"         => "ASN/NON ASN",
+    "tahun"                 => integer,
+    "tahunMulaiPenilaian"   => integer,
+    "tahunSelesaiPenilaian" => integer,
+];
+
+$response = $siasnClient->kinerjaPeriodik()
     ->create($data)
-    ->includeDokumen($file)
+    ->includeDokumen("https://pdfobject.com/pdf/sample.pdf")
     ->save();
 
-if ($siasnClient->kinerjaPeriodik()->remove($idRiwayatKinerjaPeriodik)) {
-    echo "Sukses Menghapus data";
-}
+$deleted = $siasnClient->kinerjaPeriodik()->remove($response['data']['id']);
 ```
 
 ## Kursus
@@ -604,18 +666,25 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource kursus:
 #### Contoh Penggunaan Api Kursus
 
 ```php
-#minyam data kursus
-$idRiwayatKursus = $siasnClient->kursus()->create($data)->save();
+$data = [
+    "instansiId"             => "string",
+    "institusiPenyelenggara" => "string",
+    "jenisDiklatId"          => "referensi jenis diklat",
+    "jenisKursus"            => "",
+    "jenisKursusSertipikat"  => "string",
+    "jumlahJam"              => integer,
+    "lokasiId"               => "",
+    "namaKursus"             => "string",
+    "nomorSertipikat"        => "string",
+    "pnsOrangId"             => "string",
+    "tahunKursus"            => integer,
+    "tanggalKursus"          => "string",
+    "tanggalSelesaiKursus"   => "string",
+];
+$response = $siasnClient->kursus()->create($data)->save();
+$kursus = $siasnClient->kursus()->get($response['data']['id']);
 
-#mengambil data riwayat kursus
-$kursus = $siasnClient->kursus()->get($idRiwayatKursus);
-
-print_r($kursus);
-
-#Hapus data riwayat kursus
-if ($siasnClient->kursus()->remove($idRiwayatKursus)) {
-    echo "Sukses Hapus kursus";
-}
+$siasnClient->kursus()->remove($response['data']['id']);
 ```
 
 ## SKP

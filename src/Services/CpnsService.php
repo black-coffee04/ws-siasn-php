@@ -5,9 +5,12 @@ use SiASN\Sdk\Config\Config;
 use SiASN\Sdk\Interfaces\ServiceInterface;
 use SiASN\Sdk\Resources\HttpClient;
 use SiASN\Sdk\Exceptions\SiasnDataException;
+use SiASN\Sdk\Traits\ResponseTransformerTrait;
 
 class CpnsService implements ServiceInterface
 {
+    use ResponseTransformerTrait;
+
     /**
      * @var AuthenticationService Instance dari AuthenticationService untuk otentikasi.
      */
@@ -31,12 +34,22 @@ class CpnsService implements ServiceInterface
     /**
      * @var mixed Dokumen yang akan disertakan dalam permintaan.
      */
-    private $dokumen = null;
+    private $skCPNS = null;
+
+    /**
+     * @var mixed Dokumen yang akan disertakan dalam permintaan.
+     */
+    private $spmt = null;
 
     /**
      * @var string ID referensi dokumen CPNS.
      */
     private $idRefDokumenCpns = '889';
+
+    /**
+     * @var string ID referensi dokumen SPMT.
+     */
+    private $idRefDokumenSPMT = '888';
 
     /**
      * Constructor untuk CpnsService.
@@ -83,10 +96,10 @@ class CpnsService implements ServiceInterface
      * @param mixed $file File dokumen yang akan diunggah.
      * @return $this
      */
-    public function includeDokumen($file): self
+    public function includeDokumen($skCPNS, $spmt): self
     {
-        $dokumenService = new DokumenService($this->authentication, $this->config);
-        $this->dokumen  = $dokumenService->upload($this->idRefDokumenCpns, $file);
+        $this->skCPNS = $skCPNS;
+        $this->spmt   = $spmt;
         return $this;
     }
 
@@ -98,16 +111,39 @@ class CpnsService implements ServiceInterface
      */
     public function save(): array
     {
-        if ($this->dokumen !== null && is_array($this->dokumen)) {
-            $this->data['path'] = [$this->dokumen];
-        }
-
         $response = $this->httpClient->post("/apisiasn/1.0/cpns/save", [
             'json'    => $this->data,
             'headers' => $this->getHeaders()
         ]);
 
-        return $response;
+        if (isset($response['mapData']) && is_array($response['mapData'])) {
+            $keys      = array_keys($response['mapData']);
+            $riwayatId = $keys[0] ?? null;
+        
+            if (!is_null($riwayatId)) {
+                $riwayatIdValue = $response['mapData'][$riwayatId];
+        
+                foreach (['skCPNS', 'spmt'] as $dokumen) {
+                    if (!is_null($this->$dokumen)) {
+                        $this->uploadDokumen($riwayatIdValue, $this->$dokumen);
+                    }
+                }
+            }
+        }        
+
+        return $this->transformResponse($response);
+    }
+
+    /**
+     * Mengunggah dokumen terkait riwayat angka kredit.
+     *
+     * @param string $riwayatId ID riwayat angka kredit.
+     * @return void
+     */
+    private function uploadDokumen(string $riwayatId, $dokumen): void
+    {
+        $dokumenService = new DokumenService($this->authentication, $this->config);
+        $dokumenService->uploadRiwayat($riwayatId, $this->idRefDokumenCpns, $dokumen);
     }
 
     /**

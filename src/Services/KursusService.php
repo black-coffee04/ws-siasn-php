@@ -5,9 +5,12 @@ use SiASN\Sdk\Interfaces\ServiceInterface;
 use SiASN\Sdk\Config\Config;
 use SiASN\Sdk\Exceptions\SiasnDataException;
 use SiASN\Sdk\Resources\HttpClient;
+use SiASN\Sdk\Traits\ResponseTransformerTrait;
 
 class KursusService implements ServiceInterface
 {
+    use ResponseTransformerTrait;
+
     /**
      * @var AuthenticationService Instance dari AuthenticationService untuk otentikasi.
      */
@@ -34,7 +37,7 @@ class KursusService implements ServiceInterface
     private $dokumen = null;
 
     /**
-     * @var string ID referensi dokumen angka kredit.
+     * @var string ID referensi dokumen kursus.
      */
     private $idRefDokumenKursus = '881';
 
@@ -63,7 +66,7 @@ class KursusService implements ServiceInterface
             "headers" => $this->getHeaders()
         ]);
         
-        return isset($response['data']) && is_array($response['data']) ? $response['data'] : [];
+        return $this->transformResponse($response);
     }
 
     /**
@@ -93,35 +96,42 @@ class KursusService implements ServiceInterface
     /**
      * Menyimpan data kursus.
      *
-     * @return string Pesan atau ID kursus yang disimpan.
+     * @return array data respon api.
      */
-    public function save(): string
+    public function save(): array
     {
         $response = $this->httpClient->post("/apisiasn/1.0/kursus/save", [
             'json'    => $this->data,
             'headers' => $this->getHeaders()
         ]);
 
-        if (!isset($response['mapData']['rwKursusId'])) {
-            return $response['message'];
-        }
-
-        if ($this->dokumen !== null && is_string($this->dokumen)) {
-            $dokumenService = new DokumenService($this->authentication, $this->config);
-            $dokumenService->uploadRiwayat($response['mapData']['rwKursusId'], $this->idRefDokumenKursus, $this->dokumen);
+        if ($this->dokumen && isset($response['mapData']['rwKursusId'])) {
+            $this->uploadDokumen($response['mapData']['rwKursusId']);
         }
         
-        return $response['mapData']['rwKursusId'] ?? $response['message'];
+        return $this->transformResponse($response, 'rwKursusId');
+    }
+
+    /**
+     * Mengunggah dokumen terkait riwayat kursus.
+     *
+     * @param string $riwayatId ID riwayat kursus.
+     * @return void
+     */
+    private function uploadDokumen(string $riwayatId): void
+    {
+        $dokumenService = new DokumenService($this->authentication, $this->config);
+        $dokumenService->uploadRiwayat($riwayatId, $this->idRefDokumenKursus, $this->dokumen);
     }
 
     /**
      * Menghapus kursus berdasarkan ID.
      *
      * @param string $idRiwayatKursus ID riwayat kursus yang akan dihapus.
-     * @return bool True jika penghapusan berhasil, false jika tidak.
+     * @return array respon api.
      * @throws SiasnDataException Jika riwayat kursus tidak ditemukan.
      */
-    public function remove(string $idRiwayatKursus): bool
+    public function remove(string $idRiwayatKursus): array
     {
         $angkaKredit = $this->get($idRiwayatKursus);
 
@@ -133,7 +143,7 @@ class KursusService implements ServiceInterface
             'headers' => $this->getHeaders()
         ]);
 
-        return $response['success'] ?? false;
+        return $this->transformResponse($response, 'rwKursusId');
     }
 
     /**

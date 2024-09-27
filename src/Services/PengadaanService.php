@@ -5,9 +5,12 @@ namespace SiASN\Sdk\Services;
 use SiASN\Sdk\Config\Config;
 use SiASN\Sdk\Interfaces\ServiceInterface;
 use SiASN\Sdk\Resources\HttpClient;
+use SiASN\Sdk\Traits\ResponseTransformerTrait;
 
 class PengadaanService implements ServiceInterface
 {
+    use ResponseTransformerTrait;
+
     /**
      * @var AuthenticationService Instance dari AuthenticationService untuk otentikasi.
      */
@@ -72,7 +75,7 @@ class PengadaanService implements ServiceInterface
             'headers' => $this->getHeaders(),
         ]);
 
-        return $response['data'] ?? [];
+        return $this->transformResponse($response);
     }
 
     /**

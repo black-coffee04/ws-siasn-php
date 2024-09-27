@@ -6,6 +6,7 @@ use SiASN\Sdk\Config\Config;
 use SiASN\Sdk\Exceptions\SiasnDataException;
 use SiASN\Sdk\Interfaces\ServiceInterface;
 use SiASN\Sdk\Resources\HttpClient;
+use SiASN\Sdk\Traits\ResponseTransformerTrait;
 
 /**
  * Class JabatanService
@@ -14,6 +15,8 @@ use SiASN\Sdk\Resources\HttpClient;
  */
 class JabatanService implements ServiceInterface
 {
+    use ResponseTransformerTrait;
+
     /**
      * @var AuthenticationService Instance dari AuthenticationService untuk otentikasi.
      */
@@ -133,7 +136,7 @@ class JabatanService implements ServiceInterface
            $this->uploadDokumen($response['mapData']['rwJabatanId']);
         }
 
-        return $this->transformResponse($response);
+        return $this->transformResponse($response, 'rwJabatanId');
     }
 
     /**
@@ -146,23 +149,6 @@ class JabatanService implements ServiceInterface
     {
         $dokumenService = new DokumenService($this->authentication, $this->config);
         $dokumenService->uploadRiwayat($riwayatId, $this->idRefDokumenJabatan, $this->dokumen);
-    }
-
-    /**
-     * Transformasi respons dari API dengan mengubah kunci `mapData` menjadi `data`.
-     *
-     * @param array $response Respons asli dari API.
-     * @return array Respons yang sudah ditransformasi.
-     */
-    private function transformResponse(array $response): array
-    {
-        $response['data'] = !empty($response['mapData']) && is_array($response['mapData'])
-            ? ['id' => $response['mapData']['rwJabatanId'] ?? null] 
-            : [];
-
-        unset($response['mapData']);
-
-        return $response;
     }
 
     /**
@@ -184,7 +170,7 @@ class JabatanService implements ServiceInterface
             'headers' => $this->getHeaders()
         ]);
 
-        return $this->transformResponse($response);
+        return $this->transformResponse($response, 'rwJabatanId');
     }
 
     /**
@@ -202,7 +188,7 @@ class JabatanService implements ServiceInterface
             'headers' => $this->getHeaders()
         ]);
 
-        return $response;
+        return $this->transformResponse($response, 'rwJabatanId');;
     }
 
     /**

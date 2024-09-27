@@ -5,9 +5,12 @@ namespace SiASN\Sdk\Services;
 use SiASN\Sdk\Interfaces\ServiceInterface;
 use SiASN\Sdk\Config\Config;
 use SiASN\Sdk\Resources\HttpClient;
+use SiASN\Sdk\Traits\ResponseTransformerTrait;
 
 class HukdisService implements ServiceInterface
 {
+    use ResponseTransformerTrait;
+
     /**
      * @var AuthenticationService Instance dari AuthenticationService untuk otentikasi.
      */
@@ -64,7 +67,7 @@ class HukdisService implements ServiceInterface
             ['headers' => $this->getHeaders()]
         );
 
-        return $response['data'] ?? [];
+        return $this->transformResponse($response, 'rwHukdisId');
     }
 
     /**
@@ -94,9 +97,9 @@ class HukdisService implements ServiceInterface
     /**
      * Menyimpan data riwayat hukdis.
      *
-     * @return string ID riwayat hukdis yang disimpan atau pesan kesalahan.
+     * @return array riwayat hukdis yang disimpan atau pesan kesalahan.
      */
-    public function save(): string
+    public function save(): array
     {
         $response = $this->httpClient->post(
             "/apisiasn/1.0/hukdis/save", 
@@ -107,12 +110,23 @@ class HukdisService implements ServiceInterface
             return $response['message'];
         }
 
-        if ($this->dokumen !== null) {
-            $dokumenService = new DokumenService($this->authentication, $this->config);
-            $dokumenService->uploadRiwayat($response['mapData']['rwHukdisId'], $this->idRefDokumenHukdis, $this->dokumen);
+        if ($this->dokumen && !empty($response['mapData']['rwHukdisId'])) {
+            $this->uploadDokumen($response['mapData']['rwHukdisId']);
         }
 
-        return $response['mapData']['rwHukdisId'] ?? $response['message'];
+        return $this->transformResponse($response, 'rwHukdisId');
+    }
+
+    /**
+     * Mengunggah dokumen terkait riwayat hukuman disiplin.
+     *
+     * @param string $riwayatPenghargaanId ID riwayat hukuman disiplin.
+     * @return void
+     */
+    private function uploadDokumen(string $riwayatPenghargaanId): void
+    {
+        $dokumenService = new DokumenService($this->authentication, $this->config);
+        $dokumenService->uploadRiwayat($riwayatPenghargaanId, $this->idRefDokumenHukdis, $this->dokumen);
     }
 
     /**

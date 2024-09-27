@@ -4,9 +4,12 @@ namespace SiASN\Sdk\Services;
 use SiASN\Sdk\Interfaces\ServiceInterface;
 use SiASN\Sdk\Config\Config;
 use SiASN\Sdk\Resources\HttpClient;
+use SiASN\Sdk\Traits\ResponseTransformerTrait;
 
 class SkpService implements ServiceInterface
 {
+    use ResponseTransformerTrait;
+
     /**
      * @var AuthenticationService Instance dari AuthenticationService untuk otentikasi.
      */
@@ -35,7 +38,7 @@ class SkpService implements ServiceInterface
     /**
      * @var string ID referensi dokumen SKP.
      */
-    private $idRefDokumenSkp = '873';
+    private $idRefDokumenSkp = '891';
 
     /**
      * @var string Endpoint untuk permintaan GET data SKP.
@@ -77,7 +80,7 @@ class SkpService implements ServiceInterface
             'headers' => $this->getHeaders()
         ]);
 
-        return $response['data'] ?? [];
+        return $this->transformResponse($response);
     }
 
     /**
@@ -114,8 +117,7 @@ class SkpService implements ServiceInterface
     public function includeDokumen($file): self
     {
         if ($this->endPointPost === 'skp22/save') {
-            $dokumenService = new DokumenService($this->authentication, $this->config);
-            $this->dokumen  = $dokumenService->upload($this->idRefDokumenSkp, $file);
+            $this->dokumen  = $file;
         }
         return $this;
     }
@@ -127,16 +129,28 @@ class SkpService implements ServiceInterface
      */
     public function save(): array
     {
-        if ($this->dokumen !== null) {
-            $this->data['path'] = [$this->dokumen];
-        }
-
         $response = $this->httpClient->post("/apisiasn/1.0/{$this->endPointPost}", [
             'json'    => $this->data,
             'headers' => $this->getHeaders()
         ]);
 
-        return $response['mapData'] ?? $response;
+        if ($this->dokumen && isset($response['mapData']['rwSkpId'])) {
+            $this->uploadDokumen($response['mapData']['rwSkpId']);
+        }
+
+        return $this->transformResponse($response, 'rwSkpId');
+    }
+
+    /**
+     * Mengunggah dokumen terkait riwayat kursus.
+     *
+     * @param string $riwayatId ID riwayat kursus.
+     * @return void
+     */
+    private function uploadDokumen(string $riwayatId): void
+    {
+        $dokumenService = new DokumenService($this->authentication, $this->config);
+        $dokumenService->uploadRiwayat($riwayatId, $this->idRefDokumenSkp, $this->dokumen);
     }
 
     /**

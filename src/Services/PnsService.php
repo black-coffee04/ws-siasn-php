@@ -7,6 +7,7 @@ use SiASN\Sdk\Exceptions\SiasnRequestException;
 use SiASN\Sdk\Exceptions\SiasnServiceException;
 use SiASN\Sdk\Interfaces\ServiceInterface;
 use SiASN\Sdk\Resources\HttpClient;
+use SiASN\Sdk\Traits\ResponseTransformerTrait;
 use SiASN\Sdk\Utils\Mime;
 
 /**
@@ -16,30 +17,13 @@ use SiASN\Sdk\Utils\Mime;
  */
 class PnsService implements ServiceInterface
 {
-    /**
-     * @var AuthenticationService Instance dari AuthenticationService untuk otentikasi.
-     */
-    private $authentication;
+    use ResponseTransformerTrait;
 
-    /**
-     * @var Config Instance dari Config yang menyimpan konfigurasi aplikasi.
-     */
-    private $config;
-
-    /**
-     * @var object Response dari permintaan terakhir.
-     */
-    private $response;
-
-    /**
-     * @var string Nama file untuk disimpan.
-     */
-    private $fileName;
-
-    /**
-     * @var string Path tempat menyimpan file.
-     */
-    private $filePath;
+    private AuthenticationService $authentication;
+    private Config $config;
+    private object $response;
+    private string $fileName;
+    private string $filePath;
 
     /**
      * Constructor untuk PnsService.
@@ -63,16 +47,7 @@ class PnsService implements ServiceInterface
      */
     protected function request(string $endpoint, string $args): array
     {
-        $httpClient = new HttpClient($this->config->getApiBaseUrl());
-        $response = $httpClient->get("/apisiasn/1.0/{$endpoint}/{$args}", [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->getWsoAccessToken(),
-                'Auth' => 'bearer ' . $this->getSsoAccessToken(),
-                'Accept' => 'application/json'
-            ]
-        ]);
-
-        return $response['data'] ?? [];
+        return $this->sendRequest("apisiasn/1.0/{$endpoint}/{$args}");
     }
 
     /**
@@ -80,23 +55,33 @@ class PnsService implements ServiceInterface
      *
      * @param string $endpoint Endpoint API yang dituju.
      * @param string $pnsId ID PNS yang akan di-refresh.
-     * @return bool Status hasil permintaan refresh.
+     * @return array Status hasil permintaan refresh.
      */
-    protected function refresh(string $endpoint, string $pnsId): bool
+    protected function refresh(string $endpoint, string $pnsId): array
+    {
+        return $this->sendRequest("apisiasn/1.0/{$endpoint}", [
+            'query' => ['pns_orang_id' => $pnsId]
+        ]);
+    }
+
+    /**
+     * Mengirim permintaan HTTP secara umum.
+     *
+     * @param string $uri URI lengkap untuk permintaan.
+     * @param array|null $options Opsi tambahan untuk permintaan.
+     * @return array Data respon dari API.
+     */
+    private function sendRequest(string $uri, array $options = []): array
     {
         $httpClient = new HttpClient($this->config->getApiBaseUrl());
-        $response = $httpClient->get("/apisiasn/1.0/{$endpoint}", [
-            'query' => [
-                'pns_orang_id' => $pnsId
-            ],
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->getWsoAccessToken(),
-                'Auth' => 'bearer ' . $this->getSsoAccessToken(),
-                'Accept' => 'application/json'
-            ]
-        ]);
+        $options['headers'] = [
+            'Authorization' => 'Bearer ' . $this->getWsoAccessToken(),
+            'Auth' => 'bearer ' . $this->getSsoAccessToken(),
+            'Accept' => 'application/json'
+        ];
 
-        return isset($response['Error']) && $response['Error'] === 'false';
+        $response = $httpClient->get("/{$uri}", $options);
+        return $this->transformResponse($response);
     }
 
     /**
@@ -104,7 +89,6 @@ class PnsService implements ServiceInterface
      *
      * @param string $nip Nomor Induk Pegawai.
      * @return array Data utama PNS.
-     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
     public function dataUtama(string $nip): array
     {
@@ -116,7 +100,6 @@ class PnsService implements ServiceInterface
      *
      * @param string $nip Nomor Induk Pegawai.
      * @return array Data pasangan PNS.
-     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
     public function dataPasangan(string $nip): array
     {
@@ -128,7 +111,6 @@ class PnsService implements ServiceInterface
      *
      * @param string $nip Nomor Induk Pegawai.
      * @return array Data anak PNS.
-     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
     public function dataAnak(string $nip): array
     {
@@ -140,7 +122,6 @@ class PnsService implements ServiceInterface
      *
      * @param string $nip Nomor Induk Pegawai.
      * @return array Data orang tua PNS.
-     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
      */
     public function dataOrangTua(string $nip): array
     {
@@ -148,11 +129,10 @@ class PnsService implements ServiceInterface
     }
 
     /**
-     * Mengambil nilai IP ASN berdasarkan NIP.
+     * Mengambil nilai IP ASN PNS berdasarkan NIP.
      *
      * @param string $nip Nomor Induk Pegawai.
-     * @return array Data nilai IP ASN.
-     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta data.
+     * @return array Nilai IP ASN PNS.
      */
     public function nilaiIpAsn(string $nip): array
     {
@@ -160,63 +140,94 @@ class PnsService implements ServiceInterface
     }
 
     /**
-     * Menyegarkan data jabatan PNS berdasarkan NIP.
+     * Melakukan refresh jabatan PNS berdasarkan NIP.
      *
      * @param string $nip Nomor Induk Pegawai.
-     * @return bool Status hasil penyegaran.
+     * @return array Status hasil refresh jabatan.
      */
-    public function refreshJabatan(string $nip): bool
+    public function refreshJabatan(string $nip): array
     {
-        $pns = $this->dataUtama($nip);
-        return $this->refresh("pns/data-utama-jabatansync", $pns["id"]);
+        return $this->refreshWithDataUtama("pns/data-utama-jabatansync", $nip);
     }
 
     /**
-     * Menyegarkan data golongan PNS berdasarkan NIP.
+     * Melakukan refresh golongan PNS berdasarkan NIP.
      *
      * @param string $nip Nomor Induk Pegawai.
-     * @return bool Status hasil penyegaran.
+     * @return array Status hasil refresh golongan.
      */
-    public function refreshGolongan(string $nip): bool
+    public function refreshGolongan(string $nip): array
+    {
+        return $this->refreshWithDataUtama("pns/data-utama-golongansync", $nip);
+    }
+
+    /**
+     * Refresh data dengan menggunakan data utama PNS.
+     *
+     * @param string $endpoint Endpoint untuk refresh.
+     * @param string $nip Nomor Induk Pegawai.
+     * @return array Status hasil refresh.
+     */
+    private function refreshWithDataUtama(string $endpoint, string $nip): array
     {
         $pns = $this->dataUtama($nip);
-        return $this->refresh("pns/data-utama-golongansync", $pns["id"]);
+        return $this->refresh($endpoint, $pns["data"]["id"]);
     }
 
     /**
      * Mengambil foto PNS berdasarkan NIP dan menyimpannya ke file.
      *
      * @param string $nip Nomor Induk Pegawai.
-     * @return $this
+     * @return $this Instance dari PnsService.
      */
     public function foto(string $nip)
     {
         $pns = $this->dataUtama($nip);
+        $this->response = $this->fetchFoto($pns['id']);
+        return $this;
+    }
+
+    /**
+     * Mengambil foto PNS dari API.
+     *
+     * @param string $pnsId ID PNS.
+     * @return object Respon dari API.
+     */
+    private function fetchFoto(string $pnsId): object
+    {
         $httpClient = new HttpClient($this->config->getApiBaseUrl());
-        $this->response = $httpClient->get("/apisiasn/1.0/pns/photo/{$pns['id']}", [
+        return $httpClient->get("/apisiasn/1.0/pns/photo/{$pnsId}", [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->getWsoAccessToken(),
-                'Auth'          => 'bearer ' . $this->getSsoAccessToken(),
-                'Accept'        => 'application/json'
+                'Auth' => 'bearer ' . $this->getSsoAccessToken(),
+                'Accept' => 'application/json'
             ]
         ]);
-
-        return $this;
     }
 
     /**
      * Menetapkan nama file untuk disimpan.
      *
      * @param string $fileName Nama file.
-     * @return $this
+     * @return $this Instance dari PnsService.
      */
     public function setName(string $fileName)
     {
+        $this->fileName = $this->generateFileName($fileName);
+        return $this;
+    }
+
+    /**
+     * Menghasilkan nama file berdasarkan Content-Type.
+     *
+     * @param string $fileName Nama file.
+     * @return string Nama file yang dihasilkan.
+     */
+    private function generateFileName(string $fileName): string
+    {
         $contentType = $this->response->getHeaderLine('Content-Type');
         $extension = (new Mime)->get($contentType);
-
-        $this->fileName = $fileName . "." . $extension;
-        return $this;
+        return $fileName . '.' . $extension;
     }
 
     /**
@@ -228,24 +239,8 @@ class PnsService implements ServiceInterface
      */
     public function saveTo(string $path): string
     {
-        $this->filePath = $path;
+        $this->filePath = rtrim($path, DIRECTORY_SEPARATOR);
         return $this->saveToFile();
-    }
-
-    /**
-     * Memastikan direktori untuk menyimpan file sudah ada.
-     *
-     * @param string $path Path dari direktori.
-     * @return void
-     * @throws SiasnServiceException Jika gagal membuat direktori.
-     */
-    private function ensureDirectoryExists(string $path): void
-    {
-        if (!is_dir($path)) {
-            if (!mkdir($path, 0777, true) && !is_dir($path)) {
-                throw new SiasnServiceException('Gagal membuat direktori: ' . $path);
-            }
-        }
     }
 
     /**
@@ -256,43 +251,27 @@ class PnsService implements ServiceInterface
      */
     private function saveToFile(): string
     {
-        $directory = rtrim($this->filePath, DIRECTORY_SEPARATOR);
-        $this->ensureDirectoryExists($directory);
-
-        $fullPath = $directory . DIRECTORY_SEPARATOR . $this->fileName;
-        $file     = $this->response->getBody()->getContents();
-        file_put_contents($fullPath, $file);
-
+        $this->ensureDirectoryExists($this->filePath);
+        $fullPath     = $this->filePath . DIRECTORY_SEPARATOR . $this->fileName;
+        $fileContents = $this->response->getBody()->getContents();
+        file_put_contents($fullPath, $fileContents);
         return $this->fileName;
     }
-    
+
     /**
-     * Mengirimkan data foto ke output stream untuk diunduh.
+     * Memastikan direktori untuk menyimpan file sudah ada.
      *
+     * @param string $path Path dari direktori.
      * @return void
+     * @throws SiasnServiceException Jika direktori tidak dapat dibuat.
      */
-    public function outputStream(): void
+    private function ensureDirectoryExists(string $path): void
     {
-        $content  = $this->response->getBody()->getContents();
-        $fileSize = strlen($content);
-        $mime     = $this->response->getHeaderLine('Content-Type');
-    
-        header('Content-Description: File Transfer');
-        header('Content-Type: ' . $mime);
-        header('Content-Disposition: attachment; filename="' . basename($this->fileName) . '"');
-        header('Content-Transfer-Encoding: binary');
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate');
-        header('Pragma: public');
-        header('Content-Length: ' . $fileSize);
-    
-        ob_clean();
-        flush();
-    
-        echo $content;
-        exit;
+        if (!is_dir($path) && !mkdir($path, 0755, true) && !is_dir($path)) {
+            throw new SiasnServiceException("Gagal membuat direktori: {$path}");
+        }
     }
-    
+
     /**
      * Mendapatkan access token dari layanan SSO.
      *
@@ -302,7 +281,7 @@ class PnsService implements ServiceInterface
     {
         return $this->authentication->getSsoAccessToken();
     }
-    
+
     /**
      * Mendapatkan access token dari layanan WSO.
      *
@@ -312,4 +291,4 @@ class PnsService implements ServiceInterface
     {
         return $this->authentication->getWsoAccessToken();
     }
-}    
+}
