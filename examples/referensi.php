@@ -26,6 +26,6 @@ $limit      = 10;
 
 $unor = $siasn
     ->referensi()
-    ->penghargaan();
+    ->penghargaan()->get();
 
 var_dump($unor);

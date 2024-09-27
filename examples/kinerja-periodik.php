@@ -33,11 +33,9 @@ $data        = [
     "tahunSelesaiPenilaian" => integer,
 ];
 
-$idRiwayatKinerjaPeriodik = $siasnClient->kinerjaPeriodik()
+$response = $siasnClient->kinerjaPeriodik()
     ->create($data)
     ->includeDokumen("https://pdfobject.com/pdf/sample.pdf")
     ->save();
 
-if ($siasnClient->kinerjaPeriodik()->remove($idRiwayatKinerjaPeriodik)) {
-    echo "Sukses Menghapus data";
-}
+$deleted = $siasnClient->kinerjaPeriodik()->remove($response['data']['id']);

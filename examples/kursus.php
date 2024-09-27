@@ -28,9 +28,7 @@ $data = [
     "tanggalKursus"          => "string",
     "tanggalSelesaiKursus"   => "string",
 ];
-$idRiwayatKursus = $siasnClient->kursus()->create($data)->save();
-$kursus = $siasnClient->kursus()->get($idRiwayatKursus);
-var_dump($kursus);
-if ($siasnClient->kursus()->remove($idRiwayatKursus)) {
-    echo "Sukses Hapus kursus";
-}
+$response = $siasnClient->kursus()->create($data)->save();
+$kursus = $siasnClient->kursus()->get($response['data']['id']);
+
+$siasnClient->kursus()->remove($response['data']['id']);
