@@ -76,11 +76,31 @@ class PnsService implements ServiceInterface
         $httpClient = new HttpClient($this->config->getApiBaseUrl());
         $options['headers'] = [
             'Authorization' => 'Bearer ' . $this->getWsoAccessToken(),
-            'Auth' => 'bearer ' . $this->getSsoAccessToken(),
-            'Accept' => 'application/json'
+            'Auth'          => 'bearer ' . $this->getSsoAccessToken(),
+            'Accept'        => 'application/json'
         ];
 
         $response = $httpClient->get("/{$uri}", $options);
+        return $this->transformResponse($response);
+    }
+
+    /**
+     * Memperbarui data utama PNS melalui API.
+     *
+     * @param array $data Data yang akan diperbarui. Harus mencakup semua field yang diperlukan oleh API.
+     * @return array Hasil dari permintaan API, yang sudah ditransformasi.
+     */
+    public function updateDataUtama(array $data): array
+    {
+        $httpClient         = new HttpClient($this->config->getApiBaseUrl());
+        $options['json']    = $data;
+        $options['headers'] = [
+            'Authorization' => 'Bearer ' . $this->getWsoAccessToken(),
+            'Auth'          => 'bearer ' . $this->getSsoAccessToken(),
+            'Accept'        => 'application/json'
+        ];
+
+        $response = $httpClient->post("apisiasn/1.0/pns/data-utama-update", $options);
         return $this->transformResponse($response);
     }
 
@@ -199,8 +219,8 @@ class PnsService implements ServiceInterface
         return $httpClient->get("/apisiasn/1.0/pns/photo/{$pnsId}", [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->getWsoAccessToken(),
-                'Auth' => 'bearer ' . $this->getSsoAccessToken(),
-                'Accept' => 'application/json'
+                'Auth'          => 'bearer ' . $this->getSsoAccessToken(),
+                'Accept'        => 'application/json'
             ]
         ]);
     }
