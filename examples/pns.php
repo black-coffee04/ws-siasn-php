@@ -2,16 +2,14 @@
 
 use SiASN\Sdk\SiasnClient;
 
-require_once __DIR__ . './init.php';
+require_once('init.php');
 
 $config = [
     "consumerKey"    => getenv('CONSUMER_KEY'),
     "consumerSecret" => getenv('CONSUMER_SECRET'),
     "clientId"       => getenv('CLIENT_ID'),
-    "username"       => getenv('USERNAME_SSO'),
-    "password"       => getenv('PASSWORD')
+    "ssoAccessToken" => getenv('SSO_ACCESS_TOKEN'),
 ];
-
 $nipAsn = getenv('NIP');
 $siasn  = new SiasnClient($config);
 
@@ -38,5 +36,5 @@ $data = [
     "taspen_nomor"    => "string",
 ];
 #Update data utama
-$update = $siasn->pns()->update($nipAsn);
-var_dump($update);
+// $update = $siasn->pns()->updateDataUtama($data);
+var_dump($dataUtama);

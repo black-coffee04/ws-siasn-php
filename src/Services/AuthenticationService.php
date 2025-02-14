@@ -66,13 +66,7 @@ class AuthenticationService implements ServiceInterface
      */
     public function getSsoAccessToken(): string
     {
-        $cacheKey = self::SSO_TOKEN_CACHE_PREFIX . $this->config->getUsername();
-
-        if ($this->cache->has($cacheKey)) {
-            return $this->cache->get($cacheKey);
-        }
-
-        return $this->requestSsoToken();
+        return $this->config->getSsoAccessToken();
     }
 
     /**
@@ -94,24 +88,6 @@ class AuthenticationService implements ServiceInterface
     }
 
     /**
-     * Meminta token dari SSO.
-     *
-     * @return string Token dari SSO.
-     * @throws SiasnRequestException Jika terjadi kesalahan saat meminta token.
-     */
-    protected function requestSsoToken(): string
-    {
-        $postOptions = $this->getSsoPostOptions();
-
-        $httpClient = new HttpClient($this->config->getSsoBaseUrl());
-        $response   = $httpClient->post('/auth/realms/public-siasn/protocol/openid-connect/token', $postOptions);
-
-        $this->cacheToken(self::SSO_TOKEN_CACHE_PREFIX . $this->config->getUsername(), $response['access_token']);
-
-        return $response['access_token'];
-    }
-
-    /**
      * Mengatur token ke cache.
      *
      * @param string $cacheKey Key untuk cache.
@@ -119,7 +95,7 @@ class AuthenticationService implements ServiceInterface
      */
     protected function cacheToken(string $cacheKey, string $token): void
     {
-        $expiresIn = isset($response['expires_in']) ? $response['expires_in'] - 10 : 3600; 
+        $expiresIn = isset($response['expires_in']) ? $response['expires_in'] - 10 : 3600;
         $this->cache->set($cacheKey, $token, $expiresIn);
     }
 
@@ -132,31 +108,11 @@ class AuthenticationService implements ServiceInterface
     {
         return [
             'auth' => [
-                $this->config->getConsumerKey(), 
+                $this->config->getConsumerKey(),
                 $this->config->getConsumerSecret()
             ],
             'form_params' => [
                 'grant_type' => 'client_credentials'
-            ],
-            'headers' => [
-                'Accept' => 'application/json'
-            ]
-        ];
-    }
-
-    /**
-     * Mendapatkan opsi POST untuk WSO.
-     *
-     * @return array Opsi POST untuk WSO.
-     */
-    protected function getSsoPostOptions(): array
-    {
-        return [
-            'form_params' => [
-                'grant_type' => 'password',
-                'client_id'  => $this->config->getClientId(),
-                'username'   => $this->config->getUsername(),
-                'password'   => $this->config->getPassword(),
             ],
             'headers' => [
                 'Accept' => 'application/json'

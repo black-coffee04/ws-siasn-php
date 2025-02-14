@@ -29,11 +29,8 @@ class Config
     /** @var string Client ID */
     private $clientId;
 
-    /** @var string Username */
-    private $username;
-
-    /** @var string Password */
-    private $password;
+    /** @var string Access Token */
+    private $ssoAccessToken;
 
     /**
      * Constructor
@@ -53,8 +50,7 @@ class Config
         $this->consumerKey    = $this->validateConfigValue($config, 'consumerKey');
         $this->consumerSecret = $this->validateConfigValue($config, 'consumerSecret');
         $this->clientId       = $this->validateConfigValue($config, 'clientId');
-        $this->username       = $this->validateConfigValue($config, 'username');
-        $this->password       = $this->validateConfigValue($config, 'password');
+        $this->ssoAccessToken = $this->validateConfigValue($config, 'ssoAccessToken');
     }
 
     /**
@@ -134,22 +130,12 @@ class Config
     }
 
     /**
-     * Mendapatkan Username
+     * Mendapatkan SSO AccessToken
      *
-     * @return string Username
+     * @return string SSO Access Token
      */
-    public function getUsername(): string
+    public function getSsoAccessToken(): string
     {
-        return $this->username;
-    }
-
-    /**
-     * Mendapatkan Password
-     *
-     * @return string Password
-     */
-    public function getPassword(): string
-    {
-        return $this->password;
+        return $this->ssoAccessToken;
     }
 }

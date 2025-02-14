@@ -94,8 +94,8 @@ class HttpClient implements ClientInterface
         if ($statusCode === 404) {
             $errorData = json_decode($errorMessage, true);
             return isset($errorData['code'], $errorData['data']) &&
-                   $errorData['code'] === 0 &&
-                   $errorData['data'] === 'Data tidak ditemukan';
+                $errorData['code'] === 0 &&
+                $errorData['data'] === 'Data tidak ditemukan';
         }
 
         return false;

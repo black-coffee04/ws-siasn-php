@@ -1,6 +1,6 @@
 <?php
 
-$envFile = __DIR__ . '../../.env';
+$envFile = '../.env';
 
 if (file_exists($envFile)) {
     $envVariables = parse_ini_file($envFile);
@@ -12,12 +12,4 @@ foreach ($envVariables as $key => $value) {
     putenv("$key=$value");
 }
 
-require_once __DIR__ . './../vendor/autoload.php';
-
-$config = [
-    "consumerKey"    => getenv('CONSUMER_KEY'),
-    "consumerSecret" => getenv('CONSUMER_SECRET'),
-    "clientId"       => getenv('CLIENT_ID'),
-    "username"       => getenv('USERNAME_SSO'),
-    "password"       => getenv('PASSWORD')
-];
+require_once '../vendor/autoload.php';
