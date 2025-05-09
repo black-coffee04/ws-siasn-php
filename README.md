@@ -169,50 +169,56 @@ $siasnClient->authentication()->getSsoAccessToken();
 
 Berikut adalah daftar lengkap metode yang tersedia pada resource Referensi:
 
-| Metode                                               | Deskripsi                                                                                                                                                                        | Kembalian                                       |
-| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | --- |
-| `$siasnClient->referensi()->unor($storeCache)`       | Mengambil data referensi Unit Organisasi (UNOR). Parameter `$storeCache` dapat diatur ke `true` untuk menyimpan data di cache dengan masa berlaku 3600 detik (default: `false`). | `Array` data referensi Unit Organisasi (UNOR).  |     |
-| `$siasnClient->referensi()->agama()`                 | Mengambil data referensi agama.                                                                                                                                                  | `Array` data referensi agama.                   |
-| `$siasnClient->referensi()->alasanHukumanDisiplin()` | Mengambil data referensi alasan hukuman disiplin.                                                                                                                                | `Array` data referensi alasan hukuman disiplin. |
-| `$siasnClient->referensi()->cltn()`                  | Mengambil data referensi CLTN.                                                                                                                                                   | `Array` data referensi CLTN.                    |
-| `$siasnClient->referensi()->dokumen()`               | Mengambil data referensi dokumen.                                                                                                                                                | `Array` data referensi dokumen.                 |
-| `$siasnClient->referensi()->eselon()`                | Mengambil data referensi eselon.                                                                                                                                                 | `Array` data referensi eselon.                  |
-| `$siasnClient->referensi()->golonganPns()`           | Mengambil data referensi golongan PNS.                                                                                                                                           | `Array` data referensi golongan PNS.            |
-| `$siasnClient->referensi()->instansi()`              | Mengambil data referensi instansi.                                                                                                                                               | `Array` data referensi instansi.                |
-| `$siasnClient->referensi()->jabatanFungsional()`     | Mengambil data referensi jabatan fungsional.                                                                                                                                     | `Array` data referensi jabatan fungsional.      |
-| `$siasnClient->referensi()->jabatanPelaksana()`      | Mengambil data referensi jabatan pelaksana.                                                                                                                                      | `Array` data referensi jabatan pelaksana.       |
-| `$siasnClient->referensi()->jenisDiklat()`           | Mengambil data referensi jenis diklat.                                                                                                                                           | `Array` data referensi jenis diklat.            |
-| `$siasnClient->referensi()->jenisHukuman()`          | Mengambil data referensi jenis hukuman.                                                                                                                                          | `Array` data referensi jenis hukuman.           |
-| `$siasnClient->referensi()->jenisJabatan()`          | Mengambil data referensi jenis jabatan.                                                                                                                                          | `Array` data referensi jenis jabatan.           |
-| `$siasnClient->referensi()->jenisKursus()`           | Mengambil data referensi jenis kursus.                                                                                                                                           | `Array` data referensi jenis kursus.            |
-| `$siasnClient->referensi()->jenisMutasi()`           | Mengambil data referensi jenis mutasi.                                                                                                                                           | `Array` data referensi jenis mutasi.            |
-| `$siasnClient->referensi()->jenisPegawai()`          | Mengambil data referensi jenis pegawai.                                                                                                                                          | `Array` data referensi jenis pegawai.           |
-| `$siasnClient->referensi()->jenisPemberhentian()`    | Mengambil data referensi jenis pemberhentian.                                                                                                                                    | `Array` data referensi jenis pemberhentian.     |
-| `$siasnClient->referensi()->jenisPengadaan()`        | Mengambil data referensi jenis pengadaan.                                                                                                                                        | `Array` data referensi jenis pengadaan.         |
-| `$siasnClient->referensi()->jenisPensiun()`          | Mengambil data referensi jenis pensiun.                                                                                                                                          | `Array` data referensi jenis pensiun.           |
-| `$siasnClient->referensi()->jenisPenugasan()`        | Mengambil data referensi jenis penugasan.                                                                                                                                        | `Array` data referensi jenis penugasan.         |
-| `$siasnClient->referensi()->jenisRiwayat()`          | Mengambil data referensi jenis riwayat.                                                                                                                                          | `Array` data referensi jenis riwayat.           |
-| `$siasnClient->referensi()->kabupaten()`             | Mengambil data referensi kabupaten.                                                                                                                                              | `Array` data referensi kabupaten.               |
-| `$siasnClient->referensi()->kawin()`                 | Mengambil data referensi kawin.                                                                                                                                                  | `Array` data referensi kawin.                   |
-| `$siasnClient->referensi()->kedudukanHukum()`        | Mengambil data referensi kedudukan hukum.                                                                                                                                        | `Array` data referensi kedudukan hukum.         |
-| `$siasnClient->referensi()->kelasJabatan()`          | Mengambil data referensi kelas jabatan.                                                                                                                                          | `Array` data referensi kelas jabatan.           |
-| `$siasnClient->referensi()->kenaikanPangkat()`       | Mengambil data referensi kenaikan pangkat.                                                                                                                                       | `Array` data referensi kenaikan pangkat.        |
-| `$siasnClient->referensi()->kepanitiaan()`           | Mengambil data referensi kepanitiaan.                                                                                                                                            | `Array` data referensi kepanitiaan.             |
-| `$siasnClient->referensi()->koefisien()`             | Mengambil data referensi koefisien.                                                                                                                                              | `Array` data referensi koefisien.               |
-| `$siasnClient->referensi()->kompetensi()`            | Mengambil data referensi kompetensi.                                                                                                                                             | `Array` data referensi kompetensi.              |
-| `$siasnClient->referensi()->kpkn()`                  | Mengambil data referensi KPKN.                                                                                                                                                   | `Array` data referensi KPKN.                    |
-| `$siasnClient->referensi()->kuadranNilai()`          | Mengambil data referensi kuadran nilai.                                                                                                                                          | `Array` data referensi kuadran nilai.           |
-| `$siasnClient->referensi()->kursus()`                | Mengambil data referensi kursus.                                                                                                                                                 | `Array` data referensi kursus.                  |
-| `$siasnClient->referensi()->latihanStruktural()`     | Mengambil data referensi latihan struktural.                                                                                                                                     | `Array` data referensi latihan struktural.      |
-| `$siasnClient->referensi()->pendidikan()`            | Mengambil data referensi pendidikan.                                                                                                                                             | `Array` data referensi pendidikan.              |
-| `$siasnClient->referensi()->penghargaan()`           | Mengambil data referensi penghargaan.                                                                                                                                            | `Array` data referensi penghargaan.             |
-| `$siasnClient->referensi()->perilakuDanKinerja()`    | Mengambil data referensi perilaku dan kinerja.                                                                                                                                   | `Array` data referensi perilaku dan kinerja.    |
-| `$siasnClient->referensi()->periodik()`              | Mengambil data referensi periodik.                                                                                                                                               | `Array` data referensi periodik.                |
-| `$siasnClient->referensi()->profesi()`               | Mengambil data referensi profesi.                                                                                                                                                | `Array` data referensi profesi.                 |
-| `$siasnClient->referensi()->rumpunJabatan()`         | Mengambil data referensi rumpun jabatan.                                                                                                                                         | `Array` data referensi rumpun jabatan.          |
-| `$siasnClient->referensi()->satuanKerja()`           | Mengambil data referensi satuan kerja.                                                                                                                                           | `Array` data referensi satuan kerja.            |
-| `$siasnClient->referensi()->subJabatan()`            | Mengambil data referensi sub jabatan.                                                                                                                                            | `Array` data referensi sub jabatan.             |
-| `$siasnClient->referensi()->taspen()`                | Mengambil data referensi taspen.                                                                                                                                                 | `Array` data referensi taspen.                  |
+## Referensi SIASN Client
+
+Berikut adalah daftar lengkap metode yang tersedia pada resource Referensi:
+
+### Daftar Metode Referensi
+
+| Metode | Deskripsi | Kembalian |
+|--------|-----------|-----------|
+| `$siasnClient->referensi()->unor($storeCache)` | Mengambil data referensi Unit Organisasi (UNOR). Parameter `$storeCache` dapat diatur ke `true` untuk menyimpan data di cache dengan masa berlaku 3600 detik (default: `false`). | `Array` data referensi Unit Organisasi (UNOR). |
+| `$siasnClient->referensi()->agama()` | Mengambil data referensi agama. | `Array` data referensi agama. |
+| `$siasnClient->referensi()->alasanHukumanDisiplin()` | Mengambil data referensi alasan hukuman disiplin. | `Array` data referensi alasan hukuman disiplin. |
+| `$siasnClient->referensi()->cltn()` | Mengambil data referensi CLTN. | `Array` data referensi CLTN. |
+| `$siasnClient->referensi()->dokumen()` | Mengambil data referensi dokumen. | `Array` data referensi dokumen. |
+| `$siasnClient->referensi()->eselon()` | Mengambil data referensi eselon. | `Array` data referensi eselon. |
+| `$siasnClient->referensi()->golonganPns()` | Mengambil data referensi golongan PNS. | `Array` data referensi golongan PNS. |
+| `$siasnClient->referensi()->instansi()` | Mengambil data referensi instansi. | `Array` data referensi instansi. |
+| `$siasnClient->referensi()->jabatanFungsional()` | Mengambil data referensi jabatan fungsional. | `Array` data referensi jabatan fungsional. |
+| `$siasnClient->referensi()->jabatanPelaksana()` | Mengambil data referensi jabatan pelaksana. | `Array` data referensi jabatan pelaksana. |
+| `$siasnClient->referensi()->jenisDiklat()` | Mengambil data referensi jenis diklat. | `Array` data referensi jenis diklat. |
+| `$siasnClient->referensi()->jenisHukuman()` | Mengambil data referensi jenis hukuman. | `Array` data referensi jenis hukuman. |
+| `$siasnClient->referensi()->jenisJabatan()` | Mengambil data referensi jenis jabatan. | `Array` data referensi jenis jabatan. |
+| `$siasnClient->referensi()->jenisKursus()` | Mengambil data referensi jenis kursus. | `Array` data referensi jenis kursus. |
+| `$siasnClient->referensi()->jenisMutasi()` | Mengambil data referensi jenis mutasi. | `Array` data referensi jenis mutasi. |
+| `$siasnClient->referensi()->jenisPegawai()` | Mengambil data referensi jenis pegawai. | `Array` data referensi jenis pegawai. |
+| `$siasnClient->referensi()->jenisPemberhentian()` | Mengambil data referensi jenis pemberhentian. | `Array` data referensi jenis pemberhentian. |
+| `$siasnClient->referensi()->jenisPengadaan()` | Mengambil data referensi jenis pengadaan. | `Array` data referensi jenis pengadaan. |
+| `$siasnClient->referensi()->jenisPensiun()` | Mengambil data referensi jenis pensiun. | `Array` data referensi jenis pensiun. |
+| `$siasnClient->referensi()->jenisPenugasan()` | Mengambil data referensi jenis penugasan. | `Array` data referensi jenis penugasan. |
+| `$siasnClient->referensi()->jenisRiwayat()` | Mengambil data referensi jenis riwayat. | `Array` data referensi jenis riwayat. |
+| `$siasnClient->referensi()->kabupaten()` | Mengambil data referensi kabupaten. | `Array` data referensi kabupaten. |
+| `$siasnClient->referensi()->kawin()` | Mengambil data referensi kawin. | `Array` data referensi kawin. |
+| `$siasnClient->referensi()->kedudukanHukum()` | Mengambil data referensi kedudukan hukum. | `Array` data referensi kedudukan hukum. |
+| `$siasnClient->referensi()->kelasJabatan()` | Mengambil data referensi kelas jabatan. | `Array` data referensi kelas jabatan. |
+| `$siasnClient->referensi()->kenaikanPangkat()` | Mengambil data referensi kenaikan pangkat. | `Array` data referensi kenaikan pangkat. |
+| `$siasnClient->referensi()->kepanitiaan()` | Mengambil data referensi kepanitiaan. | `Array` data referensi kepanitiaan. |
+| `$siasnClient->referensi()->koefisien()` | Mengambil data referensi koefisien. | `Array` data referensi koefisien. |
+| `$siasnClient->referensi()->kompetensi()` | Mengambil data referensi kompetensi. | `Array` data referensi kompetensi. |
+| `$siasnClient->referensi()->kpkn()` | Mengambil data referensi KPKN. | `Array` data referensi KPKN. |
+| `$siasnClient->referensi()->kuadranNilai()` | Mengambil data referensi kuadran nilai. | `Array` data referensi kuadran nilai. |
+| `$siasnClient->referensi()->kursus()` | Mengambil data referensi kursus. | `Array` data referensi kursus. |
+| `$siasnClient->referensi()->latihanStruktural()` | Mengambil data referensi latihan struktural. | `Array` data referensi latihan struktural. |
+| `$siasnClient->referensi()->pendidikan()` | Mengambil data referensi pendidikan. | `Array` data referensi pendidikan. |
+| `$siasnClient->referensi()->penghargaan()` | Mengambil data referensi penghargaan. | `Array` data referensi penghargaan. |
+| `$siasnClient->referensi()->perilakuDanKinerja()` | Mengambil data referensi perilaku dan kinerja. | `Array` data referensi perilaku dan kinerja. |
+| `$siasnClient->referensi()->periodik()` | Mengambil data referensi periodik. | `Array` data referensi periodik. |
+| `$siasnClient->referensi()->profesi()` | Mengambil data referensi profesi. | `Array` data referensi profesi. |
+| `$siasnClient->referensi()->rumpunJabatan()` | Mengambil data referensi rumpun jabatan. | `Array` data referensi rumpun jabatan. |
+| `$siasnClient->referensi()->satuanKerja()` | Mengambil data referensi satuan kerja. | `Array` data referensi satuan kerja. |
+| `$siasnClient->referensi()->subJabatan()` | Mengambil data referensi sub jabatan. | `Array` data referensi sub jabatan. |
+| `$siasnClient->referensi()->taspen()` | Mengambil data referensi taspen. | `Array` data referensi taspen. |
 
 #### Contoh Penggunaan Referensi
 
@@ -277,7 +283,7 @@ Berikut adalah daftar lengkap metode yang tersedia pada resource PNS:
 | `$siasnClient->pns()->refreshGolongan($nipAsn)`                          | Memperbarui data golongan ASN berdasarkan NIP ASN.                                                | `$nipAsn` (string): NIP ASN                                    | Array Respon api.                           |
 | `$siasnClient->pns()->nilaiIpAsn($nipAsn)`                               | Mengambil nilai IP ASN berdasarkan NIP ASN.                                                       | `$nipAsn` (string): NIP ASN                                    | Array nilai IP ASN.                         |
 | `$siasnClient->pns()->foto($nipAsn)->setName($fileName)->outputStream()` | Mengambil foto profil ASN berdasarkan NIP ASN dan menyimpannya sebagai file dengan nama tertentu. | `$nipAsn` (string): NIP ASN, `$fileName` (string): Nama file   | Menghasilkan output stream foto profil ASN. |
-| `$siasnClient->pns()->foto($nipAsn)->setName($fileName)->saveTo($path)`  | Menyimpan foto profil ASN ke direktori yang ditentukan.                                           | `$nipAsn` (string): NIP ASN, `$path ` (string): direktori      | String nama file.                           |
+| `$siasnClient->pns()->foto($nipAsn)->setName($fileName)->saveTo($path)`  | Menyimpan foto profil ASN ke direktori yang ditentukan.                                           | `$nipAsn` (string): NIP ASN, `$path` (string): direktori       | String nama file.                           |
 | `$siasnClient->pns()->updateDataUtama([...])`                            | Memperbarui data utama ASN dengan parameter yang diberikan.                                       | `$data` (array): Data yang akan diperbarui pada data utama ASN | Array.                                      |
 
 #### Contoh Penggunaan Api PNS
@@ -317,15 +323,15 @@ var_dump($update);
 
 ### Jabatan
 
-Berikut adalah daftar lengkap metode yang tersedia pada resource Jabatan:
+Berikut adalah daftar lengkap metode yang tersedia pada resource **Jabatan**:
 
-| Metode                                                      | Deskripsi                                              | Parameter                                        | Kembalian                   |
-| ----------------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------ | --------------------------- | ------ |
-| `$siasnClient->jabatan()->pns($nipAsn)`                     | Mengambil data jabatan ASN berdasarkan NIP ASN.        | `$nipAsn` (string): NIP ASN                      | Array data jabatan ASN.     |
-| `$siasnClient->jabatan()->riwayat($idJabatan)`              | Mengambil data riwayat jabatan berdasarkan Id Jabatan. | `$idJabatan` (string): Id Jabatan                | Array data riwayat jabatan. |
-| `$siasnClient->jabatan()->create($data)->save()`            | Menambahkan data jabatan.                              | `$data` (Array): Data Jabatan                    | Array Respon api.           |
-| `$siasnClient->jabatan()->createUnorJabatan($data)->save()` | Menambahkan data unor jabatan.                         | `$data` (Array): Data Jabatan                    | Array Respon api.           |
-| `$siasnClient->jabatan()->remove($idRiwayatJabatan)`        | Menghapus riwayat jabatan.                             | `$idRiwayatJabatan` (String): ID Riwayat Jabatan | Array                       | false. |
+| Metode                                                      | Deskripsi                                              | Parameter                                        | Kembalian                    |
+|-------------------------------------------------------------|--------------------------------------------------------|--------------------------------------------------|------------------------------|
+| `$siasnClient->jabatan()->pns($nipAsn)`                     | Mengambil data jabatan ASN berdasarkan NIP ASN.        | `$nipAsn` (string): NIP ASN                      | Array data jabatan ASN.      |
+| `$siasnClient->jabatan()->riwayat($idJabatan)`              | Mengambil data riwayat jabatan berdasarkan ID Jabatan. | `$idJabatan` (string): ID Jabatan                | Array data riwayat jabatan.  |
+| `$siasnClient->jabatan()->create($data)->save()`            | Menambahkan data jabatan baru.                         | `$data` (array): Data jabatan                    | Array respons API.           |
+| `$siasnClient->jabatan()->createUnorJabatan($data)->save()` | Menambahkan data unit organisasi jabatan.              | `$data` (array): Data jabatan                    | Array respons API.           |
+| `$siasnClient->jabatan()->remove($idRiwayatJabatan)`        | Menghapus riwayat jabatan berdasarkan ID.              | `$idRiwayatJabatan` (string): ID Riwayat Jabatan | Array respons API atau `false`. |
 
 #### Metode Tambahan
 
@@ -408,16 +414,20 @@ $daftarPengadaan  = $siasnClient->pengadaan()->get($tahunAnggaran);
 $dokumenPengadaan = $siasnClient->pengadaan()->dokumen();
 ```
 
-## Penghargaan
+###
 
-Berikut adalah daftar lengkap metode yang tersedia pada resource penghargaan:
+### Penghargaan
 
-| Metode                                                                      | Deskripsi                                                  | Parameter                                                                      | Kembalian                       |
-| --------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------ | ------------------------------- | ------ |
-| `$siasnClient->penghargaan()->get($idRiwayatPenghargaan)`                   | Mengambil data riwayat penghargaan berdasarkan id riwayat. | `$idRiwayatPenghargaan` (string): Id riwayat penghargaan                       | Array data riwayat penghargaan. |
-| `$siasnClient->penghargaan()->create($data)->save()`                        | Membuat data riwayat penghargaan tanpa dokumen.            | `$data` (array): data penghargaan                                              | Array data penghargaan.         |
-| `$siasnClient->penghargaan()->create($data)->includeDokumen($file)->save()` | Membuat data riwayat penghargaan dengan dokumen.           | `$data` (array): data penghargaan, `$file` (string) path file atau url dokumen | Array data penghargaan.         |
-| `$siasnClient->penghargaan()->remove($idRiwayatPenghargaan)`                | Menghapus data riwayat penghargaan.                        | `$idRiwayatPenghargaan` (string) Id riwayat penghargaan                        | Array                           | false. |
+Berikut adalah daftar lengkap metode yang tersedia pada resource **Penghargaan**:
+
+| Metode                                                                      | Deskripsi                                                  | Parameter                                                                       | Kembalian                       |
+| --------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------- |
+| `$siasnClient->penghargaan()->get($idRiwayatPenghargaan)`                   | Mengambil data riwayat penghargaan berdasarkan ID riwayat. | `$idRiwayatPenghargaan` (string): ID riwayat penghargaan                        | Array data riwayat penghargaan. |
+| `$siasnClient->penghargaan()->create($data)->save()`                        | Membuat data riwayat penghargaan tanpa dokumen.            | `$data` (array): Data penghargaan                                               | Array data penghargaan.         |
+| `$siasnClient->penghargaan()->create($data)->includeDokumen($file)->save()` | Membuat data riwayat penghargaan dengan dokumen.           | `$data` (array): Data penghargaan, `$file` (string): Path file atau URL dokumen | Array data penghargaan.         |
+| `$siasnClient->penghargaan()->remove($idRiwayatPenghargaan)`                | Menghapus data riwayat penghargaan.                        | `$idRiwayatPenghargaan` (string): ID riwayat penghargaan                        | Array respons API atau `false`. |
+
+
 
 #### Contoh Penggunaan Api Penghargaan
 
@@ -496,16 +506,18 @@ $nip  = 'xxxxxxxxxxxxxxxxxx';
 $riwayatKursus = $siasnClient->riwayat()->kursus($nip);
 ```
 
-## Angka Kredit
+### Angka Kredit
 
-Berikut adalah daftar lengkap metode yang tersedia pada resource angka kredit:
+Berikut adalah daftar lengkap metode yang tersedia pada resource **Angka Kredit**:
 
-| Metode                                                                      | Deskripsi                                                   | Parameter                                                                       | Kembalian                        |
-| --------------------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------- | ------ |
-| `$siasnClient->angkaKredit()->get($idRiwayatAngkaKredit)`                   | Mengambil data riwayat angka kredit berdasarkan id riwayat. | `$idRiwayatAngkaKredit` (string): Id riwayat angka kredit                       | Array data riwayat angka kredit. |
-| `$siasnClient->angkaKredit()->create($data)->save()`                        | Membuat data riwayat angka kredit tanpa dokumen.            | `$data` (array): data angka kredit                                              | Array data angka kredit.         |
-| `$siasnClient->angkaKredit()->create($data)->includeDokumen($file)->save()` | Membuat data riwayat angka kredit dengan dokumen.           | `$data` (array): data angka kredit, `$file` (string) path file atau url dokumen | Array data angka kredit.         |
-| `$siasnClient->angkaKredit()->remove($idRiwayatAngkaKredit)`                | Menghapus data riwayat angka kredit.                        | `$idRiwayatAngkaKredit` (string) Id riwayat angka kredit                        | Array                            | false. |
+| Metode                                                                      | Deskripsi                                                   | Parameter                                                                        | Kembalian                        |
+| --------------------------------------------------------------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------- |
+| `$siasnClient->angkaKredit()->get($idRiwayatAngkaKredit)`                   | Mengambil data riwayat angka kredit berdasarkan ID riwayat. | `$idRiwayatAngkaKredit` (string): ID riwayat angka kredit                        | Array data riwayat angka kredit. |
+| `$siasnClient->angkaKredit()->create($data)->save()`                        | Membuat data riwayat angka kredit tanpa dokumen.            | `$data` (array): Data angka kredit                                               | Array data angka kredit.         |
+| `$siasnClient->angkaKredit()->create($data)->includeDokumen($file)->save()` | Membuat data riwayat angka kredit dengan dokumen.           | `$data` (array): Data angka kredit, `$file` (string): Path file atau URL dokumen | Array data angka kredit.         |
+| `$siasnClient->angkaKredit()->remove($idRiwayatAngkaKredit)`                | Menghapus data riwayat angka kredit.                        | `$idRiwayatAngkaKredit` (string): ID riwayat angka kredit                        | Array respons API atau `false`.  |
+
+
 
 #### Contoh Penggunaan Api Angka Kredit
 
@@ -645,11 +657,11 @@ print_r($siasnClient->hukdis()->get($response['data']['id']));
 
 Berikut adalah daftar lengkap metode yang tersedia pada resource kinerja periodik:
 
-| Metode                                                                          | Deskripsi                                             | Parameter                                                                           | Kembalian                    |
-| ------------------------------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------- | ---------------------------- | ------ |
-| `$siasnClient->kinerjaPeriodik()->create($data)->save()`                        | Membuat data riwayat kinerja periodik tanpa dokumen.  | `$data` (array): data kinerja periodik                                              | Array data kinerja periodik. |
-| `$siasnClient->kinerjaPeriodik()->create($data)->includeDokumen($file)->save()` | Membuat data riwayat kinerja periodik dengan dokumen. | `$data` (array): data kinerja periodik, `$file` (string) path file atau url dokumen | Array data kinerja periodik. |
-| `$siasnClient->kinerjaPeriodik()->remove($idRiwayatKinerjaPeriodik)`            | Menghapus data riwayat kinerja periodik.              | `$idRiwayatKinerjaPeriodik` (string) Id riwayat kinerja periodik                    | Array                        | false. |
+| Metode                                                                          | Deskripsi                                             | Parameter                                                                              | Kembalian                     |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------- | ----------------------------- |
+| `$siasnClient->kinerjaPeriodik()->create($data)->save()`                        | Membuat data riwayat kinerja periodik tanpa dokumen.  | `$data` (array): data kinerja periodik                                                 | Array data kinerja periodik   |
+| `$siasnClient->kinerjaPeriodik()->create($data)->includeDokumen($file)->save()` | Membuat data riwayat kinerja periodik dengan dokumen. | `$data` (array): data kinerja periodik<br>`$file` (string): path file atau URL dokumen | Array data kinerja periodik   |
+| `$siasnClient->kinerjaPeriodik()->remove($idRiwayatKinerjaPeriodik)`            | Menghapus data riwayat kinerja periodik.              | `$idRiwayatKinerjaPeriodik` (string): ID riwayat kinerja periodik                      | Array atau `false` jika gagal |
 
 #### Contoh Penggunaan Api Kinerja Periodik
 
@@ -686,12 +698,12 @@ $deleted = $siasnClient->kinerjaPeriodik()->remove($response['data']['id']);
 
 Berikut adalah daftar lengkap metode yang tersedia pada resource kursus:
 
-| Metode                                                                 | Deskripsi                                             | Parameter                                                                 | Kembalian                  |
-| ---------------------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------- | -------------------------- | ------ |
-| `$siasnClient->kursus()->get($idRiwayatKursus)`                        | Mengambil data riwayat kursus berdasarkan id riwayat. | `$idRiwayatKursus` (string): Id riwayat kursus                            | Array data riwayat kursus. |
-| `$siasnClient->kursus()->create($data)->save()`                        | Membuat data riwayat kursus tanpa dokumen.            | `$data` (array): data kursus                                              | Array data kursus.         |
-| `$siasnClient->kursus()->create($data)->includeDokumen($file)->save()` | Membuat data riwayat kursus dengan dokumen.           | `$data` (array): data kursus, `$file` (string) path file atau url dokumen | Array data kursus.         |
-| `$siasnClient->kursus()->remove($idRiwayatKursus)`                     | Menghapus data riwayat kursus.                        | `$idRiwayatKursus` (string) Id riwayat kursus                             | Array                      | false. |
+| Metode                                                                 | Deskripsi                                     | Parameter                                                                    | Kembalian                     |
+| ---------------------------------------------------------------------- | --------------------------------------------- | ---------------------------------------------------------------------------- | ----------------------------- |
+| `$siasnClient->kursus()->get($idRiwayatKursus)`                        | Mengambil data riwayat kursus berdasarkan ID. | `$idRiwayatKursus` (string): ID riwayat kursus                               | Array data riwayat kursus     |
+| `$siasnClient->kursus()->create($data)->save()`                        | Membuat data riwayat kursus tanpa dokumen.    | `$data` (array): data kursus                                                 | Array data kursus             |
+| `$siasnClient->kursus()->create($data)->includeDokumen($file)->save()` | Membuat data riwayat kursus dengan dokumen.   | `$data` (array): data kursus<br>`$file` (string): path file atau URL dokumen | Array data kursus             |
+| `$siasnClient->kursus()->remove($idRiwayatKursus)`                     | Menghapus data riwayat kursus.                | `$idRiwayatKursus` (string): ID riwayat kursus                               | Array atau `false` jika gagal |
 
 #### Contoh Penggunaan Api Kursus
 

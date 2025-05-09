@@ -25,8 +25,7 @@ class AuthenticationServiceTest extends TestCase
         $this->mockConfig->method('getWsoBaseUrl')->willReturn('http://wso.example.com');
         $this->mockConfig->method('getSsoBaseUrl')->willReturn('http://sso.example.com');
         $this->mockConfig->method('getClientId')->willReturn('testClientId');
-        $this->mockConfig->method('getUsername')->willReturn('testUsername');
-        $this->mockConfig->method('getPassword')->willReturn('testPassword');
+        $this->mockConfig->method('getSsoAccessToken')->willReturn('ssoAccessTokenTest');
         $this->mockConfig->method('getConsumerKey')->willReturn('testConsumerKey');
         $this->mockConfig->method('getConsumerSecret')->willReturn('testConsumerSecret');
 
@@ -56,17 +55,7 @@ class AuthenticationServiceTest extends TestCase
 
     public function testGetSsoAccessTokenWithCache()
     {
-        $this->mockCache->expects($this->once())
-            ->method('has')
-            ->with('sso.token.testUsername')
-            ->willReturn(true);
-
-        $this->mockCache->expects($this->once())
-            ->method('get')
-            ->with('sso.token.testUsername')
-            ->willReturn('mock_sso_access_token');
-
         $accessToken = $this->authService->getSsoAccessToken();
-        $this->assertEquals('mock_sso_access_token', $accessToken);
+        $this->assertEquals('ssoAccessTokenTest', $accessToken);
     }
 }
