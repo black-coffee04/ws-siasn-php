@@ -5,11 +5,10 @@ use SiASN\Sdk\SiasnClient;
 require_once __DIR__ . './init.php';
 
 $config = [
-    "consumerKey"    => getenv('CONSUMER_KEY'),
-    "consumerSecret" => getenv('CONSUMER_SECRET'),
-    "clientId"       => getenv('CLIENT_ID'),
-    "username"       => getenv('USERNAME_SSO'),
-    "password"       => getenv('PASSWORD')
+    "consumerKey"    => 'consumerKeyAnda',
+    "consumerSecret" => 'consumerSecretAnda',
+    "clientId"       => 'clientIdAnda',
+    "ssoAccessToken" => 'ssoAccessTokenAnda'
 ];
 
 $siasnClient = new SiasnClient($config);
@@ -41,4 +40,5 @@ if (isset($response['success']) && $response['success']) {
     #Menghapus data angka kredir
     $angkaKredit = $siasnClient->angkaKredit()->remove($response['data']['id']);
 }
-var_dump($angkaKredit);die();
+var_dump($angkaKredit);
+die();

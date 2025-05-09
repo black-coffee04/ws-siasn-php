@@ -5,11 +5,10 @@ use SiASN\Sdk\SiasnClient;
 require_once __DIR__ . './init.php';
 
 $config = [
-    "consumerKey"    => getenv('CONSUMER_KEY'),
-    "consumerSecret" => getenv('CONSUMER_SECRET'),
-    "clientId"       => getenv('CLIENT_ID'),
-    "username"       => getenv('USERNAME_SSO'),
-    "password"       => getenv('PASSWORD')
+    "consumerKey"    => 'consumerKeyAnda',
+    "consumerSecret" => 'consumerSecretAnda',
+    "clientId"       => 'clientIdAnda',
+    "ssoAccessToken" => 'ssoAccessTokenAnda'
 ];
 
 $nipAsn      = getenv('NIP');
@@ -36,4 +35,5 @@ $response['pwk']              = $siasnClient->riwayat()->pwk($nipAsn);
 $response['skp']              = $siasnClient->riwayat()->skp($nipAsn);
 $response['skp22']            = $siasnClient->riwayat()->skp22($nipAsn);
 
-var_dump($response);die();
+var_dump($response);
+die();
