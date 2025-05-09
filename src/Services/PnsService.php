@@ -71,7 +71,7 @@ class PnsService implements ServiceInterface
      * @param array|null $options Opsi tambahan untuk permintaan.
      * @return array Data respon dari API.
      */
-    private function sendRequest(string $uri, array $options = []): array
+    protected function sendRequest(string $uri, array $options = []): array
     {
         $httpClient = new HttpClient($this->config->getApiBaseUrl());
         $options['headers'] = [
